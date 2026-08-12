@@ -5,10 +5,10 @@ public class Goal extends Incident {
     private Player scorer;
     private boolean penalty;
     private boolean ownGoal;
-    private Player goalkeeper;
+    private GoalKeeper goalkeeper;
 
     public Goal(int minute, Player scorer, boolean penalty,
-                boolean ownGoal, Player goalkeeper) {
+                boolean ownGoal, GoalKeeper goalkeeper) {
 
         super(minute);
 
@@ -42,11 +42,11 @@ public class Goal extends Incident {
         this.ownGoal = ownGoal;
     }
 
-    public Player getGoalkeeper() {
+    public GoalKeeper getGoalkeeper() {
         return goalkeeper;
     }
 
-    public void setGoalkeeper(Player goalkeeper) {
+    public void setGoalkeeper(GoalKeeper goalkeeper) {
         this.goalkeeper = goalkeeper;
     }
 }

@@ -1,6 +1,6 @@
 package model;
 
-public class Incident {
+public abstract class Incident {
     private int minute;
 
     public Incident(int minute) {

@@ -10,5 +10,17 @@ public class Tournament {
         this.teams = new ArrayList<>();
     }
 
+    public ArrayList<Team> getTeams() {
+        return teams;
+    }
 
+    public Zone[] getZones() {
+        return zones;
+    }
+
+    public void addTeam(Team team) {
+        if (teams.size() < 16) {
+            teams.add(team);
+        }
+    }
 }

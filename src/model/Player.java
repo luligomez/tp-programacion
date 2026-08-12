@@ -2,27 +2,23 @@ package model;
 
 import java.time.LocalDate;
 
-public class Player extends Person {
-    private Incident incident;
+public abstract class Player extends Person {
     private Position position;
     private int rating;
+    private int matchesPlayed;
+    private int expulsions;
 
     public Player(String firstName, String lastName, LocalDate birthDate,
                   String documentType, String documentNumber,
-                  Position position, int rating) {
+                  Position position, int rating,
+                  int matchesPlayed, int expulsions) {
 
         super(firstName, lastName, birthDate, documentType, documentNumber);
 
         this.position = position;
         this.rating = rating;
-    }
-
-    public Incident getIncident() {
-        return incident;
-    }
-
-    public void setIncident(Incident incident) {
-        this.incident = incident;
+        this.matchesPlayed = matchesPlayed;
+        this.expulsions = expulsions;
     }
 
     public Position getPosition() {
@@ -39,5 +35,21 @@ public class Player extends Person {
 
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public int getMatchesPlayed() {
+        return matchesPlayed;
+    }
+
+    public void setMatchesPlayed(int matchesPlayed) {
+        this.matchesPlayed = matchesPlayed;
+    }
+
+    public int getExpulsions() {
+        return expulsions;
+    }
+
+    public void setExpulsions(int expulsions) {
+        this.expulsions = expulsions;
     }
 }

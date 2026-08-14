@@ -3,6 +3,7 @@ package model.match;
 import model.*;
 import model.person.Referee;
 import model.place.Stadium;
+import model.zone.Zone;
 
 import java.time.LocalDate;
 

@@ -1,6 +1,7 @@
 package model.match;
 
 import model.match.incident.Incident;
+import model.person.Player;
 import model.place.Stadium;
 import model.Team;
 import model.person.Referee;
@@ -13,12 +14,13 @@ public abstract class Match {
     private LocalDate date;
     private Team team1;
     private Team team2;
+    private Formation team1Formation;
+    private Formation team2Formation;
     private Referee referee;
     private ArrayList<Incident> incidents;
     private int team1Goals;
     private int team2Goals;
-    private Formation team1Formation;
-    private Formation team2Formation;
+    private ArrayList<PlayerParticipation> playerParticipations = new ArrayList<>();
     private Stadium stadium;
 
     public Match(LocalDate date, Team team1, Team team2, Referee referee,
@@ -33,9 +35,24 @@ public abstract class Match {
         this.team2Goals = 0;
         this.team1Formation = team1Formation;
         this.team2Formation = team2Formation;
+        initializePlayerParticipation(team1Formation, team2Formation);
         this.stadium = stadium;
     }
 
+    private void initializePlayerParticipation(Formation team1Formation, Formation team2Formation){
+        addFormationParticipations(team1Formation);
+        addFormationParticipations(team2Formation);
+    }
+
+    private void addFormationParticipations(Formation formation) {
+        for (Player player : formation.getStarters()) {
+            playerParticipations.add(new PlayerParticipation(player, true, 0, 90));
+        }
+        for (Player player : formation.getSubstitutes()) {
+            playerParticipations.add(new PlayerParticipation(player, false, -1, -1));
+
+        }
+    }
     public LocalDate getDate() {
         return date;
     }

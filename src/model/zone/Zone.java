@@ -1,31 +1,34 @@
-package model;
+package model.zone;
 
+import model.Team;
 import model.match.GroupStageMatch;
 
 import java.util.ArrayList;
 
+import static model.Tournament.TEAMS_PER_GROUP;
+
 public class Zone {
+    public static int TOTAL_MATCHES_PER_GROUP = 6;
     private ArrayList<Team> teams;
     private ArrayList<TeamStanding> standings;
-    private ArrayList<GroupStageMatch> matches;
+    private ArrayList<GroupStageMatch> groupStageMatches;
 
     public Zone() {
-
         this.teams = new ArrayList<>();
         this.standings = new  ArrayList<>();
-        this.matches = new ArrayList<>(6);
+        this.groupStageMatches = new ArrayList<>();
     }
 
     public ArrayList<Team> getTeams() {
         return teams;
     }
 
-    public ArrayList<GroupStageMatch> getMatches() {
-        return matches;
+    public ArrayList<GroupStageMatch> getGroupStageMatches() {
+        return groupStageMatches;
     }
 
     public void addTeam(Team team) {
-        if (teams.size() < 4) {
+        if (teams.size() < TEAMS_PER_GROUP) {
             teams.add(team);
             standings.add(new TeamStanding(team));
         }
@@ -41,7 +44,7 @@ public class Zone {
 
 
         }
-        matches.add(match);
+        groupStageMatches.add(match);
         int team1Goals = match.getTeam1Goals();
         int team2Goals = match.getTeam2Goals();
 
@@ -120,7 +123,7 @@ public class Zone {
     }
     private int compareHeadToHead(Team firstTeam, Team secondTeam) {
 
-        for (GroupStageMatch match : matches) {
+        for (GroupStageMatch match : groupStageMatches) {
 
             if (match.getTeam1() == firstTeam &&
                     match.getTeam2() == secondTeam) {
@@ -155,7 +158,7 @@ public class Zone {
     }
 
     public void addMatch (GroupStageMatch match){
-        if (matches.size()<6)
-            matches.add(match);
+        if (groupStageMatches.size()<TOTAL_MATCHES_PER_GROUP)
+            groupStageMatches.add(match);
     }
 }

@@ -7,13 +7,13 @@ import model.place.Country;
 import java.util.List;
 
 public class Team {
-    private Country country;
     private String name;
+    private Country country;
     private int rankingPosition;
     private List<Player> players;
     private Coach coach;
 
-    public Team(Country country, String name, int rankingPosition,
+    public Team(String name, Country country, int rankingPosition,
                 List<Player> players, Coach coach) {
 
         this.country = country;

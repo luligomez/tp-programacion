@@ -1,7 +1,12 @@
-package model;
+package model.zone;
+
+import model.Team;
 
 public class TeamStanding {
 
+    public static int POINTS_WIN = 3;
+    public static int POINTS_LOSE = 0;
+    public static int POINTS_DRAW = 1;
     private Team team;
     private int points;
     private int matchesPlayed;
@@ -26,64 +31,32 @@ public class TeamStanding {
         return team;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
     public int getPoints() {
         return points;
-    }
-
-    public void setPoints(int points) {
-        this.points = points;
     }
 
     public int getMatchesPlayed() {
         return matchesPlayed;
     }
 
-    public void setMatchesPlayed(int matchesPlayed) {
-        this.matchesPlayed = matchesPlayed;
-    }
-
     public int getMatchesWon() {
         return matchesWon;
-    }
-
-    public void setMatchesWon(int matchesWon) {
-        this.matchesWon = matchesWon;
     }
 
     public int getMatchesDrawn() {
         return matchesDrawn;
     }
 
-    public void setMatchesDrawn(int matchesDrawn) {
-        this.matchesDrawn = matchesDrawn;
-    }
-
     public int getMatchesLost() {
         return matchesLost;
-    }
-
-    public void setMatchesLost(int matchesLost) {
-        this.matchesLost = matchesLost;
     }
 
     public int getGoalsFor() {
         return goalsFor;
     }
 
-    public void setGoalsFor(int goalsFor) {
-        this.goalsFor = goalsFor;
-    }
-
     public int getGoalsAgainst() {
         return goalsAgainst;
-    }
-
-    public void setGoalsAgainst(int goalsAgainst) {
-        this.goalsAgainst = goalsAgainst;
     }
 
     public int getGoalDifference() {
@@ -91,7 +64,7 @@ public class TeamStanding {
     }
 
     public void registerWin(int goalsFor, int goalsAgainst) {
-        this.points += 3;
+        this.points += POINTS_WIN;
         this.matchesPlayed++;
         this.matchesWon++;
         this.goalsFor += goalsFor;
@@ -99,7 +72,7 @@ public class TeamStanding {
     }
 
     public void registerDraw(int goalsFor, int goalsAgainst) {
-        this.points += 1;
+        this.points += POINTS_DRAW;
         this.matchesPlayed++;
         this.matchesDrawn++;
         this.goalsFor += goalsFor;
@@ -111,5 +84,6 @@ public class TeamStanding {
         this.matchesLost++;
         this.goalsFor += goalsFor;
         this.goalsAgainst += goalsAgainst;
+        this.points += POINTS_LOSE; // 0
     }
 }

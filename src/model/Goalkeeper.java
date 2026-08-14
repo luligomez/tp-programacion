@@ -2,7 +2,7 @@ package model;
 
 import java.time.LocalDate;
 
-public class GoalKeeper extends Player {
+public class Goalkeeper extends Player {
 
     private int reflexes;
     private int aerialGame;
@@ -15,7 +15,7 @@ public class GoalKeeper extends Player {
     private int penaltiesReceived;
     private int penaltiesSaved;
 
-    public GoalKeeper(String firstName, String lastName, LocalDate birthDate,
+    public Goalkeeper(String firstName, String lastName, LocalDate birthDate,
                       String documentType, String documentNumber,
                       int rating, int matchesPlayed, int expulsions,
                       int reflexes, int aerialGame, int positioning,

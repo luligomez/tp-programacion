@@ -3,18 +3,20 @@ package model;
 import java.util.ArrayList;
 
 public class Tournament {
-    private ArrayList<Team> teams;
-    private Zone[] zones = new Zone[4];
+    public static final int GROUPS = 4;
+    public static final int TEAMS = 16;
+    public static final int TEAMS_PER_GROUP = 4;
+    public static final int QUALIFIED_PER_GROUP = 2;
+    private ArrayList<Team> teams = new ArrayList<>();
+    private ArrayList<Zone> zones = new ArrayList<>();
 
-    public Tournament() {
-        this.teams = new ArrayList<>();
-    }
+    public Tournament(){}
 
     public ArrayList<Team> getTeams() {
         return teams;
     }
 
-    public Zone[] getZones() {
+    public ArrayList<Zone> getZones() {
         return zones;
     }
 

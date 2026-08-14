@@ -3,20 +3,28 @@ package model;
 import java.util.ArrayList;
 
 public class Formation {
-
-    private ArrayList<Player> players;
+    public static int STARTERS_PER_TEAM = 11;
+    private ArrayList<Player> starters = new ArrayList<>();
+    private ArrayList<Player> substitutes = new ArrayList<>();
 
     public Formation() {
-        this.players = new ArrayList<>();
     }
 
-    public ArrayList<Player> getPlayers() {
-        return players;
+    public ArrayList<Player> getStarters() {
+        return starters;
     }
 
-    public void addPlayer(Player player) {
-        if (players.size() < 11) {
-            players.add(player);
+    public void addStarter(Player player) {
+        if (starters.size() < STARTERS_PER_TEAM) {
+            starters.add(player);
         }
+    }
+
+    public ArrayList<Player> getSubstitutes() {
+        return substitutes;
+    }
+
+    public void addSubstitutes(Player player) {
+            substitutes.add(player);
     }
 }

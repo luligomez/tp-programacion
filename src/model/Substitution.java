@@ -1,11 +1,11 @@
 package model;
 
-public class Change extends Incident {
+public class Substitution extends Incident {
 
     private Player playerOut;
     private Player playerIn;
 
-    public Change(int minute, Player playerOut, Player playerIn) {
+    public Substitution(int minute, Player playerOut, Player playerIn) {
         super(minute);
         this.playerOut = playerOut;
         this.playerIn = playerIn;

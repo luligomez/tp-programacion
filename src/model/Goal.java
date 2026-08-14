@@ -5,7 +5,7 @@ public class Goal extends Incident {
     private Player scorer;
     private boolean penalty;
     private boolean ownGoal;
-    private Goalkeeper goalkeeper;
+    private Player goalkeeper;
 
     public Goal(int minute, Player scorer, boolean penalty,
                 boolean ownGoal, Player goalkeeper) {

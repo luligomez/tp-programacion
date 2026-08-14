@@ -7,13 +7,11 @@ public class Zone {
     private ArrayList<Team> teams;
     private ArrayList<TeamStanding> standings;
     private ArrayList<GroupStageMatch> matches;
-    private ArrayList<ZoneMatch> matches;
 
     public Zone() {
 
         this.teams = new ArrayList<>();
         this.standings = new  ArrayList<>();
-        this.matches = new ArrayList<>();
         this.matches = new ArrayList<>(6);
     }
 
@@ -21,7 +19,7 @@ public class Zone {
         return teams;
     }
 
-    public ArrayList<ZoneMatch> getMatches() {
+    public ArrayList<GroupStageMatch> getMatches() {
         return matches;
     }
 
@@ -155,7 +153,7 @@ public class Zone {
         return 0;
     }
 
-    public void addMatch (ZoneMatch match){
+    public void addMatch (GroupStageMatch match){
         if (matches.size()<6)
             matches.add(match);
     }

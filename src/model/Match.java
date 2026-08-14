@@ -3,7 +3,7 @@ package model;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class Match {
+public abstract class Match {
 
     private LocalDate date;
     private Team team1;
@@ -14,9 +14,10 @@ public class Match {
     private int team2Goals;
     private Formation team1Formation;
     private Formation team2Formation;
+    private Stadium stadium;
 
     public Match(LocalDate date, Team team1, Team team2, Referee referee,
-                 Formation team1Formation, Formation team2Formation) {
+                 Formation team1Formation, Formation team2Formation, Stadium stadium) {
 
         this.date = date;
         this.team1 = team1;
@@ -27,6 +28,7 @@ public class Match {
         this.team2Goals = 0;
         this.team1Formation = team1Formation;
         this.team2Formation = team2Formation;
+        this.stadium = stadium;
     }
 
     public LocalDate getDate() {
@@ -73,4 +75,6 @@ public class Match {
     public Formation getTeam2Formation() {
         return team2Formation;
     }
+
+    public abstract Team getWinner();
 }

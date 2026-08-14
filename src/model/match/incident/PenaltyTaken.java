@@ -1,4 +1,6 @@
-package model;
+package model.match.incident;
+
+import model.person.Player;
 
 public class PenaltyTaken extends Incident {
 

@@ -1,8 +1,12 @@
-package model;
+package model.match;
+
+import model.place.Stadium;
+import model.Team;
+import model.person.Referee;
 
 import java.time.LocalDate;
 
-public class FirstLegMatch extends Match{
+public class FirstLegMatch extends Match {
     private String winningCriteria;
 
 

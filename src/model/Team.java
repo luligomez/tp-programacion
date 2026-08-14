@@ -1,5 +1,9 @@
 package model;
 
+import model.person.Coach;
+import model.person.Player;
+import model.place.Country;
+
 import java.util.List;
 
 public class Team {

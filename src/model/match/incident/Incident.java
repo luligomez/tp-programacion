@@ -1,4 +1,4 @@
-package model;
+package model.match.incident;
 
 public abstract class Incident {
     private int minute;

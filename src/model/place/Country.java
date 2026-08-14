@@ -1,4 +1,4 @@
-package model;
+package model.place;
 
 public class Country {
     private String name;

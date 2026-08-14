@@ -1,8 +1,10 @@
-package model;
+package model.person;
+
+import model.place.Country;
 
 import java.time.LocalDate;
 
-public class Coach extends Person{
+public class Coach extends Person {
     private Country nationality;
     private int titlesWon;
 

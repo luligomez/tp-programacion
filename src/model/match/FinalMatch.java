@@ -1,14 +1,18 @@
-package model;
+package model.match;
+
+import model.place.Stadium;
+import model.Team;
+import model.person.Referee;
 
 import java.time.LocalDate;
 
-public class SecondLegMatch extends Match{
+public class FinalMatch extends Match {
     private boolean penalties;
     private int team1PenaltyGoals;
     private int team2PenaltyGoals;
     private String winningCriteria;
 
-    public SecondLegMatch(LocalDate date, Team team1, Team team2, Referee referee, Formation team1Formation, Formation team2Formation, Stadium stadium) {
+    public FinalMatch(LocalDate date, Team team1, Team team2, Referee referee, Formation team1Formation, Formation team2Formation, Stadium stadium) {
         super(date, team1, team2, referee, team1Formation, team2Formation, stadium);
         this.penalties = false;
         this.winningCriteria = null;
@@ -23,7 +27,6 @@ public class SecondLegMatch extends Match{
     public boolean hasPenalties(){
         return penalties;
     }
-
     @Override
     public Team getWinner() {
         if (getTeam1Goals() > getTeam2Goals()) {

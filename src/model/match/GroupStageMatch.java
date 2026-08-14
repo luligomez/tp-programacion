@@ -1,8 +1,12 @@
-package model;
+package model.match;
+
+import model.*;
+import model.person.Referee;
+import model.place.Stadium;
 
 import java.time.LocalDate;
 
-public class GroupStageMatch extends Match{
+public class GroupStageMatch extends Match {
     private Zone zone;
 
     public GroupStageMatch(LocalDate date, Team team1, Team team2, Referee referee, Formation team1Formation, Formation team2Formation, Stadium stadium, Zone zone) {

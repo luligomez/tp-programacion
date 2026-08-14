@@ -1,7 +1,8 @@
 package model;
 
+import model.match.GroupStageMatch;
+
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public class Zone {
     private ArrayList<Team> teams;

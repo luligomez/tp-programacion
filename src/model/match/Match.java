@@ -1,4 +1,9 @@
-package model;
+package model.match;
+
+import model.match.incident.Incident;
+import model.place.Stadium;
+import model.Team;
+import model.person.Referee;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

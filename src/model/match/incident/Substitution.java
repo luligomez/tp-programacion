@@ -1,4 +1,6 @@
-package model;
+package model.match.incident;
+
+import model.person.Player;
 
 public class Substitution extends Incident {
 

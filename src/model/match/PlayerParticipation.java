@@ -1,4 +1,6 @@
-package model;
+package model.match;
+
+import model.person.Player;
 
 public class PlayerParticipation {
     private Player player;

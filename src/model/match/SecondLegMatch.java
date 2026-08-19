@@ -31,15 +31,15 @@ public class SecondLegMatch extends Match {
     @Override
     public Team getWinner() {
         if (getTeam1Goals() > getTeam2Goals()) {
-            this.winningCriteria = "Mayor cantidad de goles en 90 minutos";
+            this.winningCriteria = "Higher number of goals in 90 minutes";
             return getTeam1();
         }
         if (getTeam2Goals() > getTeam1Goals()) {
-            this.winningCriteria = "Mayor cantidad de goles en 90 minutos";
+            this.winningCriteria = "Higher number of goals in 90 minutes";
             return getTeam2();
         }
         //se define por penales
-        this.winningCriteria = "Ganador en tiros penales";
+        this.winningCriteria = "Won on penalties";
         return team1PenaltyGoals > team2PenaltyGoals ? getTeam1() : getTeam2();
     }
 

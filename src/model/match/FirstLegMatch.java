@@ -18,11 +18,11 @@ public class FirstLegMatch extends Match {
     @Override
     public Team getWinner() {
         if (getTeam1Goals() > getTeam2Goals()) {
-            this.winningCriteria = "Mayor cantidad de goles";
+            this.winningCriteria = "Higher number of goals";
             return getTeam1();
         }
         if (getTeam2Goals() > getTeam1Goals()) {
-            this.winningCriteria = "Mayor cantidad de goles";
+            this.winningCriteria = "Higher number of goals";
             return getTeam2();
         }
         return null;

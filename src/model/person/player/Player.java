@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 public abstract class Player extends Person {
     private Position position;
-    private int rating;
+    private final int RATING;
     private TournamentStats tournamentStats;
 
 
@@ -18,7 +18,7 @@ public abstract class Player extends Person {
         super(firstName, lastName, birthDate, documentType, documentNumber);
 
         this.position = position;
-        this.rating = rating;
+        this.RATING = rating;
         this.tournamentStats = new TournamentStats();
     }
 
@@ -31,7 +31,7 @@ public abstract class Player extends Person {
     }
 
     public int getRating() {
-        return rating;
+        return RATING;
     }
 
 }

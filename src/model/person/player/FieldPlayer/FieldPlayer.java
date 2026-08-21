@@ -6,8 +6,6 @@ import model.person.player.RatingCalculator;
 
 import java.time.LocalDate;
 
-import static model.person.player.RatingCalculator.calculateRating;
-
 public class FieldPlayer extends Player {
     private final FieldPlayerAttributes ATTRIBUTES;
     private final FieldPlayerCareerStats CAREERSTATS;

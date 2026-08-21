@@ -1,6 +1,6 @@
 package model.match.incident;
 
-import model.person.Player;
+import model.person.player.Player;
 
 public class YellowCard extends Incident {
 

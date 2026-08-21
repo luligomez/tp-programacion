@@ -1,6 +1,6 @@
 package model.match;
 
-import model.person.Player;
+import model.person.player.Player;
 
 import java.util.ArrayList;
 

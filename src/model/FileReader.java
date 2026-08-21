@@ -1,5 +1,6 @@
 package model;
 import model.person.*;
+import model.person.player.*;
 import model.place.*;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
@@ -53,7 +54,7 @@ public class FileReader {
                 Player player;
                 int matchesPlayed = ((Long) stats.get("partidosJugados")).intValue();
                 int expulsions = ((Long) stats.get("expulsiones")).intValue();
-                int rating = 0; //como se calcula el rating????
+                //int rating = 0; //como se calcula el rating???? calcularlo en otra clase
 
                 if (positionEnum == Position.GOALKEEPER) {
                     //crear goalKeeper
@@ -68,10 +69,12 @@ public class FileReader {
                     int penaltiesReceived = ((Long) stats.get("penalesRecibidos")).intValue();
                     int penaltiesSaved = ((Long) stats.get("penalesAtajados")).intValue();
 
-                    player = new Goalkeeper(firstName, "", birthDate, documentType, documentNumber,
-                            rating, matchesPlayed, expulsions, reflexes, aerialGame, positioning,
-                            closingDown, handling, footwork, goalsReceived,
+                    GoalkeeperAttributes goalkeeperAttributes = new GoalkeeperAttributes(reflexes, aerialGame, positioning,
+                            closingDown, handling, footwork);
+                    GoalkeeperCareerStats goalkeeperCareerStats = new GoalkeeperCareerStats(matchesPlayed, expulsions,goalsReceived,
                             penaltiesReceived, penaltiesSaved);
+                    player = new Goalkeeper(firstName, "", birthDate, documentType, documentNumber, positionEnum,
+                            goalkeeperAttributes, goalkeeperCareerStats);
 
                     //como se divide el lastName?? como se si tiene mas de un nombre o apellido???
 
@@ -91,12 +94,10 @@ public class FileReader {
                     int penalties = ((Long) stats.get("penales")).intValue();
                     int penaltiesScored = ((Long) stats.get("penalesConvertidos")).intValue();
                     int assists = ((Long) stats.get("pasesGol")).intValue();
-
+                    FieldPlayerAttributes playerAttributes = new FieldPlayerAttributes(tackling,speed,skill,heading,finishing,shotPower,gameVision,physicalResistance);
+                    FieldPlayerCareerStats playerCareerStats = new FieldPlayerCareerStats(matchesPlayed, expulsions, goals, penalties, penaltiesScored, assists);
                     player = new FieldPlayer(firstName, "", birthDate, documentType, documentNumber,
-                            positionEnum, rating, matchesPlayed, expulsions,
-                            tackling, speed, skill, heading, finishing,
-                            shotPower, gameVision, physicalResistance,
-                            goals, penalties, penaltiesScored, assists);
+                            positionEnum, playerAttributes, playerCareerStats);
                 }
 
                 playerList.add(player);

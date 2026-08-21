@@ -1,7 +1,7 @@
 package model.match;
 
 import model.match.incident.Incident;
-import model.person.Player;
+import model.person.player.Player;
 import model.place.Stadium;
 import model.Team;
 import model.person.Referee;

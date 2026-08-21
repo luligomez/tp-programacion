@@ -1,7 +1,7 @@
 package model;
 
 import model.person.Coach;
-import model.person.Player;
+import model.person.player.Player;
 import model.place.Country;
 
 import java.util.List;

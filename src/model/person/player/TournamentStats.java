@@ -1,4 +1,4 @@
-package model.person;
+package model.person.player;
 
 public class TournamentStats {
     private int matchesPlayed;
@@ -24,15 +24,21 @@ public class TournamentStats {
         if(penalty)
             penaltyGoals++;
     }
-
     public void registerMatchPlayed(int minutes) {
         this.matchesPlayed++;
         this.minutesPlayed += minutes;
     }
-
-    public void registerStandaloneYellow() { standaloneYellowCards++; }
-    public void revertStandaloneYellow() { standaloneYellowCards--; }
-    public void registerDoubleYellowExpulsion() { doubleYellowExpulsions++; }
-    public void registerDirectRed() { directRedCards++; }
+    public void registerStandaloneYellow() {
+        standaloneYellowCards++;
+    }
+    public void revertStandaloneYellow() {
+        standaloneYellowCards--;
+    }
+    public void registerDoubleYellowExpulsion() {
+        doubleYellowExpulsions++;
+    }
+    public void registerDirectRed() {
+        directRedCards++;
+    }
 
 }

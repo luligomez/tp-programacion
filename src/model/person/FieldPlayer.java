@@ -3,7 +3,7 @@ package model.person;
 import java.time.LocalDate;
 
 public class FieldPlayer extends Player {
-
+    //attributes
     private int tackling;
     private int speed;
     private int skill;
@@ -12,11 +12,12 @@ public class FieldPlayer extends Player {
     private int shotPower;
     private int gameVision;
     private int physicalResistance;
-
-    private int goals;
-    private int penalties;
-    private int penaltiesScored;
-    private int assists;
+    
+    //career stats
+    private int careerGoals;
+    private int careerPenalties;
+    private int careerPenaltiesScored;
+    private int careerAssists;
 
     public FieldPlayer(String firstName, String lastName, LocalDate birthDate,
                        String documentType, String documentNumber,
@@ -25,8 +26,8 @@ public class FieldPlayer extends Player {
                        int tackling, int speed, int skill, int heading,
                        int finishing, int shotPower, int gameVision,
                        int physicalResistance,
-                       int goals, int penalties,
-                       int penaltiesScored, int assists) {
+                       int careerGoals, int careerPenalties,
+                       int careerPenaltiesScored, int careerAssists) {
 
         super(firstName, lastName, birthDate, documentType, documentNumber,
                 position, rating, matchesPlayed, expulsions);
@@ -39,10 +40,10 @@ public class FieldPlayer extends Player {
         this.shotPower = shotPower;
         this.gameVision = gameVision;
         this.physicalResistance = physicalResistance;
-        this.goals = goals;
-        this.penalties = penalties;
-        this.penaltiesScored = penaltiesScored;
-        this.assists = assists;
+        this.careerGoals = careerGoals;
+        this.careerPenalties = careerPenalties;
+        this.careerPenaltiesScored = careerPenaltiesScored;
+        this.careerAssists = careerAssists;
     }
 
     public int getTackling() {
@@ -109,35 +110,35 @@ public class FieldPlayer extends Player {
         this.physicalResistance = physicalResistance;
     }
 
-    public int getGoals() {
-        return goals;
+    public int getCareerGoals() {
+        return careerGoals;
     }
 
-    public void setGoals(int goals) {
-        this.goals = goals;
+    public void setCareerGoals(int careerGoals) {
+        this.careerGoals = careerGoals;
     }
 
-    public int getPenalties() {
-        return penalties;
+    public int getCareerPenalties() {
+        return careerPenalties;
     }
 
-    public void setPenalties(int penalties) {
-        this.penalties = penalties;
+    public void setCareerPenalties(int careerPenalties) {
+        this.careerPenalties = careerPenalties;
     }
 
-    public int getPenaltiesScored() {
-        return penaltiesScored;
+    public int getCareerPenaltiesScored() {
+        return careerPenaltiesScored;
     }
 
-    public void setPenaltiesScored(int penaltiesScored) {
-        this.penaltiesScored = penaltiesScored;
+    public void setCareerPenaltiesScored(int careerPenaltiesScored) {
+        this.careerPenaltiesScored = careerPenaltiesScored;
     }
 
-    public int getAssists() {
-        return assists;
+    public int getCareerAssists() {
+        return careerAssists;
     }
 
-    public void setAssists(int assists) {
-        this.assists = assists;
+    public void setCareerAssists(int careerAssists) {
+        this.careerAssists = careerAssists;
     }
 }

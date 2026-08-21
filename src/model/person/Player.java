@@ -5,20 +5,25 @@ import java.time.LocalDate;
 public abstract class Player extends Person {
     private Position position;
     private int rating;
-    private int matchesPlayed;
-    private int expulsions;
+
+    //tournament stats
+    private TournamentStats tournamentStats;
+
+    //carreer stats ///TODO CREAR GOALKEEPERCAREERSTATS Y FIELDPLAYERCAREERSTATS
+    private int carreerMatchesPlayed;
+    private int careerExpulsions;
 
     public Player(String firstName, String lastName, LocalDate birthDate,
                   String documentType, String documentNumber,
                   Position position, int rating,
-                  int matchesPlayed, int expulsions) {
+                  int carreerMatchesPlayed, int careerExpulsions) {
 
         super(firstName, lastName, birthDate, documentType, documentNumber);
 
         this.position = position;
         this.rating = rating;
-        this.matchesPlayed = matchesPlayed;
-        this.expulsions = expulsions;
+        this.carreerMatchesPlayed = carreerMatchesPlayed;
+        this.careerExpulsions = careerExpulsions;
     }
 
     public Position getPosition() {
@@ -37,19 +42,19 @@ public abstract class Player extends Person {
         this.rating = rating;
     }
 
-    public int getMatchesPlayed() {
-        return matchesPlayed;
+    public int getCarreerMatchesPlayed() {
+        return carreerMatchesPlayed;
     }
 
-    public void setMatchesPlayed(int matchesPlayed) {
-        this.matchesPlayed = matchesPlayed;
+    public void setCarreerMatchesPlayed(int carreerMatchesPlayed) {
+        this.carreerMatchesPlayed = carreerMatchesPlayed;
     }
 
-    public int getExpulsions() {
-        return expulsions;
+    public int getCareerExpulsions() {
+        return careerExpulsions;
     }
 
-    public void setExpulsions(int expulsions) {
-        this.expulsions = expulsions;
+    public void setCareerExpulsions(int careerExpulsions) {
+        this.careerExpulsions = careerExpulsions;
     }
 }

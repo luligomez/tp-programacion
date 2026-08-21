@@ -3,7 +3,7 @@ package model.person;
 import java.time.LocalDate;
 
 public class Goalkeeper extends Player {
-
+    //attributes
     private int reflexes;
     private int aerialGame;
     private int positioning;
@@ -11,17 +11,18 @@ public class Goalkeeper extends Player {
     private int handling;
     private int footwork;
 
-    private int goalsReceived;
-    private int penaltiesReceived;
-    private int penaltiesSaved;
+    //career stats
+    private int careerGoalsReceived;
+    private int careerPenaltiesReceived;
+    private int careerPenaltiesSaved;
 
     public Goalkeeper(String firstName, String lastName, LocalDate birthDate,
                       String documentType, String documentNumber,
                       int rating, int matchesPlayed, int expulsions,
                       int reflexes, int aerialGame, int positioning,
                       int closingDown, int handling, int footwork,
-                      int goalsReceived, int penaltiesReceived,
-                      int penaltiesSaved) {
+                      int careerGoalsReceived, int careerPenaltiesReceived,
+                      int careerPenaltiesSaved) {
 
         super(firstName, lastName, birthDate, documentType, documentNumber,
                 Position.GOALKEEPER, rating, matchesPlayed, expulsions);
@@ -32,9 +33,9 @@ public class Goalkeeper extends Player {
         this.closingDown = closingDown;
         this.handling = handling;
         this.footwork = footwork;
-        this.goalsReceived = goalsReceived;
-        this.penaltiesReceived = penaltiesReceived;
-        this.penaltiesSaved = penaltiesSaved;
+        this.careerGoalsReceived = careerGoalsReceived;
+        this.careerPenaltiesReceived = careerPenaltiesReceived;
+        this.careerPenaltiesSaved = careerPenaltiesSaved;
     }
 
     public int getReflexes() {
@@ -85,28 +86,27 @@ public class Goalkeeper extends Player {
         this.footwork = footwork;
     }
 
-    public int getGoalsReceived() {
-        return goalsReceived;
+    public int getCareerGoalsReceived() {
+        return careerGoalsReceived;
     }
 
-    public void setGoalsReceived(int goalsReceived) {
-        this.goalsReceived = goalsReceived;
+    public void setCareerGoalsReceived(int careerGoalsReceived) {
+        this.careerGoalsReceived = careerGoalsReceived;
     }
 
-    public int getPenaltiesReceived() {
-        return penaltiesReceived;
+    public int getCareerPenaltiesReceived() {
+        return careerPenaltiesReceived;
     }
 
-    public void setPenaltiesReceived(int penaltiesReceived) {
-        this.penaltiesReceived = penaltiesReceived;
+    public void setCareerPenaltiesReceived(int careerPenaltiesReceived) {
+        this.careerPenaltiesReceived = careerPenaltiesReceived;
     }
 
-    public int getPenaltiesSaved() {
-        return penaltiesSaved;
+    public int getCareerPenaltiesSaved() {
+        return careerPenaltiesSaved;
     }
 
-    public void setPenaltiesSaved(int penaltiesSaved) {
-        this.goalsReceived = goalsReceived;
-        this.penaltiesSaved = penaltiesSaved;
+    public void setCareerPenaltiesSaved(int careerPenaltiesSaved) {
+        this.careerPenaltiesSaved = careerPenaltiesSaved;
     }
 }

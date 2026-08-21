@@ -10,14 +10,15 @@ public abstract class Player extends Person {
     private int rating;
     private TournamentStats tournamentStats;
 
+
     public Player(String firstName, String lastName, LocalDate birthDate,
                   String documentType, String documentNumber,
-                  Position position) {
+                  Position position, int rating) {
 
         super(firstName, lastName, birthDate, documentType, documentNumber);
 
         this.position = position;
-        this.rating = 0; //TODO CALCULAR RATING
+        this.rating = rating;
         this.tournamentStats = new TournamentStats();
     }
 

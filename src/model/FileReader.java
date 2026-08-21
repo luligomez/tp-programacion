@@ -1,6 +1,12 @@
 package model;
 import model.person.*;
 import model.person.player.*;
+import model.person.player.FieldPlayer.FieldPlayer;
+import model.person.player.FieldPlayer.FieldPlayerAttributes;
+import model.person.player.FieldPlayer.FieldPlayerCareerStats;
+import model.person.player.Goalkeeper.Goalkeeper;
+import model.person.player.Goalkeeper.GoalkeeperAttributes;
+import model.person.player.Goalkeeper.GoalkeeperCareerStats;
 import model.place.*;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
@@ -61,7 +67,7 @@ public class FileReader {
                     int reflexes = ((Long) attributes.get("reflejos")).intValue();
                     int aerialGame = ((Long) attributes.get("juegoAereo")).intValue();
                     int positioning = ((Long) attributes.get("ubicacion")).intValue();
-                    int closingDown = ((Long) attributes.get("achique")).intValue();
+                    int rushingOut = ((Long) attributes.get("achique")).intValue();
                     int handling = ((Long) attributes.get("seguridadManos")).intValue();
                     int footwork = ((Long) attributes.get("juegoPies")).intValue();
 
@@ -70,7 +76,7 @@ public class FileReader {
                     int penaltiesSaved = ((Long) stats.get("penalesAtajados")).intValue();
 
                     GoalkeeperAttributes goalkeeperAttributes = new GoalkeeperAttributes(reflexes, aerialGame, positioning,
-                            closingDown, handling, footwork);
+                            rushingOut, handling, footwork);
                     GoalkeeperCareerStats goalkeeperCareerStats = new GoalkeeperCareerStats(matchesPlayed, expulsions,goalsReceived,
                             penaltiesReceived, penaltiesSaved);
                     player = new Goalkeeper(firstName, "", birthDate, documentType, documentNumber, positionEnum,
@@ -131,7 +137,7 @@ public class FileReader {
             case "defensor": return Position.DEFENDER;
             case "mediocampista": return Position.MIDFIELDER;
             case "delantero": return Position.FORWARD;
-            default: return Position.FORWARD;
+            default: throw new IllegalArgumentException("Invalid position: " + positionStr);
         }
     }
 }

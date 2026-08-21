@@ -1,6 +1,9 @@
-package model.person.player;
+package model.person.player.FieldPlayer;
 
-public class FieldPlayerAttributes {
+import model.person.Position;
+import model.person.player.Attributes;
+
+public class FieldPlayerAttributes extends Attributes {
     private final int TACKLING;
     private final int SPEED;
     private final int SKILL;
@@ -51,5 +54,22 @@ public class FieldPlayerAttributes {
 
     public int getPHYSICALRESISTANCE() {
         return PHYSICALRESISTANCE;
+    }
+
+    @Override
+    public double calculateScore(Position position) {
+        switch (position) {
+            case DEFENDER:
+                return (TACKLING * 0.30 + SPEED * 0.10 + SKILL * 0.08 + HEADING * 0.15
+                        + FINISHING * 0.02 + SHOTPOWER * 0.05 + GAMEVISION * 0.15 + PHYSICALRESISTANCE * 0.15);
+            case MIDFIELDER:
+                return (TACKLING * 0.12 + SPEED * 0.10 + SKILL * 0.20 + HEADING * 0.05
+                        + FINISHING * 0.10 + SHOTPOWER * 0.08 + GAMEVISION * 0.25 + PHYSICALRESISTANCE * 0.10);
+            case FORWARD:
+                return (TACKLING * 0.03 + SPEED * 0.15 + SKILL * 0.15 + HEADING * 0.12
+                        + FINISHING * 0.30 + SHOTPOWER * 0.15 + GAMEVISION * 0.08 + PHYSICALRESISTANCE * 0.02);
+            default:
+                throw new IllegalArgumentException("Invalid position for FieldPlayer: " + position);
+        }
     }
 }

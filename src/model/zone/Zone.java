@@ -4,22 +4,27 @@ import model.Team;
 import model.match.GroupStageMatch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static model.Tournament.TEAMS_PER_GROUP;
 
 public class Zone {
     public static int TOTAL_MATCHES_PER_GROUP = 6;
-    private ArrayList<Team> teams;
     private ArrayList<TeamStanding> standings;
     private ArrayList<GroupStageMatch> groupStageMatches;
 
     public Zone() {
-        this.teams = new ArrayList<>();
         this.standings = new  ArrayList<>();
         this.groupStageMatches = new ArrayList<>();
     }
 
     public ArrayList<Team> getTeams() {
+        ArrayList<Team> teams = new ArrayList<>();
+        for (TeamStanding s : standings) {
+            teams.add(s.getTeam());
+        }
         return teams;
     }
 
@@ -28,8 +33,7 @@ public class Zone {
     }
 
     public void addTeam(Team team) {
-        if (teams.size() < TEAMS_PER_GROUP) {
-            teams.add(team);
+        if (standings.size() < TEAMS_PER_GROUP) {
             standings.add(new TeamStanding(team));
         }
     }
@@ -108,57 +112,102 @@ public class Zone {
                     standing2.getGoalsFor(),
                     standing1.getGoalsFor()
             );
+            return comparison;
 
-            if (comparison != 0) {
-                return comparison;
-            }
 
-            return compareHeadToHead(
-                    standing1.getTeam(),
-                    standing2.getTeam()
-            );
+
         });
+        resolveHeadToHeadTies(sortedStandings);
+
 
         return sortedStandings;
     }
-    private int compareHeadToHead(Team firstTeam, Team secondTeam) {
+
+    private void resolveHeadToHeadTies(ArrayList<TeamStanding> sorted) {
+        int i = 0;
+        while (i < sorted.size() - 1) {
+            int j = i;
+            while (j + 1 < sorted.size() && isFullyTied(sorted.get(i), sorted.get(j + 1))) {
+                j++;
+            }
+            if (j > i) {
+                List<TeamStanding> tiedGroup = sorted.subList(i, j + 1);
+                    applyMultiWayHeadToHead(tiedGroup); // mini-tabla
+            }
+            i = j + 1;
+        }
+    }
+
+    private boolean isFullyTied(TeamStanding s1, TeamStanding s2) {
+        return s1.getPoints() == s2.getPoints()
+                && s1.getGoalDifference() == s2.getGoalDifference()
+                && s1.getGoalsFor() == s2.getGoalsFor();
+    }
+
+    private void applyMultiWayHeadToHead(List<TeamStanding> tiedGroup) {
+        // Extraigo los equipos del bloque empatado, para filtrar los partidos entre ellos
+        List<Team> tiedTeams = new ArrayList<>();
+        for (TeamStanding standing : tiedGroup) {
+            tiedTeams.add(standing.getTeam());
+        }
+
+        // Armo una mini-tabla, solo con puntos/goles de los partidos JUGADOS ENTRE ESTOS EQUIPOS
+        Map<Team, Integer> miniPoints = new HashMap<>();
+        Map<Team, Integer> miniGoalsFor = new HashMap<>();
+        Map<Team, Integer> miniGoalsAgainst = new HashMap<>();
+
+        for (Team team : tiedTeams) {
+            miniPoints.put(team, 0);
+            miniGoalsFor.put(team, 0);
+            miniGoalsAgainst.put(team, 0);
+        }
 
         for (GroupStageMatch match : groupStageMatches) {
+            Team team1 = match.getTeam1();
+            Team team2 = match.getTeam2();
 
-            if (match.getTeam1() == firstTeam &&
-                    match.getTeam2() == secondTeam) {
+            // solo cuenta si AMBOS equipos del partido están en el bloque empatado
+            if (tiedTeams.contains(team1) && tiedTeams.contains(team2)) {
 
-                if (match.getTeam1Goals() > match.getTeam2Goals()) {
-                    return -1;
+                int goals1 = match.getTeam1Goals();
+                int goals2 = match.getTeam2Goals();
+
+                miniGoalsFor.put(team1, miniGoalsFor.get(team1) + goals1);
+                miniGoalsAgainst.put(team1, miniGoalsAgainst.get(team1) + goals2);
+                miniGoalsFor.put(team2, miniGoalsFor.get(team2) + goals2);
+                miniGoalsAgainst.put(team2, miniGoalsAgainst.get(team2) + goals1);
+
+                if (goals1 > goals2) {
+                    miniPoints.put(team1, miniPoints.get(team1) + 3);
+                } else if (goals2 > goals1) {
+                    miniPoints.put(team2, miniPoints.get(team2) + 3);
+                } else {
+                    miniPoints.put(team1, miniPoints.get(team1) + 1);
+                    miniPoints.put(team2, miniPoints.get(team2) + 1);
                 }
-
-                if (match.getTeam1Goals() < match.getTeam2Goals()) {
-                    return 1;
-                }
-
-                return 0;
-            }
-
-            if (match.getTeam1() == secondTeam &&
-                    match.getTeam2() == firstTeam) {
-
-                if (match.getTeam2Goals() > match.getTeam1Goals()) {
-                    return -1;
-                }
-
-                if (match.getTeam2Goals() < match.getTeam1Goals()) {
-                    return 1;
-                }
-
-                return 0;
             }
         }
 
-        return 0;
+        // Ordeno el bloque empatado según la mini-tabla: puntos, luego diferencia de gol, luego goles a favor
+        tiedGroup.sort((s1, s2) -> {
+            Team t1 = s1.getTeam();
+            Team t2 = s2.getTeam();
+
+            int comparison = Integer.compare(miniPoints.get(t2), miniPoints.get(t1));
+            if (comparison != 0) return comparison;
+
+            int miniDiff1 = miniGoalsFor.get(t1) - miniGoalsAgainst.get(t1);
+            int miniDiff2 = miniGoalsFor.get(t2) - miniGoalsAgainst.get(t2);
+            comparison = Integer.compare(miniDiff2, miniDiff1);
+            if (comparison != 0) return comparison;
+
+            return Integer.compare(miniGoalsFor.get(t2), miniGoalsFor.get(t1));
+        });
     }
 
     public void addMatch (GroupStageMatch match){
         if (groupStageMatches.size()<TOTAL_MATCHES_PER_GROUP)
             groupStageMatches.add(match);
     }
+
 }

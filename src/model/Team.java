@@ -27,10 +27,6 @@ public class Team {
         return country;
     }
 
-    public void setCountry(Country country) {
-        this.country = country;
-    }
-
     public String getName() {
         return name;
     }
@@ -43,23 +39,12 @@ public class Team {
         return rankingPosition;
     }
 
-    public void setRankingPosition(int rankingPosition) {
-        this.rankingPosition = rankingPosition;
-    }
-
     public List<Player> getPlayers() {
         return players;
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players;
     }
 
     public Coach getCoach() {
         return coach;
     }
 
-    public void setCoach(Coach coach) {
-        this.coach = coach;
-    }
 }

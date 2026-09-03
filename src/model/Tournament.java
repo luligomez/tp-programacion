@@ -5,6 +5,9 @@ import model.person.Referee;
 import model.zone.Zone;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class Tournament {
     public static final int GROUPS = 4;
@@ -53,4 +56,32 @@ public class Tournament {
     }
 
     public void addReferee(Referee referee) { referees.add(referee); }
+
+    public void zoneDraw(){
+        this.zones.clear();
+        // ordenamos equipos por ranking
+        this.teams.sort(Comparator.comparingInt(Team::getRankingPosition));
+
+        // creamos los 4 bombos
+        List<Team> pot1 = new ArrayList<>(this.teams.subList(0, 4));
+        List<Team> pot2 = new ArrayList<>(this.teams.subList(4, 8));
+        List<Team> pot3 = new ArrayList<>(this.teams.subList(8, 12));
+        List<Team> pot4 = new ArrayList<>(this.teams.subList(12, 16));
+
+        // mezclamos cada bombo
+        Collections.shuffle(pot1);
+        Collections.shuffle(pot2);
+        Collections.shuffle(pot3);
+        Collections.shuffle(pot4);
+
+        // 5. Repartimos un equipo de cada bombo a cada zona
+        for (int i = 0; i < 4; i++) {
+            this.zones.add(new Zone());
+            Zone zonaActual = this.zones.get(i);
+            zonaActual.addTeam(pot1.get(i));
+            zonaActual.addTeam(pot2.get(i));
+            zonaActual.addTeam(pot3.get(i));
+            zonaActual.addTeam(pot4.get(i));
+        }
+    }
 }

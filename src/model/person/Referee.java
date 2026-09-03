@@ -8,11 +8,11 @@ public class Referee extends Person {
     private Country nationality;
     private int yearsOfExperience;
 
-    public Referee(String firstName, String lastName, LocalDate birthDate,
+    public Referee(String name, LocalDate birthDate,
                    String documentType, String documentNumber,
                    Country nationality, int yearsOfExperience) {
 
-        super(firstName, lastName, birthDate, documentType, documentNumber);
+        super(name , birthDate, documentType, documentNumber);
 
         this.nationality = nationality;
         this.yearsOfExperience = yearsOfExperience;

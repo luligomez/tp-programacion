@@ -32,7 +32,7 @@ public class FileReader {
 
         for (Object team: teams){
             JSONObject e = (JSONObject) team;
-            String name = (String) e.get("nombre");
+            String nameT = (String) e.get("nombre");
             String countryName = (String) e.get("pais");
             Country country = new Country(countryName);
             int rankingPosition = ((Long) e.get("ranking")).intValue();
@@ -51,7 +51,7 @@ public class FileReader {
 
                 String documentType = (String) person.get("tipoDocumento");
                 String documentNumber = person.get("nroDocumento").toString();
-                String firstName = (String) person.get("nombre");
+                String name = (String) person.get("nombre");
                 LocalDate birthDate = LocalDate.parse((String) person.get("fechaNacimiento"), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
                 JSONObject attributes = (JSONObject) j.get("caracteristicas");
@@ -79,10 +79,9 @@ public class FileReader {
                             rushingOut, handling, footwork);
                     GoalkeeperCareerStats goalkeeperCareerStats = new GoalkeeperCareerStats(matchesPlayed, expulsions,goalsReceived,
                             penaltiesReceived, penaltiesSaved);
-                    player = new Goalkeeper(firstName, "", birthDate, documentType, documentNumber, positionEnum,
+                    player = new Goalkeeper(name, birthDate, documentType, documentNumber, positionEnum,
                             goalkeeperAttributes, goalkeeperCareerStats);
 
-                    //como se divide el lastName?? como se si tiene mas de un nombre o apellido???
 
                 } else {
                     //crear fieldPlayer
@@ -102,7 +101,7 @@ public class FileReader {
                     int assists = ((Long) stats.get("pasesGol")).intValue();
                     FieldPlayerAttributes playerAttributes = new FieldPlayerAttributes(tackling,speed,skill,heading,finishing,shotPower,gameVision,physicalResistance);
                     FieldPlayerCareerStats playerCareerStats = new FieldPlayerCareerStats(matchesPlayed, expulsions, goals, penalties, penaltiesScored, assists);
-                    player = new FieldPlayer(firstName, "", birthDate, documentType, documentNumber,
+                    player = new FieldPlayer(name, birthDate, documentType, documentNumber,
                             positionEnum, playerAttributes, playerCareerStats);
                 }
 
@@ -114,20 +113,43 @@ public class FileReader {
             JSONObject dtPerson = (JSONObject) dtObj.get("persona");
             String dtDocumentType = (String) dtPerson.get("tipoDocumento");
             String dtDocumentNumber = dtPerson.get("nroDocumento").toString();
-            String dtFirstName = (String) dtPerson.get("nombre");
+            String dtName = (String) dtPerson.get("nombre");
             LocalDate dtBirthDate = LocalDate.parse((String) dtPerson.get("fechaNacimiento"), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
             String dtCountryName = (String) dtObj.get("pais");
             Country dtCountry = new Country(dtCountryName);  //
             int titles = ((Long) dtObj.get("titulosObtenidos")).intValue();
 
-            Coach coach = new Coach(dtFirstName, "", dtBirthDate, dtDocumentType, dtDocumentNumber,
+            Coach coach = new Coach(dtName, dtBirthDate, dtDocumentType, dtDocumentNumber,
                     dtCountry, titles);
 
-            Team JTeam = new Team(name, country, rankingPosition, playerList, coach);
+            Team JTeam = new Team(nameT, country, rankingPosition, playerList, coach);
             tournament.addTeam(JTeam);
         }
 
+        /*leer referee
+        //se repite el codigo de persona otra vez, sacar en un metodo? que devolveria?
+        JSONObject refereesObj = (JSONObject) tournamentJ.get("arbitros");
+        JSONArray referees = (JSONArray) refereesObj.get("arbitro");
+
+        for (Object r : referees) {
+            JSONObject refObj = (JSONObject) r;
+            JSONObject refPerson = (JSONObject) refObj.get("persona");
+            String refDocumentType = (String) refPerson.get("tipoDocumento");
+            String refDocumentNumber = refPerson.get("nroDocumento").toString();
+            String refName = (String) refPerson.get("nombre");
+            LocalDate refBirthDate = LocalDate.parse((String) refPerson.get("fechaNacimiento"), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            String refCountryName = (String) refObj.get("pais");
+            Country refCountry = new Country(refCountryName);
+            int yearsAsReferee = ((Long) refObj.get("aniosReferato")).intValue();
+
+            Referee referee = new Referee(refName, refBirthDate, refDocumentType,
+                    refDocumentNumber, refCountry, yearsAsReferee);
+
+        }
+        agregarlo a tournament / asignarlo a partido ????
+
+         */
         return tournament;
     }
 

@@ -11,11 +11,11 @@ public abstract class Player extends Person {
     private TournamentStats tournamentStats;
 
 
-    public Player(String firstName, String lastName, LocalDate birthDate,
+    public Player(String name, LocalDate birthDate,
                   String documentType, String documentNumber,
                   Position position, int rating) {
 
-        super(firstName, lastName, birthDate, documentType, documentNumber);
+        super(name, birthDate, documentType, documentNumber);
 
         this.position = position;
         this.RATING = rating;

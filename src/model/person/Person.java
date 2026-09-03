@@ -3,37 +3,27 @@ package model.person;
 import java.time.LocalDate;
 
 public abstract class Person {
-    private String firstName;
-    private String lastName;
+    private String name;
     private LocalDate birthDate;
     private String documentType;
     private String documentNumber;
 
 
-    public Person(String firstName, String lastName, LocalDate birthDate,
+    public Person(String name, LocalDate birthDate,
                   String documentType, String documentNumber) {
 
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
         this.birthDate = birthDate;
         this.documentType = documentType;
         this.documentNumber = documentNumber;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public LocalDate getBirthDate() {

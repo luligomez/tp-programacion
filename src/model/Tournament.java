@@ -1,6 +1,7 @@
 package model;
 
 import model.match.Match;
+import model.person.Referee;
 import model.zone.Zone;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ public class Tournament {
     private ArrayList<Team> teams = new ArrayList<>();
     private ArrayList<Zone> zones = new ArrayList<>();
     private ArrayList<Match> matches = new ArrayList<>();
+    private ArrayList<Referee> referees = new ArrayList<>();
 
 
     public Tournament(){}
@@ -29,6 +31,11 @@ public class Tournament {
         return matches;
     }
 
+    public ArrayList<Referee> getReferees() {
+        return referees;
+    }
+
+
     public void addZone(Zone zone) {
         if (zones.size() < GROUPS) {
             zones.add(zone);
@@ -44,4 +51,6 @@ public class Tournament {
     public void addMatch(Match match) {
         matches.add(match);
     }
+
+    public void addReferee(Referee referee) { referees.add(referee); }
 }

@@ -60,7 +60,6 @@ public class FileReader {
                 Player player;
                 int matchesPlayed = ((Long) stats.get("partidosJugados")).intValue();
                 int expulsions = ((Long) stats.get("expulsiones")).intValue();
-                //int rating = 0; //como se calcula el rating???? calcularlo en otra clase
 
                 if (positionEnum == Position.GOALKEEPER) {
                     //crear goalKeeper
@@ -81,7 +80,6 @@ public class FileReader {
                             penaltiesReceived, penaltiesSaved);
                     player = new Goalkeeper(name, birthDate, documentType, documentNumber, positionEnum,
                             goalkeeperAttributes, goalkeeperCareerStats);
-
 
                 } else {
                     //crear fieldPlayer
@@ -127,7 +125,7 @@ public class FileReader {
             tournament.addTeam(JTeam);
         }
 
-        /*leer referee
+        //leer referee
         //se repite el codigo de persona otra vez, sacar en un metodo? que devolveria?
         JSONObject refereesObj = (JSONObject) tournamentJ.get("arbitros");
         JSONArray referees = (JSONArray) refereesObj.get("arbitro");
@@ -145,21 +143,19 @@ public class FileReader {
 
             Referee referee = new Referee(refName, refBirthDate, refDocumentType,
                     refDocumentNumber, refCountry, yearsAsReferee);
+            tournament.addReferee(referee);
 
         }
-        agregarlo a tournament / asignarlo a partido ????
-
-         */
         return tournament;
     }
 
     private static Position mapPosition(String positionStr) {
-        switch(positionStr.toLowerCase()) {
-            case "arquero": return Position.GOALKEEPER;
-            case "defensor": return Position.DEFENDER;
-            case "mediocampista": return Position.MIDFIELDER;
-            case "delantero": return Position.FORWARD;
-            default: throw new IllegalArgumentException("Invalid position: " + positionStr);
-        }
+        return switch (positionStr.toLowerCase()) {
+            case "arquero" -> Position.GOALKEEPER;
+            case "defensor" -> Position.DEFENDER;
+            case "mediocampista" -> Position.MIDFIELDER;
+            case "delantero" -> Position.FORWARD;
+            default -> throw new IllegalArgumentException("Invalid position: " + positionStr);
+        };
     }
 }

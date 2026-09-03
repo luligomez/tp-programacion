@@ -9,8 +9,8 @@ public class Goalkeeper extends Player {
     private final GoalkeeperAttributes ATTRIBUTES;
     private final GoalkeeperCareerStats CAREERSTATS;
 
-    public Goalkeeper(String firstName, String lastName, LocalDate birthDate, String documentType, String documentNumber, Position position, GoalkeeperAttributes attributes, GoalkeeperCareerStats careerStats) {
-        super(firstName, lastName, birthDate, documentType, documentNumber, position, calculateRating(attributes, careerStats, position)); //CALCULAR RATING
+    public Goalkeeper(String name, LocalDate birthDate, String documentType, String documentNumber, Position position, GoalkeeperAttributes attributes, GoalkeeperCareerStats careerStats) {
+        super(name, birthDate, documentType, documentNumber, position, calculateRating(attributes, careerStats, position)); //CALCULAR RATING
         this.ATTRIBUTES = attributes;
         this.CAREERSTATS = careerStats;
     }

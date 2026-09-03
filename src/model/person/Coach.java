@@ -8,11 +8,11 @@ public class Coach extends Person {
     private Country nationality;
     private int titlesWon;
 
-    public Coach(String firstName, String lastName, LocalDate birthDate,
+    public Coach(String name, LocalDate birthDate,
                  String documentType, String documentNumber,
                  Country nationality, int titlesWon) {
 
-        super(firstName, lastName, birthDate, documentType, documentNumber);
+        super(name, birthDate, documentType, documentNumber);
 
         this.nationality = nationality;
         this.titlesWon = titlesWon;

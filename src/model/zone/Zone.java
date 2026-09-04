@@ -51,7 +51,6 @@ public class Zone {
             return;
 
         }
-        //groupStageMatches.add(match);
         int team1Goals = match.getTeam1Goals();
         int team2Goals = match.getTeam2Goals();
 

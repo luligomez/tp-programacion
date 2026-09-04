@@ -2,6 +2,7 @@ package model;
 
 import model.match.Match;
 import model.person.Referee;
+import model.place.Stadium;
 import model.zone.Zone;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Tournament {
     private ArrayList<Zone> zones = new ArrayList<>();
     private ArrayList<Match> matches = new ArrayList<>();
     private ArrayList<Referee> referees = new ArrayList<>();
+    private ArrayList<Stadium> stadiums = new ArrayList<>();
 
 
     public Tournament(){}
@@ -38,6 +40,9 @@ public class Tournament {
         return referees;
     }
 
+    public ArrayList<Stadium> getStadiums() {
+        return stadiums;
+    }
 
     public void addZone(Zone zone) {
         if (zones.size() < GROUPS) {
@@ -55,7 +60,13 @@ public class Tournament {
         matches.add(match);
     }
 
-    public void addReferee(Referee referee) { referees.add(referee); }
+    public void addReferee(Referee referee) {
+        referees.add(referee);
+    }
+
+    public void addStadium(Stadium stadium){
+        stadiums.add(stadium);
+    }
 
     public void zoneDraw(){
         this.zones.clear();
@@ -84,4 +95,12 @@ public class Tournament {
             zonaActual.addTeam(pot4.get(i));
         }
     }
+
+    public void generateGroupStageMatches() {
+        for (Zone zone : zones) {
+            zone.generateMatches(referees, stadiums);
+        }
+    }
+
+
 }

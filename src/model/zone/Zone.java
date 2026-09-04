@@ -1,8 +1,12 @@
 package model.zone;
 
 import model.Team;
+import model.match.Formation;
 import model.match.GroupStageMatch;
+import model.person.Referee;
+import model.place.Stadium;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,6 +88,7 @@ public class Zone {
     public ArrayList<TeamStanding> getStandings() {
         return standings;
     }
+
     public ArrayList<TeamStanding> getSortedStandings() {
 
         ArrayList<TeamStanding> sortedStandings = new ArrayList<>(standings);
@@ -208,6 +213,37 @@ public class Zone {
     public void addMatch (GroupStageMatch match){
         if (groupStageMatches.size()<TOTAL_MATCHES_PER_GROUP)
             groupStageMatches.add(match);
+    }
+
+    public void generateMatches(ArrayList<Referee> referees, ArrayList<Stadium> stadiums) {
+        ArrayList<Team> teamsInZone = getTeams();
+
+        for (int i = 0; i < teamsInZone.size(); i++) {
+            for (int j = i + 1; j < teamsInZone.size(); j++) {
+                Team team1 = teamsInZone.get(i);
+                Team team2 = teamsInZone.get(j);
+                Referee referee = selectValidReferee(team1, team2, referees);
+                //asignar estadio una vez hecha la BD
+                Stadium stadium = stadiums.isEmpty() ? null : stadiums.get(0);
+                //la fecha como se le asigna???
+                GroupStageMatch match = new GroupStageMatch(LocalDate.now(), team1, team2, referee, new Formation(), new Formation(), stadium, this);
+
+                addMatch(match);
+            }
+        }
+    }
+
+    private Referee selectValidReferee(Team team1, Team team2, ArrayList<Referee> referees) {
+        for (Referee ref : referees) {
+            String refCountry = ref.getNationality().getName();
+            String team1Country = team1.getCountry().getName();
+            String team2Country = team2.getCountry().getName();
+            if (!refCountry.equals(team1Country) && !refCountry.equals(team2Country)) {
+                return ref;
+            }
+        }
+        //se asume que siempre va a haber un referee valido??
+        return referees.get(0);
     }
 
 }

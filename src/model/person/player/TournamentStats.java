@@ -1,6 +1,10 @@
 package model.person.player;
 
-public class TournamentStats {
+import java.io.Serializable;
+
+public class TournamentStats implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int matchesPlayed;
     private int minutesPlayed;
     private int goals;
@@ -41,4 +45,31 @@ public class TournamentStats {
         directRedCards++;
     }
 
+    public int getMatchesPlayed() {
+        return matchesPlayed;
+    }
+
+    public int getMinutesPlayed() {
+        return minutesPlayed;
+    }
+
+    public int getGoals() {
+        return goals;
+    }
+
+    public int getPenaltyGoals() {
+        return penaltyGoals;
+    }
+
+    public int getStandaloneYellowCards() {
+        return standaloneYellowCards;
+    }
+
+    public int getDoubleYellowExpulsions() {
+        return doubleYellowExpulsions;
+    }
+
+    public int getDirectRedCards() {
+        return directRedCards;
+    }
 }

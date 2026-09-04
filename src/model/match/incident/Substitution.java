@@ -2,8 +2,12 @@ package model.match.incident;
 
 import model.person.player.Player;
 
+import java.io.Serial;
+
 public class Substitution extends Incident {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
     private Player playerOut;
     private Player playerIn;
 

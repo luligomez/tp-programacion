@@ -2,7 +2,13 @@ package model.match;
 
 import model.person.player.Player;
 
-public class PlayerParticipation {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class PlayerParticipation implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
     private Player player;
     private boolean starter;
     private int minuteIn;

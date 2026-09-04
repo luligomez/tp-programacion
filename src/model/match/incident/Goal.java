@@ -2,8 +2,12 @@ package model.match.incident;
 
 import model.person.player.Player;
 
+import java.io.Serial;
+
 public class Goal extends Incident {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
     private Player scorer;
     private boolean penalty;
     private boolean ownGoal;

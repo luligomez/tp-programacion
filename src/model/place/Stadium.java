@@ -1,6 +1,10 @@
 package model.place;
 
-public class Stadium {
+import java.io.Serializable;
+
+public class Stadium implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     private boolean used;
     private String name;
     private int capacity;

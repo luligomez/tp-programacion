@@ -4,9 +4,12 @@ import model.person.Position;
 import model.person.player.Player;
 import model.person.player.RatingCalculator;
 
+import java.io.Serial;
 import java.time.LocalDate;
 
 public class FieldPlayer extends Player {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private final FieldPlayerAttributes ATTRIBUTES;
     private final FieldPlayerCareerStats CAREERSTATS;
 

@@ -6,6 +6,8 @@ import model.match.GroupStageMatch;
 import model.person.Referee;
 import model.place.Stadium;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,8 +16,11 @@ import java.util.Map;
 
 import static model.Tournament.TEAMS_PER_GROUP;
 
-public class Zone {
-    public static int TOTAL_MATCHES_PER_GROUP = 6;
+public class Zone implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private static final int TOTAL_MATCHES_PER_GROUP = 6;
     private ArrayList<TeamStanding> standings;
     private ArrayList<GroupStageMatch> groupStageMatches;
 

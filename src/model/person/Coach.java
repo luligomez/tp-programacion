@@ -2,9 +2,12 @@ package model.person;
 
 import model.place.Country;
 
+import java.io.Serial;
 import java.time.LocalDate;
 
 public class Coach extends Person {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private Country nationality;
     private int titlesWon;
 

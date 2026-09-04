@@ -2,10 +2,15 @@ package model.match;
 
 import model.person.player.Player;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Formation {
-    public static int STARTERS_PER_TEAM = 11;
+public class Formation implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private static int STARTERS_PER_TEAM = 11;
     private ArrayList<Player> starters = new ArrayList<>();
     private ArrayList<Player> substitutes = new ArrayList<>();
 

@@ -1,4 +1,5 @@
 
+import model.MatchSimulator;
 import model.Team;
 import model.Tournament;
 import model.match.Formation;
@@ -140,7 +141,11 @@ public class Main {
                 System.out.println(match.getTeam1().getName() + " vs " + match.getTeam2().getName());
                 //  registrar resultados!!!!!!
             }
-
+        }
+        MatchSimulator.simulateMatchday(tournament,1);
+        MatchSimulator.simulateMatchday(tournament,2);
+        MatchSimulator.simulateMatchday(tournament,3);
+        for (Zone zone : tournament.getZones()) {
             // tabla DESPUÉS de los partidos con todos los datos
             System.out.println("\n=== Sorted Standings ===");
             printTable(zone.getSortedStandings());

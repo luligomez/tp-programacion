@@ -50,9 +50,8 @@ public class Zone {
         if (team1Standing == null || team2Standing == null) {
             return;
 
-
         }
-        groupStageMatches.add(match);
+        //groupStageMatches.add(match);
         int team1Goals = match.getTeam1Goals();
         int team2Goals = match.getTeam2Goals();
 
@@ -232,6 +231,7 @@ public class Zone {
             }
         }
     }
+
 
     private Referee selectValidReferee(Team team1, Team team2, ArrayList<Referee> referees) {
         for (Referee ref : referees) {

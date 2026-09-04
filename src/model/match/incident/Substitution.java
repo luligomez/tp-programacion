@@ -4,6 +4,7 @@ import model.person.player.Player;
 
 public class Substitution extends Incident {
 
+    private static final long serialVersionUID = 1L;
     private Player playerOut;
     private Player playerIn;
 

@@ -4,9 +4,14 @@ import model.person.Coach;
 import model.person.player.Player;
 import model.place.Country;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 
-public class Team {
+public class Team implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private String name;
     private Country country;
     private int rankingPosition;

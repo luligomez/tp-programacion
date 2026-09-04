@@ -3,7 +3,11 @@ package model.person.player.FieldPlayer;
 import model.person.Position;
 import model.person.player.CareerStats;
 
+import java.io.Serial;
+
 public class FieldPlayerCareerStats extends CareerStats {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private int goals;
     private int penalties;
     private int penaltiesScored;

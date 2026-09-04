@@ -3,7 +3,11 @@ package model.person.player.Goalkeeper;
 import model.person.Position;
 import model.person.player.Attributes;
 
+import java.io.Serial;
+
 public class GoalkeeperAttributes extends Attributes {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private final int REFLEXES;
     private final int AERIALGAME;
     private final int POSITIONING;

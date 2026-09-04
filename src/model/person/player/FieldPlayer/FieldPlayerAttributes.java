@@ -3,7 +3,11 @@ package model.person.player.FieldPlayer;
 import model.person.Position;
 import model.person.player.Attributes;
 
+import java.io.Serial;
+
 public class FieldPlayerAttributes extends Attributes {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private final int TACKLING;
     private final int SPEED;
     private final int SKILL;

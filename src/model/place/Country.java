@@ -1,6 +1,10 @@
 package model.place;
 
-public class Country {
+import java.io.Serializable;
+
+public class Country implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String name;
 
     public Country(String name) {

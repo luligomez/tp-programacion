@@ -6,11 +6,15 @@ import model.place.Stadium;
 import model.Team;
 import model.person.Referee;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public abstract class Match {
+public abstract class Match implements Serializable {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
     private LocalDate date;
     private Team team1;
     private Team team2;
@@ -90,6 +94,10 @@ public abstract class Match {
         this.team2Goals = team2Goals;
     }
 
+    public Stadium getStadium() {
+        return stadium;
+    }
+
     public Formation getTeam1Formation() {
         return team1Formation;
     }
@@ -99,4 +107,5 @@ public abstract class Match {
     }
 
     public abstract Team getWinner();
+
 }

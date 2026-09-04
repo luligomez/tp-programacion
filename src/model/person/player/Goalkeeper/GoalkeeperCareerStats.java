@@ -3,7 +3,11 @@ package model.person.player.Goalkeeper;
 import model.person.Position;
 import model.person.player.CareerStats;
 
+import java.io.Serial;
+
 public class GoalkeeperCareerStats extends CareerStats {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private int goalsReceived;
     private int penaltiesReceived;
     private int penaltiesSaved;

@@ -2,7 +2,12 @@ package model.person.player;
 
 import model.person.Position;
 
-public abstract class CareerStats {
+import java.io.Serial;
+import java.io.Serializable;
+
+public abstract class CareerStats implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private final int MATCHESPLAYED;
     private final int EXPULSIONS;
 

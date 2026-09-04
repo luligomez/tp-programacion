@@ -5,9 +5,13 @@ import model.person.Referee;
 import model.place.Stadium;
 import model.zone.Zone;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class GroupStageMatch extends Match {
+public class GroupStageMatch extends Match implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private Zone zone;
 
     public GroupStageMatch(LocalDate date, Team team1, Team team2, Referee referee, Formation team1Formation, Formation team2Formation, Stadium stadium, Zone zone) {

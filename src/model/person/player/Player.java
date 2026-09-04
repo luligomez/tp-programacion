@@ -3,9 +3,13 @@ package model.person.player;
 import model.person.Person;
 import model.person.Position;
 
+import java.io.Serial;
 import java.time.LocalDate;
 
 public abstract class Player extends Person {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private Position position;
     private final int RATING;
     private TournamentStats tournamentStats;

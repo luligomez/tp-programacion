@@ -4,6 +4,7 @@ import model.person.player.Player;
 
 public class PenaltyTaken extends Incident {
 
+    private static final long serialVersionUID = 1L;
     private Player player;
     private boolean scored;
 

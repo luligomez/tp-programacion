@@ -4,6 +4,7 @@ import model.person.player.Player;
 
 public class Goal extends Incident {
 
+    private static final long serialVersionUID = 1L;
     private Player scorer;
     private boolean penalty;
     private boolean ownGoal;

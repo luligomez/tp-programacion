@@ -4,6 +4,7 @@ import model.person.player.Player;
 
 public class YellowCard extends Incident {
 
+    private static final long serialVersionUID = 1L;
     private Player player;
 
     public YellowCard(int minute, Player player) {

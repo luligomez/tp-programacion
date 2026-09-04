@@ -2,11 +2,16 @@ package model.zone;
 
 import model.Team;
 
-public class TeamStanding {
+import java.io.Serial;
+import java.io.Serializable;
 
-    public static int POINTS_WIN = 3;
-    public static int POINTS_LOSE = 0;
-    public static int POINTS_DRAW = 1;
+public class TeamStanding implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private static final int POINTS_WIN = 3;
+    private static final int POINTS_LOSE = 0;
+    private static final int POINTS_DRAW = 1;
     private Team team;
     private int points;
     private int matchesPlayed;

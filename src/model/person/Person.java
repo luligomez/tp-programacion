@@ -1,9 +1,12 @@
 package model.person;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 public abstract class Person implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private String name;
     private LocalDate birthDate;
     private String documentType;

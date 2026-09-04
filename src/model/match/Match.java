@@ -1,6 +1,7 @@
 package model.match;
 
 import model.match.incident.Incident;
+import model.match.incident.Goal;
 import model.person.player.Player;
 import model.place.Stadium;
 import model.Team;
@@ -45,6 +46,7 @@ public abstract class Match {
     }
 
     private void addFormationParticipations(Formation formation) {
+
         for (Player player : formation.getStarters()) {
             playerParticipations.add(new PlayerParticipation(player, true, 0, 90));
         }
@@ -74,10 +76,22 @@ public abstract class Match {
     }
 
     public void addIncident(Incident incident) {
+
         incidents.add(incident);
+
+        if (incident instanceof Goal goal) {
+
+            if (!goal.isOwnGoal()) {
+
+                goal.getScorer()
+                        .getTournamentStats()
+                        .registerGoal(goal.isPenalty());
+
+            }
+        }
     }
 
-    public int getTeam1Goals() {
+        public int getTeam1Goals() {
         return team1Goals;
     }
 
@@ -96,6 +110,27 @@ public abstract class Match {
 
     public Formation getTeam2Formation() {
         return team2Formation;
+    }
+    public void registerPlayerStatistics() {
+
+        for (PlayerParticipation participation : playerParticipations) {
+
+            Player player = participation.getPlayer();
+
+            int minutes = 0;
+
+            if (participation.getMinuteIn() >= 0 &&
+                    participation.getMinuteOut() >= 0) {
+
+                minutes = participation.getMinuteOut()
+                        - participation.getMinuteIn();
+            }
+
+            if (minutes > 0) {
+                player.getTournamentStats()
+                        .registerMatchPlayed(minutes);
+            }
+        }
     }
 
     public abstract Team getWinner();

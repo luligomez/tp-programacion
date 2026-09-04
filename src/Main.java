@@ -9,6 +9,7 @@ import model.place.City;
 import model.place.Stadium;
 import model.zone.TeamStanding;
 import model.zone.Zone;
+import model.person.player.Player;
 
 
 import java.time.LocalDate;
@@ -149,6 +150,36 @@ public class Main {
             // tabla DESPUÉS de los partidos con todos los datos
             System.out.println("\n=== Sorted Standings ===");
             printTable(zone.getSortedStandings());
+        }
+        System.out.println("\n=== GOLEADORES ===");
+
+        for (Team team : tournament.getTeams()) {
+
+            for (Player player : team.getPlayers()) {
+
+                int goals = player.getTournamentStats().getGoals();
+
+                if (goals > 0) {
+                    System.out.println(
+                            player.getName() + " - " + goals + " goles"
+                    );
+                }
+            }
+        }
+        System.out.println("\n=== MINUTOS JUGADOS ===");
+
+        for (Team team : tournament.getTeams()) {
+
+            for (Player player : team.getPlayers()) {
+
+                int minutes = player.getTournamentStats().getMinutesPlayed();
+
+                if (minutes > 0) {
+                    System.out.println(
+                            player.getName() + " - " + minutes + " minutos"
+                    );
+                }
+            }
         }
     }
     //es de prueba, despues poner en la interfaz

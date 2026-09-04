@@ -41,4 +41,31 @@ public class TournamentStats {
         directRedCards++;
     }
 
+    public int getMatchesPlayed() {
+        return matchesPlayed;
+    }
+
+    public int getMinutesPlayed() {
+        return minutesPlayed;
+    }
+
+    public int getGoals() {
+        return goals;
+    }
+
+    public int getPenaltyGoals() {
+        return penaltyGoals;
+    }
+
+    public int getStandaloneYellowCards() {
+        return standaloneYellowCards;
+    }
+
+    public int getDoubleYellowExpulsions() {
+        return doubleYellowExpulsions;
+    }
+
+    public int getDirectRedCards() {
+        return directRedCards;
+    }
 }

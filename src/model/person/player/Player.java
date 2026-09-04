@@ -38,4 +38,8 @@ public abstract class Player extends Person {
         return RATING;
     }
 
+    public TournamentStats getTournamentStats() {
+        return tournamentStats;
+    }
+
 }

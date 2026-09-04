@@ -5,6 +5,7 @@ import model.match.Formation;
 import model.match.GroupStageMatch;
 import model.person.Referee;
 import model.place.Stadium;
+import model.person.player.Player;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -228,14 +229,43 @@ public class Zone implements Serializable {
                 Referee referee = selectValidReferee(team1, team2, referees);
                 //asignar estadio una vez hecha la BD
                 Stadium stadium = stadiums.isEmpty() ? null : stadiums.get(0);
-                //la fecha como se le asigna???
-                GroupStageMatch match = new GroupStageMatch(LocalDate.now(), team1, team2, referee, new Formation(), new Formation(), stadium, this);
+                // Crear las formaciones con jugadores
+                Formation formation1 = createFormation(team1);
+                Formation formation2 = createFormation(team2);
+
+// Crear partido
+                GroupStageMatch match = new GroupStageMatch(
+                        LocalDate.now(),
+                        team1,
+                        team2,
+                        referee,
+                        formation1,
+                        formation2,
+                        stadium,
+                        this
+                );
 
                 addMatch(match);
             }
         }
     }
+    private Formation createFormation(Team team) {
 
+        Formation formation = new Formation();
+
+        ArrayList<Player> players = new ArrayList<>(team.getPlayers());
+
+        for (int i = 0; i < players.size(); i++) {
+
+            if (i < Formation.STARTERS_PER_TEAM) {
+                formation.addStarter(players.get(i));
+            } else {
+                formation.addSubstitutes(players.get(i));
+            }
+        }
+
+        return formation;
+    }
 
     private Referee selectValidReferee(Team team1, Team team2, ArrayList<Referee> referees) {
         for (Referee ref : referees) {

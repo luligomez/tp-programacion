@@ -3,6 +3,10 @@ package model;
 import model.match.GroupStageMatch;
 import model.match.Match;
 import model.zone.Zone;
+import model.match.incident.Goal;
+import model.person.player.Player;
+
+import java.util.Random;
 
 public class MatchSimulator {
 
@@ -61,9 +65,61 @@ public class MatchSimulator {
     }
 
     public static void simulateMatch(Match match) {
+
         Team team1 = match.getTeam1();
         Team team2 = match.getTeam2();
-        match.setResult(2,0); // TODO *datos de prueba
 
+        Random random = new Random();
+
+        int goalsTeam1 = random.nextInt(4);
+        int goalsTeam2 = random.nextInt(4);
+
+        match.setResult(goalsTeam1, goalsTeam2);
+
+
+        // Goles del equipo 1
+        for (int i = 0; i < goalsTeam1; i++) {
+
+            Player scorer = team1.getPlayers()
+                    .get(random.nextInt(team1.getPlayers().size()));
+
+            Goal goal = new Goal(
+                    random.nextInt(90) + 1,
+                    scorer,
+                    false,
+                    false,
+                    null
+            );
+
+            System.out.println(
+                    scorer.getName() + " hizo gol para " + team1.getName()
+            );
+
+            match.addIncident(goal);
+        }
+
+
+        // Goles del equipo 2
+        for (int i = 0; i < goalsTeam2; i++) {
+
+            Player scorer = team2.getPlayers()
+                    .get(random.nextInt(team2.getPlayers().size()));
+
+            Goal goal = new Goal(
+                    random.nextInt(90) + 1,
+                    scorer,
+                    false,
+                    false,
+                    null
+            );
+
+            System.out.println(
+                    scorer.getName() + " hizo gol para " + team2.getName()
+            );
+
+            match.addIncident(goal);
+        }
+        match.registerPlayerStatistics();
     }
+
 }

@@ -1,6 +1,5 @@
 package model;
 
-import model.exception.InvalidFormationException;
 import model.match.Formation;
 import model.match.GroupStageMatch;
 import model.match.Match;
@@ -73,6 +72,8 @@ public class MatchSimulator {
         Formation form1 = match.getTeam1Formation();
         Formation form2 = match.getTeam2Formation();
         Random random = new Random();
+        boolean isGkAlreadyExpelled1 = false;
+        boolean isGkAlreadyExpelled2 = false;
 
         // Jugadores en cancha (activos)
         List<Player> activeTeam1 = new ArrayList<>(form1.getStarters());
@@ -99,32 +100,32 @@ public class MatchSimulator {
             // B. Sustituciones (Minutos 45 a 85)
             if (minute >= 45 && minute <= 85) {
                 if (subsTeam1 < 5 && random.nextDouble() < 0.03) {
-                    if (trySubstitution(match, team1, activeTeam1, benchTeam1, minute, random)) {
+                    if (trySubstitution(match, activeTeam1, benchTeam1, goalsTeam1, goalsTeam2, minute, random)) {
                         subsTeam1++;
                     }
                 }
                 if (subsTeam2 < 5 && random.nextDouble() < 0.03) {
-                    if (trySubstitution(match, team2, activeTeam2, benchTeam2, minute, random)) {
+                    if (trySubstitution(match, activeTeam2, benchTeam2, goalsTeam2, goalsTeam1, minute, random)) {
                         subsTeam2++;
                     }
                 }
             }
 
             // C. Tarjetas y Expulsiones
-            simulateCardsForMinute(match, team1, activeTeam1, minute, yellowCardsMap, random);
-            simulateCardsForMinute(match, team2, activeTeam2, minute, yellowCardsMap, random);
+            isGkAlreadyExpelled1=simulateCardsForMinute(match, activeTeam1, benchTeam1, minute, yellowCardsMap, isGkAlreadyExpelled1, random);
+            isGkAlreadyExpelled2=simulateCardsForMinute(match, activeTeam2, benchTeam2, minute, yellowCardsMap, isGkAlreadyExpelled2, random);
 
             // D. Oportunidades de Gol
             if (checkGoalOccurred(attack1, defense2, random)) {
                 goalsTeam1++;
                 Player currentGk2 = getCurrentGoalkeeper(activeTeam2);
-                registerGoalIncident(match, team1, activeTeam1, activeTeam2, currentGk2, minute, random);
+                registerGoalIncident(match, activeTeam1, activeTeam2, currentGk2, minute, random);
             }
 
             if (checkGoalOccurred(attack2, defense1, random)) {
                 goalsTeam2++;
                 Player currentGk1 = getCurrentGoalkeeper(activeTeam1);
-                registerGoalIncident(match, team2, activeTeam2, activeTeam1, currentGk1, minute, random);
+                registerGoalIncident(match, activeTeam2, activeTeam1, currentGk1, minute, random);
             }
         }
 
@@ -133,17 +134,42 @@ public class MatchSimulator {
     }
 
     // MANEJO DE SUSTITUCIONES Y PARTICIPACIÓN
-    private static boolean trySubstitution(Match match, Team team, List<Player> activePlayers, List<Player> bench, int minute, Random random) {
+    private static boolean trySubstitution(Match match , List<Player> activePlayers, List<Player> bench, int teamGoals, int opponentGoals, int minute, Random random) {
         if (activePlayers.isEmpty() || bench.isEmpty()) return false;
 
-        Player playerOut = activePlayers.get(random.nextInt(activePlayers.size()));
-        Player playerIn;
+        Player playerOut = null;
+        Player playerIn = null;
+        int scoreDiff = teamGoals - opponentGoals;
 
-        if (playerOut.getPosition() == Position.GOALKEEPER) {
-            Player subGk = findGoalkeeper(bench);
-            playerIn = (subGk != null) ? subGk : bench.get(random.nextInt(bench.size()));
-        } else {
-            playerIn = bench.get(random.nextInt(bench.size()));
+        // SI VA PERDIENDO:
+        if (scoreDiff < 0) {
+            // Busca sacar un Defensor de la cancha
+            playerOut = findRandomByPosition(activePlayers, Position.DEFENDER, random);
+            // Y busca meter un Delantero del banco
+            playerIn = findRandomByPositions(bench, Position.FORWARD, Position.MIDFIELDER, random);
+        }
+        // SI VA GANANDO:
+        else if (scoreDiff > 0) {
+            // Busca sacar un Delantero de la cancha
+            playerOut = findRandomByPosition(activePlayers, Position.FORWARD, random);
+            // Y busca meter un Defensor del banco
+            playerIn = findRandomByPositions(bench, Position.DEFENDER, Position.MIDFIELDER, random);
+        }
+
+        // C) SI VAN EMPATANDO
+        if (playerOut == null || playerIn == null) {
+            // Elegimos al jugador de cancha de menor rating
+            playerOut = getLowestRatingPlayer(activePlayers);
+
+            if (playerOut != null) {
+                // Buscamos en el banco alguien de su misma posición
+                playerIn = findRandomByPosition(bench, playerOut.getPosition(), random);
+            }
+        }
+
+        // Si aún así no hay coincidencia exacta de posición en el banco, metemos al mejor suplente disponible
+        if (playerIn == null) {
+            playerIn = getHighestRatingPlayer(bench);
         }
 
         bench.remove(playerIn);
@@ -170,58 +196,83 @@ public class MatchSimulator {
         return true;
     }
 
+    private static Player findRandomByPosition(List<Player> bench, Position pos, Random random) {
+        List<Player> candidates = bench.stream()
+                .filter(p -> p.getPosition() == pos)
+                .toList();
+
+        if (candidates.isEmpty()) return null;
+        return candidates.get(random.nextInt(candidates.size()));
+    }
+
+    private static Player findRandomByPositions(List<Player> bench, Position pos1, Position pos2, Random random) {
+        List<Player> candidates = bench.stream()
+                .filter(p -> p.getPosition() == pos1 || p.getPosition() == pos2)
+                .toList();
+
+        if (candidates.isEmpty()) return null;
+        return candidates.get(random.nextInt(candidates.size()));
+    }
+
+    private static Player getLowestRatingPlayer(List<Player> players) {
+        return players.stream()
+                .filter(p -> p.getPosition() != Position.GOALKEEPER) // El arquero no se cambia
+                .min(Comparator.comparingDouble(Player::getRating))
+                .orElse(null);
+    }
+
+    private static Player getHighestRatingPlayer(List<Player> bench) {
+        return bench.stream()
+                .max(Comparator.comparingDouble(Player::getRating))
+                .orElse(null);
+    }
+
     // MANEJO DE EXPULSIONES Y PARTICIPACIÓN
-    private static void simulateCardsForMinute(Match match, Team team, List<Player> activePlayers,
-                                               int minute, Map<Player, Integer> yellowCardsMap, Random random) {
-        if (activePlayers.isEmpty()) return;
+    private static boolean simulateCardsForMinute(Match match, List<Player> activePlayers, List<Player> benchPlayers,
+                                               int minute, Map<Player, Integer> yellowCardsMap, boolean isGkAlreadyExpelled, Random random) {
+        if (activePlayers.isEmpty()) return false;
 
-        // Chance de que ocurra una falta con tarjeta en este minuto (ej: 2.5%)
+        // Chance de que ocurra una falta con tarjeta en este minuto (ej: 1.5%)
         if (random.nextDouble() < 0.015) {
-            Player player = selectWeightedFouler(activePlayers, yellowCardsMap, random);
+            Player player = selectWeightedFouler(activePlayers, yellowCardsMap, isGkAlreadyExpelled, random);
 
-            // 1. Evaluar si es ROJA DIRECTA (ej: 5% de las tarjetas son rojas directas)
             boolean isDirectRed = random.nextDouble() < 0.05;
+            boolean isDoubleYellow = false;
 
-            if (isDirectRed) {
-                Expulsion expulsion = new Expulsion(minute, player, false); // false = roja directa
-                match.addIncident(expulsion);
+            if (!isDirectRed) {
+                // Es amarilla (1ª o 2ª)
+                int currentYellows = yellowCardsMap.getOrDefault(player, 0) + 1;
+                yellowCardsMap.put(player, currentYellows);
 
-                // El jugador es retirado de la cancha
-                activePlayers.remove(player);
+                // Registramos la tarjeta amarilla recibida en la jugada
+                YellowCard yellowCard = new YellowCard(minute, player);
+                match.addIncident(yellowCard);
 
-                PlayerParticipation pp = match.getParticipationFor(player);
-                if (pp != null) {
-                    pp.setMinuteOut(minute);
+                if (currentYellows == 2) {
+                    isDoubleYellow = true;
                 }
-                return;
             }
 
-            // 2. Si no fue roja directa, es AMARILLA
-            int currentYellows = yellowCardsMap.getOrDefault(player, 0) + 1;
-            yellowCardsMap.put(player, currentYellows);
-
-            if (currentYellows == 1) {
-                // Primera tarjeta amarilla
-                YellowCard yellowCard = new YellowCard(minute, player);
-                match.addIncident(yellowCard);
-
-            } else if (currentYellows == 2) {
-                // Segunda amarilla -> DOBLE AMARILLA Y EXPULSIÓN
-                YellowCard yellowCard = new YellowCard(minute, player);
-                match.addIncident(yellowCard);
-
-                Expulsion expulsion = new Expulsion(minute, player, true); // true = doble amarilla
+            // Si es expulsion
+            if (isDirectRed || isDoubleYellow) {
+                Expulsion expulsion = new Expulsion(minute, player, isDoubleYellow);
                 match.addIncident(expulsion);
 
-                // El jugador es retirado de la cancha
-                activePlayers.remove(player);
+                if (player!=null && player.getPosition() == Position.GOALKEEPER) {
+                    isGkAlreadyExpelled = true;
+                    handleGoalkeeperExpulsion(match, activePlayers, benchPlayers, minute);
+                }
 
+                // Retiramos al jugador de la cancha y actualizamos su participación
+                activePlayers.remove(player);
                 PlayerParticipation pp = match.getParticipationFor(player);
                 if (pp != null) {
                     pp.setMinuteOut(minute);
                 }
             }
         }
+
+        return isGkAlreadyExpelled;
     }
 
     // AUXILIARES
@@ -266,7 +317,7 @@ public class MatchSimulator {
             totalWeight += weight;
         }
 
-        if (totalWeight <= 0) return activePlayers.get(0); //TODO exception?
+        if (totalWeight <= 0) return activePlayers.getFirst(); //TODO exception?
 
         // 2. Ruleta / Sorteo Ponderado
         double randomValue = random.nextDouble() * totalWeight; // [0.0, totalWeight)
@@ -279,10 +330,10 @@ public class MatchSimulator {
             }
         }
 
-        return activePlayers.get(0); //TODO exception?
+        return activePlayers.getFirst(); //TODO exception?
     }
 
-    private static Player selectWeightedFouler(List<Player> activePlayers, Map<Player, Integer> yellowCardsMap, Random random) {
+    private static Player selectWeightedFouler(List<Player> activePlayers, Map<Player, Integer> yellowCardsMap, boolean isGkAlreadyExpelled, Random random) {
         if (activePlayers.isEmpty()) return null;
 
         double totalWeight = 0.0;
@@ -295,7 +346,14 @@ public class MatchSimulator {
                 case DEFENDER -> weight = 50.0;
                 case MIDFIELDER -> weight = 35.0;
                 case FORWARD -> weight = 12.0;
-                case GOALKEEPER -> weight = 3.0;
+                case GOALKEEPER -> {
+                    // Si YA expulsaron al arquero, el suplente no hace faltas
+                    if (isGkAlreadyExpelled) {
+                        weight = 0.0;
+                    } else {
+                        weight = 3.0; // peso habitual
+                    }
+                }
                 default -> weight = 10.0;
             }
 
@@ -319,10 +377,10 @@ public class MatchSimulator {
             }
         }
 
-        return activePlayers.get(activePlayers.size() - 1);
+        return activePlayers.getLast();
     }
 
-    private static void registerGoalIncident(Match match, Team scoringTeam, List<Player> activeScoringTeam, List<Player> activeDefendingTeam, Player opposingGoalkeeper, int minute, Random random) {
+    private static void registerGoalIncident(Match match , List<Player> activeScoringTeam, List<Player> activeDefendingTeam, Player opposingGoalkeeper, int minute, Random random) {
         if (activeScoringTeam.isEmpty()) return;
 
         boolean isPenalty = random.nextDouble() < 0.12;
@@ -366,19 +424,28 @@ public class MatchSimulator {
 
     private static double calculateAttackPower(Team team, List<Player> activePlayers) {
         if (activePlayers.isEmpty()) return 50.0;
-        double sum = 0;
-        int count = 0;
+
+        double attackSum = 0;
+        double weightSum = 0;
+
         for (Player p : activePlayers) {
-            if (p.getPosition() == Position.FORWARD || p.getPosition() == Position.MIDFIELDER) {
-                sum += p.getRating();
-                count++;
-            }
+            double rating = p.getRating();
+            double weight = switch (p.getPosition()) {
+                case FORWARD -> 1.0;
+                case MIDFIELDER -> 0.6;
+                case DEFENDER -> 0.15;
+                case GOALKEEPER -> 0.0;
+            };
+
+            attackSum += rating * weight;
+            weightSum += weight; // Acumulamos los pesos aplicados
         }
-        double avg = (count > 0) ? (sum / count) : 60.0;
 
-        double basePower = avg + calculateTeamBonus(team);
+        // Si no hay jugadores de ataque en cancha, evitamos dividir por cero
+        double avgPower = (weightSum > 0) ? (attackSum / weightSum) : 50.0;
+        double basePower = avgPower + calculateTeamBonus(team);
 
-        // (el poder depende de los jugadores en cancha)
+        // Factor por expulsiones (menos jugadores en cancha = menos poder)
         double numericalFactor = activePlayers.size() / 11.0;
 
         return basePower * numericalFactor;
@@ -386,19 +453,28 @@ public class MatchSimulator {
 
     private static double calculateDefensePower(Team team, List<Player> activePlayers) {
         if (activePlayers.isEmpty()) return 50.0;
-        double sum = 0;
-        int count = 0;
-        for (Player p : activePlayers) {
-            if (p.getPosition() == Position.DEFENDER || p.getPosition() == Position.GOALKEEPER) {
-                sum += p.getRating();
-                count++;
-            }
-        }
-        double avg = (count > 0) ? (sum / count) : 60.0;
-        // (promedio + bonus del equipo)
-        double basePower = avg + calculateTeamBonus(team);
 
-        // (el poder depende de los jugadores en cancha)
+        double defenseSum = 0;
+        double weightSum = 0;
+
+        for (Player p : activePlayers) {
+            double rating = p.getRating();
+            double weight = switch (p.getPosition()) {
+                case GOALKEEPER -> 1.2; // El arquero tiene un gran impacto defensivo
+                case DEFENDER -> 1.0;   // 100% de aporte
+                case MIDFIELDER -> 0.5; // 50% de aporte (marca en el medio)
+                case FORWARD -> 0.05;   // 5% de aporte (presión alta)
+            };
+
+            defenseSum += rating * weight;
+            weightSum += weight; // Acumulamos los pesos aplicados
+        }
+
+        // Si no hay jugadores de defensa en cancha, evitamos dividir por cero
+        double avgPower = (weightSum > 0) ? (defenseSum / weightSum) : 50.0;
+        double basePower = avgPower + calculateTeamBonus(team);
+
+        // Factor por expulsiones (menos jugadores en cancha = menos poder general)
         double numericalFactor = activePlayers.size() / 11.0;
 
         return basePower * numericalFactor;
@@ -415,13 +491,48 @@ public class MatchSimulator {
         for (Player p : activePlayers) {
             if (p.getPosition() == Position.GOALKEEPER) return p;
         }
-        return activePlayers.isEmpty() ? null : activePlayers.get(0);
+        return activePlayers.isEmpty() ? null : activePlayers.getFirst();
     }
 
     private static Player findGoalkeeper(List<Player> players) {
         for (Player p : players) {
             if (p.getPosition() == Position.GOALKEEPER) return p;
         }
-        return null;
+        return players.getFirst();
+    }
+
+    private static void handleGoalkeeperExpulsion(Match match, List<Player> activePlayers,
+                                                  List<Player> benchPlayers, int minute) {
+        // 1. Buscamos un arquero suplente en el banco
+        Player benchGK = findGoalkeeper(benchPlayers);
+
+        if (benchGK != null) {
+            // sacamos a un fieldplayer
+            Player fieldPlayerToSacrifice = getLowestRatingPlayer(activePlayers);
+
+            if (fieldPlayerToSacrifice != null) {
+                // A. Retiramos de la cancha al jugador de campo
+                activePlayers.remove(fieldPlayerToSacrifice);
+                PlayerParticipation ppSacrifice = match.getParticipationFor(fieldPlayerToSacrifice);
+                if (ppSacrifice != null) {
+                    ppSacrifice.setMinuteOut(minute);
+                }
+
+                // B. Ingresamos al arquero suplente
+                activePlayers.add(benchGK);
+                benchPlayers.remove(benchGK);
+                PlayerParticipation ppGK = match.getParticipationFor(benchGK);
+                if (ppGK != null) {
+                    ppGK.setMinuteIn(minute);
+                }
+
+                // C. Registramos la incidencia de sustitución
+                Substitution sub = new Substitution(minute, fieldPlayerToSacrifice, benchGK);
+                match.addIncident(sub);
+
+                System.out.println("Min " + minute + "' | 🔄 CAMBIO OBLIGADO: Sale "
+                        + fieldPlayerToSacrifice.getName() + " ➔ Entra el arquero suplente " + benchGK.getName());
+            }
+        }
     }
 }

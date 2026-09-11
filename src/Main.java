@@ -2,11 +2,7 @@
 import model.MatchSimulator;
 import model.Team;
 import model.Tournament;
-import model.match.Formation;
 import model.match.GroupStageMatch;
-import model.person.Referee;
-import model.place.City;
-import model.place.Stadium;
 import model.zone.TeamStanding;
 import model.zone.Zone;
 import model.person.player.Player;
@@ -320,9 +316,9 @@ public class Main {
 
                 } else if (incident instanceof Substitution) {
                     Substitution sub = (Substitution) incident;
-                    System.out.printf("Min %2d' | 🔄 CAMBIO: Sale %s ➔ Entra %s %n",
-                            min, sub.getPlayerOut().getName(),
-                            sub.getPlayerIn().getName());
+                    System.out.printf("Min %2d' | 🔄 CAMBIO: Sale %s (%s)➔ Entra %s (%s) %n",
+                            min, sub.getPlayerOut().getName(), sub.getPlayerOut().getPosition(),
+                            sub.getPlayerIn().getName(), sub.getPlayerIn().getPosition());
 
                 } else if (incident instanceof Expulsion) {
                     Expulsion exp = (Expulsion) incident;

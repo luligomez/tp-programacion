@@ -1,5 +1,6 @@
 
 import model.MatchSimulator;
+import model.StadiumLoader;
 import model.Team;
 import model.Tournament;
 import model.match.Formation;
@@ -23,6 +24,8 @@ import static model.MatchSimulator.simulateMatch;
 public class Main {
     public static void main(String[] args) throws Exception {
         Tournament tournament = fileReader("torneo.json");
+        StadiumLoader loader = new StadiumLoader();
+        tournament.addAllStadiums(loader.loadStadiums());
         tournament.zoneDraw();
         tournament.generateGroupStageMatches();
         //simulateGroupStage(tournament);

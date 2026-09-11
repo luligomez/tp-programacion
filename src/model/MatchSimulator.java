@@ -69,8 +69,13 @@ public class MatchSimulator {
 
         Team team1 = match.getTeam1();
         Team team2 = match.getTeam2();
+        match.setTeam1Formation(FormationCreator.createAutomaticFormation(team1));
+        match.setTeam2Formation(FormationCreator.createAutomaticFormation(team2));
+
         Formation form1 = match.getTeam1Formation();
         Formation form2 = match.getTeam2Formation();
+        match.initializePlayerParticipation(form1, form2);
+
         Random random = new Random();
         boolean isGkAlreadyExpelled1 = false;
         boolean isGkAlreadyExpelled2 = false;

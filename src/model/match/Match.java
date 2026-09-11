@@ -43,11 +43,10 @@ public abstract class Match implements Serializable {
         this.team2Goals = -1;
         this.team1Formation = team1Formation;
         this.team2Formation = team2Formation;
-        initializePlayerParticipation(team1Formation, team2Formation);
         this.stadium = stadium;
     }
 
-    private void initializePlayerParticipation(Formation team1Formation, Formation team2Formation){
+    public void initializePlayerParticipation(Formation team1Formation, Formation team2Formation){
         addFormationParticipations(team1Formation);
         addFormationParticipations(team2Formation);
     }
@@ -185,4 +184,11 @@ public abstract class Match implements Serializable {
 
     public abstract Team getWinner();
 
+    public void setTeam1Formation(Formation team1Formation) {
+        this.team1Formation = team1Formation;
+    }
+
+    public void setTeam2Formation(Formation team2Formation) {
+        this.team2Formation = team2Formation;
+    }
 }

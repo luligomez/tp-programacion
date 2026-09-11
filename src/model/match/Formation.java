@@ -1,5 +1,7 @@
 package model.match;
 
+import model.exception.InvalidFormationException;
+import model.person.Position;
 import model.person.player.Player;
 
 import java.io.Serial;
@@ -10,7 +12,7 @@ public class Formation implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    private static int STARTERS_PER_TEAM = 11;
+    public static int STARTERS_PER_TEAM = 11;
     private ArrayList<Player> starters = new ArrayList<>();
     private ArrayList<Player> substitutes = new ArrayList<>();
 
@@ -33,5 +35,14 @@ public class Formation implements Serializable {
 
     public void addSubstitutes(Player player) {
             substitutes.add(player);
+    }
+
+    public Player getGoalkeeper() {
+        for (Player p : starters) {
+            if (p.getPosition() == Position.GOALKEEPER) {
+                return p;
+            }
+        }
+        throw new InvalidFormationException("The Formation has no assigned goalkeeper among the starters.");
     }
 }

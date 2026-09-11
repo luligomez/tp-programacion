@@ -1,8 +1,10 @@
 package model.person.player;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class TournamentStats implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private int matchesPlayed;
@@ -12,6 +14,7 @@ public class TournamentStats implements Serializable {
     private int standaloneYellowCards;
     private int doubleYellowExpulsions;
     private int directRedCards;
+    private boolean suspended;
 
     public TournamentStats() {
         this.matchesPlayed = 0;
@@ -21,6 +24,7 @@ public class TournamentStats implements Serializable {
         this.standaloneYellowCards = 0;
         this.doubleYellowExpulsions = 0;
         this.directRedCards = 0;
+        this.suspended = false;
     }
 
     public void registerGoal(boolean penalty) {
@@ -40,9 +44,11 @@ public class TournamentStats implements Serializable {
     }
     public void registerDoubleYellowExpulsion() {
         doubleYellowExpulsions++;
+        suspended = true;
     }
     public void registerDirectRed() {
         directRedCards++;
+        suspended = true;
     }
 
     public int getMatchesPlayed() {
@@ -72,4 +78,9 @@ public class TournamentStats implements Serializable {
     public int getDirectRedCards() {
         return directRedCards;
     }
+
+    public boolean isSuspended() {
+        return suspended;
+    }
+
 }

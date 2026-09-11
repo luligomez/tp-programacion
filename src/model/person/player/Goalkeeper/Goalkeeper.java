@@ -19,5 +19,11 @@ public class Goalkeeper extends Player {
         this.CAREERSTATS = careerStats;
     }
 
+    public GoalkeeperAttributes getATTRIBUTES() {
+        return ATTRIBUTES;
+    }
 
+    public GoalkeeperCareerStats getCAREERSTATS() {
+        return CAREERSTATS;
+    }
 }

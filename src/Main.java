@@ -10,19 +10,25 @@ import model.place.Stadium;
 import model.zone.TeamStanding;
 import model.zone.Zone;
 import model.person.player.Player;
+import model.match.incident.*;
+import model.match.*;
 
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static model.FileReader.fileReader;
+import static model.MatchSimulator.simulateMatch;
 
 public class Main {
     public static void main(String[] args) throws Exception {
         Tournament tournament = fileReader("torneo.json");
         tournament.zoneDraw();
         tournament.generateGroupStageMatches();
-        simulateGroupStage(tournament);
+        //simulateGroupStage(tournament);
+        // ⚽ Probar un único partido y ver sus incidencias detalladas
+        //testSingleMatch(tournament);
+        testGroupMatch(tournament,0);
         /*
         for(Team t : tournament.getTeams()) {
             System.out.println(t.getName() +" "+ t.getRankingPosition());
@@ -118,6 +124,7 @@ public class Main {
                     s.getTeam().getName(), s.getPoints(), s.getGoalDifference(), s.getGoalsFor());
         }
         */
+
     }
 
     private static void simulateGroupStage(Tournament tournament){
@@ -189,6 +196,151 @@ public class Main {
                     " PJ: " + s.getMatchesPlayed() + " PG: " + s.getMatchesWon() +
                     " PE: " + s.getMatchesDrawn() + " PP: " + s.getMatchesLost() +
                     " GF: " + s.getGoalsFor() + " GC: " + s.getGoalsAgainst());
+        }
+    }
+    private static void testSingleMatch(Tournament tournament) {
+        // 1. Obtener el primer partido de la primera zona
+        Zone zone = tournament.getZones().get(0);
+        GroupStageMatch match = zone.getGroupStageMatches().get(0);
+
+        System.out.println("==================================================");
+        System.out.println("  TEST DE SIMULACIÓN DE UN PARTIDO INDIVIDUAL");
+        System.out.println("==================================================");
+        System.out.println("Encuentro: " + match.getTeam1().getName() + " vs " + match.getTeam2().getName());
+        if (match.getReferee() != null) {
+            System.out.println("Árbitro: " + match.getReferee().getName());
+        }
+        if (match.getStadium() != null) {
+            System.out.println("Estadio: " + match.getStadium().getName());
+        }
+        System.out.println("--------------------------------------------------");
+
+        // 2. Ejecutar la simulación del partido
+        simulateMatch(match);
+
+        // 3. Resultado final
+        System.out.println("\n[RESULTADO FINAL]");
+        System.out.println("(" + match.getTeam1().getRankingPosition() + ")"+match.getTeam1().getName() + " " + match.getTeam1Goals() + " - "
+                + match.getTeam2Goals() + " " + match.getTeam2().getName()+ "(" + match.getTeam2().getRankingPosition()+")");
+
+        // 4. Ordenar y listar todas las incidencias por minuto cronológico
+        ArrayList<Incident> incidents = new ArrayList<>(match.getIncidents());
+        incidents.sort((i1, i2) -> Integer.compare(i1.getMinute(), i2.getMinute()));
+
+        System.out.println("\n=== INCIDENCIAS DEL PARTIDO (" + incidents.size() + " en total) ===");
+
+        for (Incident incident : incidents) {
+            int min = incident.getMinute();
+
+            if (incident instanceof Goal) {
+                Goal g = (Goal) incident;
+                String detail = g.isOwnGoal() ? " (En Contra)" : (g.isPenalty() ? " (Penal)" : "");
+                String gkInfo = (g.getGoalkeeper() != null) ? " [Arquero rival: " + g.getGoalkeeper().getName() + "]" : "";
+                System.out.printf("Min %2d' | ⚽ GOL de %s %s%s%n",
+                        min, g.getScorer().getName(), detail, gkInfo);
+
+            } else if (incident instanceof Substitution) {
+                Substitution sub = (Substitution) incident;
+                System.out.printf("Min %2d' | 🔄 CAMBIO: Sale %s ➔ Entra %s %n",
+                        min, sub.getPlayerOut().getName(),
+                        sub.getPlayerIn().getName());
+
+            } else if (incident instanceof Expulsion) {
+                Expulsion exp = (Expulsion) incident;
+                System.out.printf("Min %2d' | 🟥 EXPULSIÓN: %s %n",
+                        min, exp.getPlayer().getName());
+
+            } else if (incident instanceof YellowCard) {
+                YellowCard yc = (YellowCard) incident;
+                System.out.printf("Min %2d' | 🟨 AMARILLA: %s %n",
+                        min, yc.getPlayer().getName());
+
+            } else if (incident instanceof PenaltyTaken) {
+                PenaltyTaken pt = (PenaltyTaken) incident;
+                String estado = pt.isScored() ? "Convertido" : "Errado/Atajado";
+                System.out.printf("Min %2d' | 🥅 PENAL EJECUTADO por %s: %s%n",
+                        min, pt.getPlayer().getName(), estado);
+            }
+        }
+        // 5. Revisar las participaciones y minutos jugados
+        System.out.println("\n=== PARTICIPACIONES (PlayerParticipations) ===");
+        for (PlayerParticipation pp : match.getPlayerParticipations()) {
+            if (pp.getMinuteIn() != -1) { // Filtra solo a los que jugaron
+                int played = pp.getMinuteOut() - pp.getMinuteIn();
+                System.out.printf("- %-20s | Titular: %-5b | Entró: %2d' | Salió: %2d' | Jugó: %2d min%n",
+                        pp.getPlayer().getName(),
+                        pp.isStarter(), pp.getMinuteIn(), pp.getMinuteOut(), played);
+            }
+        }
+
+
+    }
+    private static void testGroupMatch(Tournament tournament, int group) {
+        for(int i=0; i<6;i++) {
+
+            // 1. Obtener el primer partido de la primera zona
+            Zone zone = tournament.getZones().get(group);
+            GroupStageMatch match = zone.getGroupStageMatches().get(i);
+
+            System.out.println("==================================================");
+            System.out.println("  TEST DE SIMULACIÓN DE UN PARTIDO INDIVIDUAL "+i);
+            System.out.println("==================================================");
+            System.out.println("Encuentro: " + match.getTeam1().getName() + " vs " + match.getTeam2().getName());
+            if (match.getReferee() != null) {
+                System.out.println("Árbitro: " + match.getReferee().getName());
+            }
+            if (match.getStadium() != null) {
+                System.out.println("Estadio: " + match.getStadium().getName());
+            }
+            System.out.println("--------------------------------------------------");
+
+            // 2. Ejecutar la simulación del partido
+            simulateMatch(match);
+
+            // 3. Resultado final
+            System.out.println("\n[RESULTADO FINAL]");
+            System.out.println("(" + match.getTeam1().getRankingPosition() + ")" + match.getTeam1().getName() + " " + match.getTeam1Goals() + " - "
+                    + match.getTeam2Goals() + " " + match.getTeam2().getName() + "(" + match.getTeam2().getRankingPosition() + ")");
+
+            // 4. Ordenar y listar todas las incidencias por minuto cronológico
+            ArrayList<Incident> incidents = new ArrayList<>(match.getIncidents());
+            incidents.sort((i1, i2) -> Integer.compare(i1.getMinute(), i2.getMinute()));
+
+            System.out.println("\n=== INCIDENCIAS DEL PARTIDO (" + incidents.size() + " en total) ===");
+
+            for (Incident incident : incidents) {
+                int min = incident.getMinute();
+
+                if (incident instanceof Goal) {
+                    Goal g = (Goal) incident;
+                    String detail = g.isOwnGoal() ? " (En Contra)" : (g.isPenalty() ? " (Penal)" : "");
+                    String gkInfo = (g.getGoalkeeper() != null) ? " [Arquero rival: " + g.getGoalkeeper().getName() + "]" : "";
+                    System.out.printf("Min %2d' | ⚽ GOL de %s %s%s%n",
+                            min, g.getScorer().getName(), detail, gkInfo);
+
+                } else if (incident instanceof Substitution) {
+                    Substitution sub = (Substitution) incident;
+                    System.out.printf("Min %2d' | 🔄 CAMBIO: Sale %s ➔ Entra %s %n",
+                            min, sub.getPlayerOut().getName(),
+                            sub.getPlayerIn().getName());
+
+                } else if (incident instanceof Expulsion) {
+                    Expulsion exp = (Expulsion) incident;
+                    System.out.printf("Min %2d' | 🟥 EXPULSIÓN: %s %n",
+                            min, exp.getPlayer().getName());
+
+                } else if (incident instanceof YellowCard) {
+                    YellowCard yc = (YellowCard) incident;
+                    System.out.printf("Min %2d' | 🟨 AMARILLA: %s %n",
+                            min, yc.getPlayer().getName());
+
+                } else if (incident instanceof PenaltyTaken) {
+                    PenaltyTaken pt = (PenaltyTaken) incident;
+                    String estado = pt.isScored() ? "Convertido" : "Errado/Atajado";
+                    System.out.printf("Min %2d' | 🥅 PENAL EJECUTADO por %s: %s%n",
+                            min, pt.getPlayer().getName(), estado);
+                }
+            }
         }
     }
 }

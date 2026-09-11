@@ -1,11 +1,14 @@
 package model.match;
 
+import model.match.incident.Expulsion;
 import model.match.incident.Incident;
 import model.match.incident.Goal;
+import model.match.incident.YellowCard;
 import model.person.player.Player;
 import model.place.Stadium;
 import model.Team;
 import model.person.Referee;
+import model.match.incident.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -36,8 +39,8 @@ public abstract class Match implements Serializable {
         this.team2 = team2;
         this.referee = referee;
         this.incidents = new ArrayList<>();
-        this.team1Goals = 0;
-        this.team2Goals = 0;
+        this.team1Goals = -1; //(no jugado aun)
+        this.team2Goals = -1;
         this.team1Formation = team1Formation;
         this.team2Formation = team2Formation;
         initializePlayerParticipation(team1Formation, team2Formation);
@@ -80,22 +83,41 @@ public abstract class Match implements Serializable {
     }
 
     public void addIncident(Incident incident) {
+        if (incident == null) return;
 
+        // Se guarda en el historial cronológico del partido
         incidents.add(incident);
 
+        // 1. GOLES
         if (incident instanceof Goal goal) {
-
-            if (!goal.isOwnGoal()) {
-
+            if (!goal.isOwnGoal() && goal.getScorer() != null) {
                 goal.getScorer()
                         .getTournamentStats()
                         .registerGoal(goal.isPenalty());
-
+            }
+        }
+        // 2. AMARILLAS
+        else if (incident instanceof YellowCard yc) {
+            if (yc.getPlayer() != null) {
+                yc.getPlayer()
+                        .getTournamentStats()
+                        .registerStandaloneYellow();
+            }
+        }
+        // 3. EXPULSIONES
+        else if (incident instanceof Expulsion exp) {
+            if (exp.getPlayer() != null) {
+                if (exp.isDoubleYellow()) {
+                    exp.getPlayer().getTournamentStats().revertStandaloneYellow();
+                    exp.getPlayer().getTournamentStats().registerDoubleYellowExpulsion();
+                } else {
+                    exp.getPlayer().getTournamentStats().registerDirectRed();
+                }
             }
         }
     }
 
-        public int getTeam1Goals() {
+    public int getTeam1Goals() {
         return team1Goals;
     }
 
@@ -119,6 +141,7 @@ public abstract class Match implements Serializable {
     public Formation getTeam2Formation() {
         return team2Formation;
     }
+
     public void registerPlayerStatistics() {
 
         for (PlayerParticipation participation : playerParticipations) {
@@ -139,6 +162,25 @@ public abstract class Match implements Serializable {
                         .registerMatchPlayed(minutes);
             }
         }
+    }
+
+    public ArrayList<PlayerParticipation> getPlayerParticipations() {
+        return playerParticipations;
+    }
+
+    public PlayerParticipation getParticipationFor(Player player) {
+        if (player == null) return null;//TODO exception
+
+        for (PlayerParticipation pp : playerParticipations) {
+            if (pp.getPlayer().equals(player)) {
+                return pp;
+            }
+        }
+        return null;
+    }
+
+    public boolean isPlayed() {
+        return this.team1Goals != -1;
     }
 
     public abstract Team getWinner();

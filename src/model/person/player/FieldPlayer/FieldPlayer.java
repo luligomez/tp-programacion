@@ -19,5 +19,11 @@ public class FieldPlayer extends Player {
         this.CAREERSTATS = careerStats;
     }
 
+    public FieldPlayerAttributes getATTRIBUTES() {
+        return ATTRIBUTES;
+    }
 
+    public FieldPlayerCareerStats getCAREERSTATS() {
+        return CAREERSTATS;
+    }
 }

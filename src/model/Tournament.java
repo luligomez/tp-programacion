@@ -10,6 +10,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
+import static model.TournamentState.GROUP_STAGE;
+
 public class Tournament implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -22,9 +24,14 @@ public class Tournament implements Serializable {
     private ArrayList<Match> matches = new ArrayList<>();
     private ArrayList<Referee> referees = new ArrayList<>();
     private transient ArrayList<Stadium> stadiums = new ArrayList<>(); //no se guardan los estadios, se consultan nuevamente de la bbdd
+    private TournamentState state = TournamentState.NOT_DRAWN;
 
 
     public Tournament(){}
+
+    public TournamentState getState() { return state; }
+
+    public void setState(TournamentState state) { this.state = state; }
 
     public ArrayList<Team> getTeams() {
         return teams;
@@ -100,6 +107,7 @@ public class Tournament implements Serializable {
             zonaActual.addTeam(pot3.get(i));
             zonaActual.addTeam(pot4.get(i));
         }
+        state = GROUP_STAGE;
     }
 
     public void generateGroupStageMatches() {

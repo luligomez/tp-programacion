@@ -70,6 +70,10 @@ public class Tournament implements Serializable {
         stadiums.add(stadium);
     }
 
+    public void addAllStadiums(ArrayList<Stadium> stadia) {
+        this.stadiums.addAll(stadia);
+    }
+
     public void zoneDraw(){
         this.zones.clear();
         // ordenamos equipos por ranking

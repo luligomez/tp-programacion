@@ -230,9 +230,6 @@ public class Zone implements Serializable {
                 //asignar estadio una vez hecha la BD
                 Stadium stadium = stadiums.isEmpty() ? null : stadiums.get(stadiumN % stadiums.size());
                 stadiumN++;
-                // Crear las formaciones con jugadores
-                Formation formation1 = createFormation(team1);
-                Formation formation2 = createFormation(team2);
 
 // Crear partido
                 GroupStageMatch match = new GroupStageMatch(
@@ -240,8 +237,8 @@ public class Zone implements Serializable {
                         team1,
                         team2,
                         referee,
-                        formation1,
-                        formation2,
+                        null,
+                        null,
                         stadium,
                         this
                 );
@@ -249,23 +246,6 @@ public class Zone implements Serializable {
                 addMatch(match);
             }
         }
-    }
-    private Formation createFormation(Team team) {
-
-        Formation formation = new Formation();
-
-        ArrayList<Player> players = new ArrayList<>(team.getPlayers());
-
-        for (int i = 0; i < players.size(); i++) {
-
-            if (i < Formation.STARTERS_PER_TEAM) {
-                formation.addStarter(players.get(i));
-            } else {
-                formation.addSubstitutes(players.get(i));
-            }
-        }
-
-        return formation;
     }
 
     private Referee selectValidReferee(Team team1, Team team2, ArrayList<Referee> referees) {

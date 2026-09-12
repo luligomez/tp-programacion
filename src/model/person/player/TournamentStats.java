@@ -83,4 +83,7 @@ public class TournamentStats implements Serializable {
         return suspended;
     }
 
+    public void setSuspended(boolean suspended) {
+        this.suspended=suspended;
+    }
 }

@@ -221,14 +221,15 @@ public class Zone implements Serializable {
 
     public void generateMatches(ArrayList<Referee> referees, ArrayList<Stadium> stadiums) {
         ArrayList<Team> teamsInZone = getTeams();
-
+        int stadiumN=0;
         for (int i = 0; i < teamsInZone.size(); i++) {
             for (int j = i + 1; j < teamsInZone.size(); j++) {
                 Team team1 = teamsInZone.get(i);
                 Team team2 = teamsInZone.get(j);
                 Referee referee = selectValidReferee(team1, team2, referees);
                 //asignar estadio una vez hecha la BD
-                Stadium stadium = stadiums.isEmpty() ? null : stadiums.get(0);
+                Stadium stadium = stadiums.isEmpty() ? null : stadiums.get(stadiumN % stadiums.size());
+                stadiumN++;
                 // Crear las formaciones con jugadores
                 Formation formation1 = createFormation(team1);
                 Formation formation2 = createFormation(team2);

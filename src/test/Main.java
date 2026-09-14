@@ -1,5 +1,5 @@
+package test;
 
-import model.StadiumLoader;
 import model.Tournament;
 // Importá tus clases de modelo necesarias para inicializar el torneo...
 
@@ -17,9 +17,7 @@ import view.mainwindow.MainWindowView;
 import javax.swing.*;
 import java.util.ArrayList;
 
-import static model.FileReader.fileReader;
 import static model.MatchSimulator.simulateMatch;
-import static model.StadiumLoader.initDatabase;
 
 public class Main {
     public static void main(String[] args) throws Exception {

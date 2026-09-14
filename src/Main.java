@@ -1,24 +1,30 @@
 
-import model.MatchSimulator;
 import model.StadiumLoader;
-import model.Team;
 import model.Tournament;
+// Importá tus clases de modelo necesarias para inicializar el torneo...
+
+import model.MatchSimulator;
+import model.Team;
 import model.match.GroupStageMatch;
 import model.zone.TeamStanding;
 import model.zone.Zone;
 import model.person.player.Player;
 import model.match.incident.*;
 import model.match.*;
+import view.mainwindow.MainWindowView;
 
 
-import java.time.LocalDate;
+import javax.swing.*;
 import java.util.ArrayList;
 
 import static model.FileReader.fileReader;
 import static model.MatchSimulator.simulateMatch;
+import static model.StadiumLoader.initDatabase;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+        testUI();
+/*
         Tournament tournament = fileReader("torneo.json");
         StadiumLoader loader = new StadiumLoader();
         tournament.addAllStadiums(loader.loadStadiums());
@@ -341,5 +347,80 @@ public class Main {
                 }
             }
         }
+    }
+
+    private static void testUI() {
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignored) {}
+
+        SwingUtilities.invokeLater(() -> {
+            MainWindowView window = new MainWindowView(new Tournament());
+            window.setVisible(true);
+        });
+        /*
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignored) {}
+
+        SwingUtilities.invokeLater(() -> {
+            Tournament tournament = null;
+            try {
+                tournament = fileReader("torneo.json");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            StadiumLoader loader = new StadiumLoader();
+            initDatabase();
+            tournament.addAllStadiums(loader.loadStadiums());
+
+            // 2. Instanciar la vista principal Dashboard
+            MainWindowView dashboardView = new MainWindowView();
+
+            // 3. Conectar la vista y el modelo con el controlador principal
+            MainWindowController mainController = new MainWindowController(dashboardView, tournament);
+
+            // 4. Hacer visible la aplicación
+            dashboardView.setVisible(true);
+        });
+        */
+
+        /*
+        // Establecer el Look &amp; Feel del sistema operativo para que se vea moderno
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignored) {}
+
+        // Iniciar la interfaz en el hilo de eventos de Swing (EDT)
+        SwingUtilities.invokeLater(() -> {
+
+            Tournament tournament = null;
+            try {
+                tournament = fileReader("torneo.json");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            StadiumLoader loader = new StadiumLoader();
+            initDatabase();
+            tournament.addAllStadiums(loader.loadStadiums());
+
+            // 2. Crear la ventana principal Dashboard
+            MainDashboardView dashboardView = new MainDashboardView();
+
+            // 3. Crear la vista y el controlador de la Fase de Grupos
+            //GroupStageView groupStageView = new GroupStageView();
+            //GroupStageController groupStageController = new GroupStageController(groupStageView, tournament);
+
+            // 4. Cargar la vista de grupos en el panel central del Dashboard
+            dashboardView.setContentPanel(groupStageView);
+
+            // 5. Configurar los botones de navegación superiores
+            dashboardView.getBtnGroupStage().addActionListener(e ->dashboardView.setContentPanel(groupStageView));
+
+            // 6. Hacer visible la ventana
+            dashboardView.setVisible(true);
+        });
+        */
     }
 }

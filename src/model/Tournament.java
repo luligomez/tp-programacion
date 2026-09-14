@@ -81,33 +81,38 @@ public class Tournament implements Serializable {
         this.stadiums.addAll(stadia);
     }
 
+    public List<List<Team>> getPots() {
+        List<Team> sortedTeams = new ArrayList<>(this.teams);
+        sortedTeams.sort(Comparator.comparingInt(Team::getRankingPosition));
+
+        List<List<Team>> pots = new ArrayList<>();
+        pots.add(new ArrayList<>(sortedTeams.subList(0, 4)));
+        pots.add(new ArrayList<>(sortedTeams.subList(4, 8)));
+        pots.add(new ArrayList<>(sortedTeams.subList(8, 12)));
+        pots.add(new ArrayList<>(sortedTeams.subList(12, 16)));
+        return pots;
+    }
+
     public void zoneDraw(){
         this.zones.clear();
-        // ordenamos equipos por ranking
-        this.teams.sort(Comparator.comparingInt(Team::getRankingPosition));
 
-        // creamos los 4 bombos
-        List<Team> pot1 = new ArrayList<>(this.teams.subList(0, 4));
-        List<Team> pot2 = new ArrayList<>(this.teams.subList(4, 8));
-        List<Team> pot3 = new ArrayList<>(this.teams.subList(8, 12));
-        List<Team> pot4 = new ArrayList<>(this.teams.subList(12, 16));
+        List<List<Team>> pots = getPots();
 
         // mezclamos cada bombo
-        Collections.shuffle(pot1);
-        Collections.shuffle(pot2);
-        Collections.shuffle(pot3);
-        Collections.shuffle(pot4);
+        for (List<Team> pot : pots) {
+            Collections.shuffle(pot);
+        }
 
         // 5. Repartimos un equipo de cada bombo a cada zona
         for (int i = 0; i < 4; i++) {
             this.zones.add(new Zone());
             Zone zonaActual = this.zones.get(i);
-            zonaActual.addTeam(pot1.get(i));
-            zonaActual.addTeam(pot2.get(i));
-            zonaActual.addTeam(pot3.get(i));
-            zonaActual.addTeam(pot4.get(i));
+            zonaActual.addTeam(pots.get(0).get(i));
+            zonaActual.addTeam(pots.get(1).get(i));
+            zonaActual.addTeam(pots.get(2).get(i));
+            zonaActual.addTeam(pots.get(3).get(i));
         }
-        state = GROUP_STAGE;
+        state = TournamentState.DRAWN_UNCONFIRMED;
     }
 
     public void generateGroupStageMatches() {
@@ -136,5 +141,21 @@ public class Tournament implements Serializable {
                 });
     }
 
+
+    public boolean hasZonesDrawn() {
+        return state != TournamentState.NOT_DRAWN;
+    }
+
+    public boolean isDrawConfirmed() {
+        return state == TournamentState.GROUP_STAGE;
+    }
+
+    public void confirmDraw() {
+        state = GROUP_STAGE;
+    }
+
+    public void resetDraw() {
+        zoneDraw();
+    }
 
 }

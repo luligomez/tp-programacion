@@ -1,7 +1,6 @@
 package model;
 
-import model.match.GroupStageMatch;
-import model.match.Match;
+import model.match.*;
 import model.person.Referee;
 import model.place.Stadium;
 import model.zone.Zone;
@@ -22,16 +21,25 @@ public class Tournament implements Serializable {
     private ArrayList<Team> teams = new ArrayList<>();
     private ArrayList<Zone> zones = new ArrayList<>();
     private ArrayList<Match> matches = new ArrayList<>();
+    private ArrayList<FirstLegMatch> quarterFinalMatches = new ArrayList<>();
+    private ArrayList<SecondLegMatch> quarterFinalSecondLegMatches = new ArrayList<>();
+    private ArrayList<FirstLegMatch> semiFinalMatches = new ArrayList<>();
+    private ArrayList<SecondLegMatch> semiFinalSecondLegMatches = new ArrayList<>();
     private ArrayList<Referee> referees = new ArrayList<>();
     private transient ArrayList<Stadium> stadiums = new ArrayList<>(); //no se guardan los estadios, se consultan nuevamente de la bbdd
     private TournamentState state = TournamentState.NOT_DRAWN;
 
 
-    public Tournament(){}
+    public Tournament() {
+    }
 
-    public TournamentState getState() { return state; }
+    public TournamentState getState() {
+        return state;
+    }
 
-    public void setState(TournamentState state) { this.state = state; }
+    public void setState(TournamentState state) {
+        this.state = state;
+    }
 
     public ArrayList<Team> getTeams() {
         return teams;
@@ -43,6 +51,78 @@ public class Tournament implements Serializable {
 
     public ArrayList<Match> getMatches() {
         return matches;
+    }
+
+    public ArrayList<FirstLegMatch> getQuarterFinalMatches() {
+        return quarterFinalMatches;
+    }
+
+    public ArrayList<FirstLegMatch> getSemiFinalMatches() {
+        return semiFinalMatches;
+    }
+
+    public ArrayList<SecondLegMatch> getSemiFinalSecondLegMatches() {
+        return semiFinalSecondLegMatches;
+    }
+
+
+    public void generateSemiFinals() {
+
+        ArrayList<Team> winners = getQuarterFinalWinners();
+
+        Referee referee = referees.get(0);
+        Stadium stadium = stadiums.isEmpty() ? null : stadiums.get(0);
+
+
+        FirstLegMatch semi1 = new FirstLegMatch(
+                java.time.LocalDate.now(),
+                winners.get(0),
+                winners.get(1),
+                referee,
+                null,
+                null,
+                stadium
+        );
+
+
+        FirstLegMatch semi2 = new FirstLegMatch(
+                java.time.LocalDate.now(),
+                winners.get(2),
+                winners.get(3),
+                referee,
+                null,
+                null,
+                stadium
+        );
+
+
+        matches.add(semi1);
+        matches.add(semi2);
+        semiFinalMatches.add(semi1);
+        semiFinalMatches.add(semi2);
+    }
+
+    public void generateSemiFinalSecondLegs() {
+
+        ArrayList<SecondLegMatch> secondLegs = new ArrayList<>();
+
+        for (FirstLegMatch match : semiFinalMatches) {
+
+            SecondLegMatch secondLeg = new SecondLegMatch(
+                    java.time.LocalDate.now(),
+                    match.getTeam2(),
+                    match.getTeam1(),
+                    referees.get(0),
+                    null,
+                    null,
+                    stadiums.isEmpty() ? null : stadiums.get(0)
+            );
+
+            secondLegs.add(secondLeg);
+            semiFinalSecondLegMatches.add(secondLeg);
+        }
+
+        matches.addAll(secondLegs);
     }
 
     public ArrayList<Referee> getReferees() {
@@ -73,7 +153,7 @@ public class Tournament implements Serializable {
         referees.add(referee);
     }
 
-    public void addStadium(Stadium stadium){
+    public void addStadium(Stadium stadium) {
         stadiums.add(stadium);
     }
 
@@ -93,7 +173,7 @@ public class Tournament implements Serializable {
         return pots;
     }
 
-    public void zoneDraw(){
+    public void zoneDraw() {
         this.zones.clear();
 
         List<List<Team>> pots = getPots();
@@ -158,4 +238,194 @@ public class Tournament implements Serializable {
         zoneDraw();
     }
 
+    public ArrayList<Team> getQualifiedTeams() {
+
+        ArrayList<Team> qualifiedTeams = new ArrayList<>();
+
+        for (Zone zone : zones) {
+            qualifiedTeams.addAll(zone.getQualifiedTeams());
+        }
+
+        return qualifiedTeams;
+    }
+
+    public void generateQuarterFinals() {
+
+        ArrayList<Team> qualifiedTeams = getQualifiedTeams();
+
+        // acá después asignaremos árbitro y estadio correctamente
+        Referee referee = referees.get(0);
+        Stadium stadium = stadiums.isEmpty() ? null : stadiums.get(0);
+
+
+        FirstLegMatch quarter1 = new FirstLegMatch(
+                java.time.LocalDate.now(),
+                qualifiedTeams.get(0),
+                qualifiedTeams.get(3),
+                referee,
+                null,
+                null,
+                stadium
+        );
+
+
+        FirstLegMatch quarter2 = new FirstLegMatch(
+                java.time.LocalDate.now(),
+                qualifiedTeams.get(2),
+                qualifiedTeams.get(1),
+                referee,
+                null,
+                null,
+                stadium
+        );
+
+
+        FirstLegMatch quarter3 = new FirstLegMatch(
+                java.time.LocalDate.now(),
+                qualifiedTeams.get(4),
+                qualifiedTeams.get(7),
+                referee,
+                null,
+                null,
+                stadium
+        );
+
+
+        FirstLegMatch quarter4 = new FirstLegMatch(
+                java.time.LocalDate.now(),
+                qualifiedTeams.get(6),
+                qualifiedTeams.get(5),
+                referee,
+                null,
+                null,
+                stadium
+        );
+
+
+        matches.add(quarter1);
+        matches.add(quarter2);
+        matches.add(quarter3);
+        matches.add(quarter4);
+
+        quarterFinalMatches.add(quarter1);
+        quarterFinalMatches.add(quarter2);
+        quarterFinalMatches.add(quarter3);
+        quarterFinalMatches.add(quarter4);
+    }
+
+    public void generateQuarterFinalSecondLegs() {
+
+        for (FirstLegMatch match : quarterFinalMatches) {
+
+            SecondLegMatch secondLeg = new SecondLegMatch(
+                    java.time.LocalDate.now(),
+                    match.getTeam2(),
+                    match.getTeam1(),
+                    referees.get(0),
+                    null,
+                    null,
+                    stadiums.isEmpty() ? null : stadiums.get(0)
+            );
+
+            matches.add(secondLeg);
+            quarterFinalSecondLegMatches.add(secondLeg);
+        }
+    }
+
+    public ArrayList<SecondLegMatch> getQuarterFinalSecondLegMatches() {
+
+        return quarterFinalSecondLegMatches;
+
+    }
+    public ArrayList<Team> getQuarterFinalWinners() {
+
+        ArrayList<Team> winners = new ArrayList<>();
+
+        for (int i = 0; i < quarterFinalMatches.size(); i++) {
+
+            FirstLegMatch firstLeg = quarterFinalMatches.get(i);
+            SecondLegMatch secondLeg = quarterFinalSecondLegMatches.get(i);
+
+            int team1Goals =
+                    firstLeg.getTeam1Goals() + secondLeg.getTeam2Goals();
+
+            int team2Goals =
+                    firstLeg.getTeam2Goals() + secondLeg.getTeam1Goals();
+
+
+            if (team1Goals > team2Goals) {
+
+                winners.add(firstLeg.getTeam1());
+
+            } else if (team2Goals > team1Goals) {
+
+                winners.add(firstLeg.getTeam2());
+
+            } else {
+
+                // empate global
+                // por ahora usamos ganador de la vuelta
+                winners.add(secondLeg.getWinner());
+            }
+        }
+
+        return winners;
+    }
+
+    public ArrayList<Team> getSemiFinalWinners() {
+
+        ArrayList<Team> winners = new ArrayList<>();
+
+        for (int i = 0; i < semiFinalMatches.size(); i++) {
+
+            FirstLegMatch firstLeg = semiFinalMatches.get(i);
+            SecondLegMatch secondLeg = semiFinalSecondLegMatches.get(i);
+
+            int team1Goals =
+                    firstLeg.getTeam1Goals() + secondLeg.getTeam2Goals();
+
+            int team2Goals =
+                    firstLeg.getTeam2Goals() + secondLeg.getTeam1Goals();
+
+
+            if (team1Goals > team2Goals) {
+
+                winners.add(firstLeg.getTeam1());
+
+            } else if (team2Goals > team1Goals) {
+
+                winners.add(firstLeg.getTeam2());
+
+            } else {
+
+                // si empatan en el global, por ahora usamos penales
+                winners.add(secondLeg.getWinner());
+
+            }
+        }
+
+        return winners;
+    }
+
+    public void generateFinal() {
+
+        ArrayList<Team> finalists = getSemiFinalWinners();
+
+        Referee referee = referees.get(0);
+        Stadium stadium = stadiums.isEmpty() ? null : stadiums.get(0);
+
+
+        FinalMatch finalMatch = new FinalMatch(
+                java.time.LocalDate.now(),
+                finalists.get(0),
+                finalists.get(1),
+                referee,
+                null,
+                null,
+                stadium
+        );
+
+
+        matches.add(finalMatch);
+    }
 }

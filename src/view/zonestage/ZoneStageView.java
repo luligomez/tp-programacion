@@ -6,38 +6,61 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ZoneStageView extends JPanel {
-    private Tournament tournament;
 
-    public ZoneStageView(Tournament tournament) {
-        this.tournament = tournament;
+    private Runnable onDrawCompletedListener;
+    private Runnable onDrawConfirmedListener;
+    private Runnable onRedrawListener;
+    private StandingsPanel standingsPanel;
+
+    public ZoneStageView() {
         setLayout(new BorderLayout());
-        showCurrentState();
     }
 
-    private void showCurrentState() {
+    // Setters de listeners para el controlador
+    public void setOnDrawCompletedListener(Runnable listener) {
+        this.onDrawCompletedListener = listener;
+    }
+
+    public void setOnDrawConfirmedListener(Runnable listener) {
+        this.onDrawConfirmedListener = listener;
+    }
+
+    public void setOnRedrawListener(Runnable listener) {
+        this.onRedrawListener = listener;
+    }
+
+    // Métodos de renderizado invocados por el controlador
+    public void showDrawPotsState(Tournament tournament) {
         removeAll();
-        if (!tournament.hasZonesDrawn()) {
-            add(new DrawPotsPanel(tournament, this::onDrawCompleted), BorderLayout.CENTER);
-        } else if (!tournament.isDrawConfirmed()) {
-            add(new DrawResultPanel(tournament, this::onDrawConfirmed, this::onRedraw), BorderLayout.CENTER);
-        } else {
-            add(new JLabel("TODO: Standings View", SwingConstants.CENTER), BorderLayout.CENTER); // placeholder por ahora
-        }
+        add(new DrawPotsPanel(tournament, () -> {
+            if (onDrawCompletedListener != null) onDrawCompletedListener.run();
+        }), BorderLayout.CENTER);
         revalidate();
         repaint();
     }
 
-    private void onDrawCompleted() {
-        showCurrentState();
+    public void showDrawResultState(Tournament tournament) {
+        removeAll();
+        add(new DrawResultPanel(
+                tournament,
+                () -> { if (onDrawConfirmedListener != null) onDrawConfirmedListener.run(); },
+        () -> { if (onRedrawListener != null) onRedrawListener.run(); }
+        ), BorderLayout.CENTER);
+        revalidate();
+        repaint();
     }
 
-    private void onDrawConfirmed() {
-        tournament.confirmDraw();
-        showCurrentState();
+    public void showStandingsState(Tournament tournament) {
+        removeAll();
+        if (standingsPanel == null) {
+            standingsPanel = new StandingsPanel(tournament);
+        } else { standingsPanel.updateGroups(tournament);
+        }
+        add(standingsPanel, BorderLayout.CENTER);
+        revalidate();
+        repaint();
     }
-
-    private void onRedraw() {
-        tournament.resetDraw();
-        showCurrentState();
+    public StandingsPanel getStandingsPanel() {
+        return standingsPanel;
     }
 }

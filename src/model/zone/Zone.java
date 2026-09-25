@@ -1,11 +1,9 @@
 package model.zone;
 
 import model.Team;
-import model.match.Formation;
 import model.match.GroupStageMatch;
 import model.person.Referee;
 import model.place.Stadium;
-import model.person.player.Player;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -220,12 +218,16 @@ public class Zone implements Serializable {
     }
 
     public void generateMatches(ArrayList<Referee> referees, ArrayList<Stadium> stadiums) {
-        ArrayList<Team> teamsInZone = getTeams();
+        ArrayList<Team> teamsInZone = new ArrayList<>(getTeams());
+        int numTeams = teamsInZone.size();
+        int numMatchdays = numTeams - 1;
+        int matchesPerDay = numTeams / 2;
         int stadiumN=0;
-        for (int i = 0; i < teamsInZone.size(); i++) {
-            for (int j = i + 1; j < teamsInZone.size(); j++) {
-                Team team1 = teamsInZone.get(i);
-                Team team2 = teamsInZone.get(j);
+
+        for (int day = 1; day <= numMatchdays; day++) {
+            for (int j = 0; j <matchesPerDay; j++) {
+                Team team1 = teamsInZone.get(j);
+                Team team2 = teamsInZone.get(numTeams-1-j);
                 Referee referee = selectValidReferee(team1, team2, referees);
                 //asignar estadio una vez hecha la BD
                 Stadium stadium = stadiums.isEmpty() ? null : stadiums.get(stadiumN % stadiums.size());
@@ -240,11 +242,15 @@ public class Zone implements Serializable {
                         null,
                         null,
                         stadium,
-                        this
+                        this,
+                        day
                 );
 
                 addMatch(match);
             }
+            // Rotación Round-Robin (mantiene fijo el índice 0)
+            Team lastTeam = teamsInZone.remove(numTeams - 1);
+            teamsInZone.add(1, lastTeam);
         }
     }
 
@@ -258,7 +264,7 @@ public class Zone implements Serializable {
             }
         }
         //se asume que siempre va a haber un referee valido??
-        return referees.get(0);
+        return referees.getFirst();
     }
 
 }

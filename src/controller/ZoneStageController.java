@@ -1,7 +1,11 @@
 package controller;
 
+import model.MatchSimulator;
 import model.Tournament;
 import view.zonestage.ZoneStageView;
+import view.zonestage.StandingsPanel;
+
+import javax.swing.*;
 
 public class ZoneStageController {
 
@@ -16,12 +20,10 @@ public class ZoneStageController {
     }
 
     private void initController() {
-        // Conectamos los callbacks/listeners con la vista
         view.setOnDrawCompletedListener(this::onDrawCompleted);
         view.setOnDrawConfirmedListener(this::onDrawConfirmed);
         view.setOnRedrawListener(this::onRedraw);
 
-        // Renderizamos la pantalla según el estado inicial del torneo
         updateView();
     }
 
@@ -32,6 +34,55 @@ public class ZoneStageController {
             view.showDrawResultState(tournament);
         } else {
             view.showStandingsState(tournament);
+            setupStandingsListeners();
+
+            // 💡 SI YA SE JUGARON LAS 3 FECHAS, MANTENEMOS EL BOTÓN DESHABILITADO
+            // aunque el usuario vuelva a hacer clic en "Groups" desde el Sidebar
+            if (tournament.getCurrentMatchday() > 3) {
+                StandingsPanel standingsPanel = view.getStandingsPanel();
+                if (standingsPanel != null) {
+                    standingsPanel.disableSimulateButton();
+                }
+            }
+        }
+    }
+
+    private void setupStandingsListeners() {
+        StandingsPanel standingsPanel = view.getStandingsPanel();
+        if (standingsPanel != null) {
+            standingsPanel.setOnSimulateMatchdayListener(this::simulateNextMatchday);
+        }
+    }
+
+    private void simulateNextMatchday() {
+        int currentDay = tournament.getCurrentMatchday();
+
+        if (currentDay > 3) {
+            return;
+        }
+
+        // 1. Simular la fecha actual obtenida del torneo
+        MatchSimulator.simulateMatchday(tournament, currentDay);
+
+        // 2. Avanzar la fecha en el Modelo
+        tournament.setCurrentMatchday(currentDay + 1);
+
+        // 3. Refrescar la UI
+        StandingsPanel standingsPanel = view.getStandingsPanel();
+        if (standingsPanel != null) {
+            standingsPanel.updateGroups(tournament);
+        }
+
+        JOptionPane.showMessageDialog(
+                view,
+                "Matchday " + currentDay + " successfully simulated!",
+                "Matchday Complete",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+
+        // 4. Si acabamos de completar la fecha 3, deshabilitamos el botón
+        if (tournament.getCurrentMatchday() > 3 && standingsPanel != null) {
+            standingsPanel.disableSimulateButton();
         }
     }
 

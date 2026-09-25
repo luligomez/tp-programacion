@@ -72,6 +72,11 @@ public class StandingsPanel extends JPanel {
         groupsGrid.repaint();
     }
 
+    public void disableSimulateButton() {
+        btnSimulateMatchday.setEnabled(false);
+        btnSimulateMatchday.setText("Group Stage Completed 🏁");
+    }
+
     public void setOnSimulateMatchdayListener(Runnable listener) {
         this.onSimulateListener = listener;
     }

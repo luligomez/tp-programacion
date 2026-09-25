@@ -1,5 +1,7 @@
 package test;
 
+import controller.MainWindowController;
+import model.FileReader;
 import model.Tournament;
 // Importá tus clases de modelo necesarias para inicializar el torneo...
 
@@ -354,8 +356,19 @@ public class Main {
         } catch (Exception ignored) {}
 
         SwingUtilities.invokeLater(() -> {
-            MainWindowView window = new MainWindowView(new Tournament());
-            window.setVisible(true);
+            // 1\. Cargar el torneo inicial
+            Tournament tournament = null;
+            try {
+                tournament = FileReader.fileReader("torneo.json");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            // 2\. Crear la vista principal (ya no necesita recibir el Tournament directamente)
+            MainWindowView windowView = new MainWindowView();
+            // 3\. Crear el controlador que conecta la vista con el modelo
+            MainWindowController mainController = new MainWindowController(windowView, tournament);
+            // 4\. Mostrar la aplicación
+            windowView.setVisible(true);
         });
         /*
         try {

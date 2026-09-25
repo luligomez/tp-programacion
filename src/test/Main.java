@@ -1,5 +1,7 @@
 package test;
 
+import controller.MainWindowController;
+import model.FileReader;
 import model.Tournament;
 // Importá tus clases de modelo necesarias para inicializar el torneo...
 
@@ -354,71 +356,19 @@ public class Main {
         } catch (Exception ignored) {}
 
         SwingUtilities.invokeLater(() -> {
-            MainWindowView window = new MainWindowView(new Tournament());
-            window.setVisible(true);
-        });
-        /*
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
-
-        SwingUtilities.invokeLater(() -> {
+            // 1\. Cargar el torneo inicial
             Tournament tournament = null;
             try {
-                tournament = fileReader("torneo.json");
+                tournament = FileReader.fileReader("torneo.json");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            StadiumLoader loader = new StadiumLoader();
-            initDatabase();
-            tournament.addAllStadiums(loader.loadStadiums());
-
-            // 2. Instanciar la vista principal Dashboard
-            MainWindowView dashboardView = new MainWindowView();
-
-            // 3. Conectar la vista y el modelo con el controlador principal
-            MainWindowController mainController = new MainWindowController(dashboardView, tournament);
-
-            // 4. Hacer visible la aplicación
-            dashboardView.setVisible(true);
+            // 2\. Crear la vista principal (ya no necesita recibir el Tournament directamente)
+            MainWindowView windowView = new MainWindowView();
+            // 3\. Crear el controlador que conecta la vista con el modelo
+            MainWindowController mainController = new MainWindowController(windowView, tournament);
+            // 4\. Mostrar la aplicación
+            windowView.setVisible(true);
         });
-        */
-
-        /*
-        // Establecer el Look &amp; Feel del sistema operativo para que se vea moderno
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
-
-        // Iniciar la interfaz en el hilo de eventos de Swing (EDT)
-        SwingUtilities.invokeLater(() -> {
-
-            Tournament tournament = null;
-            try {
-                tournament = fileReader("torneo.json");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            StadiumLoader loader = new StadiumLoader();
-            initDatabase();
-            tournament.addAllStadiums(loader.loadStadiums());
-
-            // 2. Crear la ventana principal Dashboard
-            MainDashboardView dashboardView = new MainDashboardView();
-
-            // 3. Crear la vista y el controlador de la Fase de Grupos
-            //GroupStageView groupStageView = new GroupStageView();
-            //GroupStageController groupStageController = new GroupStageController(groupStageView, tournament);
-
-            // 4. Cargar la vista de grupos en el panel central del Dashboard
-            dashboardView.setContentPanel(groupStageView);
-
-            // 5. Configurar los botones de navegación superiores
-            dashboardView.getBtnGroupStage().addActionListener(e ->dashboardView.setContentPanel(groupStageView));
-
-            // 6. Hacer visible la ventana
-            dashboardView.setVisible(true);
-        });
-        */
     }
 }

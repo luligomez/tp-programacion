@@ -13,10 +13,16 @@ public class GroupStageMatch extends Match implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private Zone zone;
+    private final int MATCHDAY;
 
-    public GroupStageMatch(LocalDate date, Team team1, Team team2, Referee referee, Formation team1Formation, Formation team2Formation, Stadium stadium, Zone zone) {
+    public GroupStageMatch(LocalDate date, Team team1, Team team2, Referee referee, Formation team1Formation, Formation team2Formation, Stadium stadium, Zone zone, int matchday) {
         super(date, team1, team2, referee, team1Formation, team2Formation, stadium);
         this.zone = zone;
+        this.MATCHDAY = matchday;
+    }
+
+    public int getMATCHDAY() {
+        return MATCHDAY;
     }
 
     public Zone getZone() {

@@ -1,6 +1,7 @@
 package controller;
 
 import controller.ZoneStageController;
+import model.FileReader;
 import model.Tournament;
 import view.mainwindow.MainWindowView;
 import view.mainwindow.SidebarItem;
@@ -62,18 +63,35 @@ public class MainWindowController {
     private void onResetTournament() {
         int confirm = JOptionPane.showConfirmDialog(
                 view,
-                "¿Are you sure? The current tournament will be lost.",
+                "Are you sure? The current tournament will be lost.",
                 "Reset tournament",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
-            // Acá reseteás el modelo de torneo o lo recargás desde JSON
-            // tournament.reset();
+            try {
+                // 1. Recargamos el modelo desde el JSON
+                this.tournament = FileReader.fileReader("torneo.json");
 
-            // Volvemos a cargar la pantalla de grupos limpia
-            navigateToGroups();
+                // 2. Volvemos a cargar la pantalla de grupos limpia con el nuevo torneo
+                navigateToGroups();
+
+                JOptionPane.showMessageDialog(
+                        view,
+                        "Tournament successfully reset!",
+                        "Reset Complete",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(
+                        view,
+                        "Error loading tournament file: " + e.getMessage(),
+                        "Error Resetting Tournament",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
         }
     }
+
 }

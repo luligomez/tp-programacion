@@ -1,5 +1,6 @@
 package model;
 
+import model.match.*;
 import model.match.Formation;
 import model.match.Match;
 import model.match.PlayerParticipation;
@@ -26,6 +27,14 @@ public class MatchSimulator {
 
     public static void simulateQuarterFinals(Tournament tournament) {
 
+        for (Match match : tournament.getMatches()) {
+
+            if (match instanceof FirstLegMatch ||
+                    match instanceof SecondLegMatch) {
+
+                simulateMatch(match);
+            }
+        }
     }
 
     public static void simulateSemifinals(Tournament tournament) {
@@ -510,4 +519,15 @@ public class MatchSimulator {
             }
         }
     }
+    public static void simulateSemiFinals(Tournament tournament) {
+
+        for (FirstLegMatch match : tournament.getSemiFinalMatches()) {
+            simulateMatch(match);
+        }
+
+        for (SecondLegMatch match : tournament.getSemiFinalSecondLegMatches()) {
+            simulateMatch(match);
+        }
+    }
+
 }

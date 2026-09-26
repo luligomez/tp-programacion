@@ -24,8 +24,13 @@ import static model.MatchSimulator.simulateMatch;
 public class Main {
     public static void main(String[] args) throws Exception {
         testUI();
-/*
-        Tournament tournament = fileReader("torneo.json");
+
+        Tournament tournament = model.FileReader.fileReader("torneo.json");
+
+        tournament.zoneDraw();
+
+        tournament.generateGroupStageMatches();
+        /*
         StadiumLoader loader = new StadiumLoader();
         tournament.addAllStadiums(loader.loadStadiums());
         tournament.zoneDraw();

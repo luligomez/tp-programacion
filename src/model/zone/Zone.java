@@ -230,8 +230,13 @@ public class Zone implements Serializable {
                 Team team2 = teamsInZone.get(numTeams-1-j);
                 Referee referee = selectValidReferee(team1, team2, referees);
                 //asignar estadio una vez hecha la BD
+
                 Stadium stadium = stadiums.isEmpty() ? null : stadiums.get(stadiumN % stadiums.size());
                 stadiumN++;
+
+                // crea formaciones de los equipos
+                Formation formation1 = createFormation(team1);
+                Formation formation2 = createFormation(team2);
 
 // Crear partido
                 GroupStageMatch match = new GroupStageMatch(
@@ -239,8 +244,8 @@ public class Zone implements Serializable {
                         team1,
                         team2,
                         referee,
-                        null,
-                        null,
+                        formation1,
+                        formation2,
                         stadium,
                         this,
                         day
@@ -254,6 +259,26 @@ public class Zone implements Serializable {
         }
     }
 
+    private Formation createFormation(Team team) {
+
+        Formation formation = new Formation();
+
+        ArrayList<Player> players = new ArrayList<>(team.getPlayers());
+
+        for (int i = 0; i < players.size(); i++) {
+
+            if (i < Formation.STARTERS_PER_TEAM) {
+                formation.addStarter(players.get(i));
+            } else {
+                formation.addSubstitutes(players.get(i));
+            }
+
+        }
+
+        return formation;
+    }
+
+
     private Referee selectValidReferee(Team team1, Team team2, ArrayList<Referee> referees) {
         for (Referee ref : referees) {
             String refCountry = ref.getNationality().getName();
@@ -266,5 +291,15 @@ public class Zone implements Serializable {
         //se asume que siempre va a haber un referee valido??
         return referees.getFirst();
     }
+    public ArrayList<Team> getQualifiedTeams() {
 
+        ArrayList<Team> qualifiedTeams = new ArrayList<>();
+
+        ArrayList<TeamStanding> sorted = getSortedStandings();
+
+        qualifiedTeams.add(sorted.get(0).getTeam());
+        qualifiedTeams.add(sorted.get(1).getTeam());
+
+        return qualifiedTeams;
+    }
 }

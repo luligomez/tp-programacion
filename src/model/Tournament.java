@@ -339,6 +339,7 @@ public class Tournament implements Serializable {
         return quarterFinalSecondLegMatches;
 
     }
+
     public ArrayList<Team> getQuarterFinalWinners() {
 
         ArrayList<Team> winners = new ArrayList<>();
@@ -429,11 +430,12 @@ public class Tournament implements Serializable {
 
 
         matches.add(finalMatch);
+    }
     public int getCurrentMatchday() {
         return currentMatchday;
     }
 
-    public void setCurrentMatchday(int currentMatchday) {
+    public void setCurrentMatchday ( int currentMatchday){
         this.currentMatchday = currentMatchday;
     }
 }

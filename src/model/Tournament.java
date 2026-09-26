@@ -28,6 +28,7 @@ public class Tournament implements Serializable {
     private ArrayList<Referee> referees = new ArrayList<>();
     private transient ArrayList<Stadium> stadiums = new ArrayList<>(); //no se guardan los estadios, se consultan nuevamente de la bbdd
     private TournamentState state = TournamentState.NOT_DRAWN;
+    private int currentMatchday = 1; // Controla la fecha actual (1, 2 o 3)
 
 
     public Tournament() {
@@ -232,6 +233,7 @@ public class Tournament implements Serializable {
 
     public void confirmDraw() {
         state = GROUP_STAGE;
+        this.generateGroupStageMatches();
     }
 
     public void resetDraw() {
@@ -427,5 +429,11 @@ public class Tournament implements Serializable {
 
 
         matches.add(finalMatch);
+    public int getCurrentMatchday() {
+        return currentMatchday;
+    }
+
+    public void setCurrentMatchday(int currentMatchday) {
+        this.currentMatchday = currentMatchday;
     }
 }

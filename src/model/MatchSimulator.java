@@ -1,10 +1,12 @@
 package model;
 
 import model.match.*;
+import model.match.Formation;
+import model.match.Match;
+import model.match.PlayerParticipation;
 import model.match.incident.*;
 import model.person.Position;
 import model.person.player.FieldPlayer.FieldPlayer;
-import model.zone.Zone;
 import model.person.player.Player;
 
 import java.util.*;
@@ -13,34 +15,14 @@ public class MatchSimulator {
 
     //simular X fecha de la fase de grupos, de cada zona (fecha 1, 2, o 3)
     public static void simulateMatchday(Tournament tournament, int matchday) {
-        for (Zone zone : tournament.getZones()) {
-            GroupStageMatch match1;
-            GroupStageMatch match2;
-
-            switch (matchday) {
-                case 1:
-                    match1 = zone.getGroupStageMatches().get(0);
-                    match2 = zone.getGroupStageMatches().get(5);
-                    break;
-                case 2:
-                    match1 = zone.getGroupStageMatches().get(1);
-                    match2 = zone.getGroupStageMatches().get(4);
-                    break;
-                case 3:
-                    match1 = zone.getGroupStageMatches().get(2);
-                    match2 = zone.getGroupStageMatches().get(3);
-                    break;
-                default:
-                    throw new RuntimeException("Invalid matchday.");
-            }
-
-            // Simulamos y registramos
-            simulateMatch(match1);
-            zone.registerMatchResult(match1);
-
-            simulateMatch(match2);
-            zone.registerMatchResult(match2);
-        }
+        tournament.getZones().forEach(zone -> {
+            zone.getGroupStageMatches().stream()
+                    .filter(match -> match.getMATCHDAY() == matchday && !match.isPlayed())
+                    .forEach(match -> {
+                        simulateMatch(match);
+                        zone.registerMatchResult(match);
+                    });
+        });
     }
 
     public static void simulateQuarterFinals(Tournament tournament) {
@@ -308,20 +290,12 @@ public class MatchSimulator {
                 finishing = ((FieldPlayer) p).getATTRIBUTES().getFINISHING();
             }
 
-            switch (p.getPosition()) {
-                case FORWARD:
-                    weight = 60.0 + finishing;
-                    break;
-                case MIDFIELDER:
-                    weight = 20.0 + (finishing * 0.5);
-                    break;
-                case DEFENDER:
-                    weight = 3.0 + (finishing * 0.1);
-                    break;
-                case GOALKEEPER:
-                    weight = 0.0001;
-                    break;
-            }
+            weight = switch (p.getPosition()) {
+                case FORWARD -> 60.0 + finishing;
+                case MIDFIELDER -> 20.0 + (finishing * 0.5);
+                case DEFENDER -> 3.0 + (finishing * 0.1);
+                case GOALKEEPER -> 0.0001;
+            };
 
             weights.put(p, weight);
             totalWeight += weight;

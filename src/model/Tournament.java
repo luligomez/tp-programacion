@@ -344,7 +344,7 @@ public class Tournament implements Serializable {
         }
     }
 
-    public void assignFormationsForSecondLeg(KnockoutPhase phase) { //TODO llamar a este metodo luego de simular firstleg de cuartos/semis
+    public void assignFormationsForSecondLeg(KnockoutPhase phase) { //TODO llamar a este metodo luego de simular firstleg de cuartos/semis en controlador
         this.knockoutTies.stream()
                 .filter(tie -> tie.getPhase() == phase)
             .map(KnockoutTie::getSecondLeg)

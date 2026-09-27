@@ -83,6 +83,8 @@ public class ZoneStageController {
         // 4. Si acabamos de completar la fecha 3, deshabilitamos el botón
         if (tournament.getCurrentMatchday() > 3 && standingsPanel != null) {
             standingsPanel.disableSimulateButton();
+        } else {
+            tournament.assignFormationsForMatchday(tournament.getCurrentMatchday());
         }
     }
 

@@ -1,10 +1,10 @@
 package model;
 
-import model.match.*;
 import model.match.Formation;
 import model.match.Match;
 import model.match.PlayerParticipation;
 import model.match.incident.*;
+import model.match.knockout.*;
 import model.person.Position;
 import model.person.player.FieldPlayer.FieldPlayer;
 import model.person.player.Player;
@@ -25,23 +25,93 @@ public class MatchSimulator {
         });
     }
 
-    public static void simulateQuarterFinals(Tournament tournament) {
 
-        for (Match match : tournament.getMatches()) {
+    public static void simulateFirstLeg(Tournament tournament, KnockoutPhase phase) {
 
-            if (match instanceof FirstLegMatch ||
-                    match instanceof SecondLegMatch) {
+        for (KnockoutTie tie : tournament.getKnockoutTies()) {
+            if(tie.getPhase().equals(phase))
+                simulateMatch(tie.getFirstLeg());
+        }
+    }
 
+    public static void simulateSecondLeg(Tournament tournament, KnockoutPhase phase) {
+
+        for (KnockoutTie tie : tournament.getKnockoutTies()) {
+            if(tie.getPhase().equals(phase)) {
+                Match match = tie.getSecondLeg();
                 simulateMatch(match);
+                resolveTieIfNeeded(tie);
             }
         }
     }
 
-    public static void simulateSemifinals(Tournament tournament) {
-        // ...
+    public static void resolveTieIfNeeded(KnockoutTie tie) {
+        if (tie.needsPenaltyShootout()) {
+            simulatePenaltyShootout(tie.getSecondLeg());
+        }
     }
 
+    private static void simulatePenaltyShootout(KnockoutMatch knockoutMatch) {
+
+        knockoutMatch.setPenalties(new PenaltyShootout(knockoutMatch.getTeam1(), knockoutMatch.getTeam2()));
+        Team team1 = knockoutMatch.getTeam1();
+        Team team2 = knockoutMatch.getTeam2();
+
+        List<Player> shootersTeam1 = selectPenaltyOrder(team1, knockoutMatch);
+        List<Player> shootersTeam2 = selectPenaltyOrder(team2, knockoutMatch);
+
+        Random random = new Random();
+        int scoredTeam1 = 0, scoredTeam2 = 0;
+        int round = 0;
+
+        // primeros 5 penales obligatorios por equipo
+        while (round < 5) {
+            boolean scored1 = simulatePenaltyKick(team1, shootersTeam1.get(round), knockoutMatch, random);
+            if (scored1) scoredTeam1++;
+
+            boolean scored2 = simulatePenaltyKick(team2, shootersTeam2.get(round), knockoutMatch, random);
+            if (scored2) scoredTeam2++;
+
+            round++;
+        }
+
+        // muerte súbita si sigue empatado, reutilizando jugadores en orden
+        while (scoredTeam1 == scoredTeam2) {
+            Player shooter1 = shootersTeam1.get(round % shootersTeam1.size());
+            Player shooter2 = shootersTeam2.get(round % shootersTeam2.size());
+
+            if (simulatePenaltyKick(team1, shooter1, knockoutMatch, random)) scoredTeam1++;
+            if (simulatePenaltyKick(team2, shooter2, knockoutMatch, random)) scoredTeam2++;
+
+            round++;
+        }
+    }
+
+    private static boolean simulatePenaltyKick(Team team, Player shooter, KnockoutMatch match, Random random) {
+        double conversionChance = 0.75; // base
+        if (shooter instanceof FieldPlayer fieldPlayer) {
+            conversionChance = 0.55 + (fieldPlayer.getATTRIBUTES().getFINISHING() / 250.0); // ajustable
+        }
+        boolean scored = random.nextDouble() < conversionChance;
+
+        match.getPenalties().addKick(team, shooter, scored);
+        return scored;
+    }
+
+    private static List<Player> selectPenaltyOrder(Team team, KnockoutMatch knockoutMatch) {
+        // acá elegís qué 5 (o más) jugadores patean, priorizando por finishing/mentalidad
+        // por simplicidad, podés tomar los titulares de campo con mejor finishing + el arquero al final
+        return knockoutMatch.getTeam1Formation().getStarters(); //TODO ELEGIR orden de PATEADORES (USAR LOS JUGADORES EN CANCHA)
+    }
+
+
     public static void simulateFinal(Tournament tournament) {
+
+        KnockoutMatch match = tournament.getFinalMatch();
+        simulateMatch(match);
+        if(match.getWinner()==null){
+            simulatePenaltyShootout(match);
+        }
 
     }
 
@@ -56,8 +126,6 @@ public class MatchSimulator {
 
         Team team1 = match.getTeam1();
         Team team2 = match.getTeam2();
-        match.setTeam1Formation(FormationCreator.createAutomaticFormation(team1));
-        match.setTeam2Formation(FormationCreator.createAutomaticFormation(team2));
 
         Formation form1 = match.getTeam1Formation();
         Formation form2 = match.getTeam2Formation();
@@ -519,6 +587,7 @@ public class MatchSimulator {
             }
         }
     }
+   /*
     public static void simulateSemiFinals(Tournament tournament) {
 
         for (FirstLegMatch match : tournament.getSemiFinalMatches()) {
@@ -529,5 +598,5 @@ public class MatchSimulator {
             simulateMatch(match);
         }
     }
-
+*/
 }

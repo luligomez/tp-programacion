@@ -8,7 +8,6 @@ import model.person.player.Player;
 import model.place.Stadium;
 import model.Team;
 import model.person.Referee;
-import model.match.incident.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -43,6 +42,19 @@ public abstract class Match implements Serializable {
         this.team2Goals = -1;
         this.team1Formation = team1Formation;
         this.team2Formation = team2Formation;
+        this.stadium = stadium;
+    }
+    public Match(LocalDate date, Team team1, Team team2, Referee referee, Stadium stadium) {
+
+        this.date = date;
+        this.team1 = team1;
+        this.team2 = team2;
+        this.referee = referee;
+        this.incidents = new ArrayList<>();
+        this.team1Goals = -1; //(no jugado aun)
+        this.team2Goals = -1;
+        this.team1Formation = null;
+        this.team2Formation = null;
         this.stadium = stadium;
     }
 
@@ -88,30 +100,34 @@ public abstract class Match implements Serializable {
         incidents.add(incident);
 
         // 1. GOLES
-        if (incident instanceof Goal goal) {
-            if (!goal.isOwnGoal() && goal.getScorer() != null) {
-                goal.getScorer()
-                        .getTournamentStats()
-                        .registerGoal(goal.isPenalty());
-            }
-        }
-        // 2. AMARILLAS
-        else if (incident instanceof YellowCard yc) {
-            if (yc.getPlayer() != null) {
-                yc.getPlayer()
-                        .getTournamentStats()
-                        .registerStandaloneYellow();
-            }
-        }
-        // 3. EXPULSIONES
-        else if (incident instanceof Expulsion exp) {
-            if (exp.getPlayer() != null) {
-                if (exp.isDoubleYellow()) {
-                    exp.getPlayer().getTournamentStats().revertStandaloneYellow();
-                    exp.getPlayer().getTournamentStats().registerDoubleYellowExpulsion();
-                } else {
-                    exp.getPlayer().getTournamentStats().registerDirectRed();
+        switch (incident) {
+            case Goal goal -> {
+                if (!goal.isOwnGoal() && goal.getScorer() != null) {
+                    goal.getScorer()
+                            .getTournamentStats()
+                            .registerGoal(goal.isPenalty());
                 }
+            }
+            // 2. AMARILLAS
+            case YellowCard yc -> {
+                if (yc.getPlayer() != null) {
+                    yc.getPlayer()
+                            .getTournamentStats()
+                            .registerStandaloneYellow();
+                }
+            }
+            // 3. EXPULSIONES
+            case Expulsion exp -> {
+                if (exp.getPlayer() != null) {
+                    if (exp.isDoubleYellow()) {
+                        exp.getPlayer().getTournamentStats().revertStandaloneYellow();
+                        exp.getPlayer().getTournamentStats().registerDoubleYellowExpulsion();
+                    } else {
+                        exp.getPlayer().getTournamentStats().registerDirectRed();
+                    }
+                }
+            }
+            default -> {
             }
         }
     }

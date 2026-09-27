@@ -1,10 +1,9 @@
 package model.zone;
 
 import model.Team;
-import model.match.Formation;
+import model.Tournament;
 import model.match.GroupStageMatch;
 import model.person.Referee;
-import model.person.player.Player;
 import model.place.Stadium;
 
 import java.io.Serial;
@@ -224,32 +223,23 @@ public class Zone implements Serializable {
         int numTeams = teamsInZone.size();
         int numMatchdays = numTeams - 1;
         int matchesPerDay = numTeams / 2;
-        int stadiumN=0;
 
         for (int day = 1; day <= numMatchdays; day++) {
             for (int j = 0; j <matchesPerDay; j++) {
                 Team team1 = teamsInZone.get(j);
                 Team team2 = teamsInZone.get(numTeams-1-j);
-                Referee referee = selectValidReferee(team1, team2, referees);
+                Referee referee = Tournament.pickValidReferee(team1, team2, referees);
                 //asignar estadio una vez hecha la BD
 
-                Stadium stadium = stadiums.isEmpty() ? null : stadiums.get(stadiumN % stadiums.size());
-                stadiumN++;
+                Stadium stadium = Tournament.pickRandomStadium(stadiums);
 
-                // crea formaciones de los equipos
-                Formation formation1 = createFormation(team1);
-                Formation formation2 = createFormation(team2);
-
-// Crear partido
+            // Crear partido
                 GroupStageMatch match = new GroupStageMatch(
                         LocalDate.now(),
                         team1,
                         team2,
                         referee,
-                        formation1,
-                        formation2,
                         stadium,
-                        this,
                         day
                 );
 
@@ -261,38 +251,7 @@ public class Zone implements Serializable {
         }
     }
 
-    private Formation createFormation(Team team) {
 
-        Formation formation = new Formation();
-
-        ArrayList<Player> players = new ArrayList<>(team.getPlayers());
-
-        for (int i = 0; i < players.size(); i++) {
-
-            if (i < Formation.STARTERS_PER_TEAM) {
-                formation.addStarter(players.get(i));
-            } else {
-                formation.addSubstitutes(players.get(i));
-            }
-
-        }
-
-        return formation;
-    }
-
-
-    private Referee selectValidReferee(Team team1, Team team2, ArrayList<Referee> referees) {
-        for (Referee ref : referees) {
-            String refCountry = ref.getNationality().getName();
-            String team1Country = team1.getCountry().getName();
-            String team2Country = team2.getCountry().getName();
-            if (!refCountry.equals(team1Country) && !refCountry.equals(team2Country)) {
-                return ref;
-            }
-        }
-        //se asume que siempre va a haber un referee valido??
-        return referees.getFirst();
-    }
     public ArrayList<Team> getQualifiedTeams() {
 
         ArrayList<Team> qualifiedTeams = new ArrayList<>();
@@ -304,4 +263,6 @@ public class Zone implements Serializable {
 
         return qualifiedTeams;
     }
+
+
 }

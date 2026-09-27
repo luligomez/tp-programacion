@@ -2,6 +2,7 @@ package controller;
 
 import controller.ZoneStageController;
 import model.FileReader;
+import model.StadiumLoader;
 import model.Tournament;
 import view.mainwindow.MainWindowView;
 import view.mainwindow.SidebarItem;
@@ -73,7 +74,7 @@ public class MainWindowController {
             try {
                 // 1. Recargamos el modelo desde el JSON
                 this.tournament = FileReader.fileReader("torneo.json");
-
+                this.tournament.setStadiums(StadiumLoader.loadStadiums());
                 // 2. Volvemos a cargar la pantalla de grupos limpia con el nuevo torneo
                 navigateToGroups();
 

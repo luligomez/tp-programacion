@@ -56,6 +56,7 @@ public class FormationCreator {
 
         return formation;
     }
+    
 
     // elegir cant de jugadores de una posición específica según la forma del día
     private static void selectBestForPosition(List<Player> pool, Formation formation,

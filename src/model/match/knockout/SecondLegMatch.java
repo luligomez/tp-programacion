@@ -1,20 +1,17 @@
-package model.match;
+package model.match.knockout;
 
-import model.match.knockout.KnockoutMatch;
-import model.match.knockout.PenaltyShootout;
+import model.match.Formation;
 import model.place.Stadium;
 import model.Team;
 import model.person.Referee;
 
 import java.time.LocalDate;
 
-public class FinalMatch extends KnockoutMatch {
+public class SecondLegMatch extends KnockoutMatch {
 
-    public FinalMatch(LocalDate date, Team team1, Team team2, Referee referee, Formation team1Formation, Formation team2Formation, Stadium stadium) {
+    public SecondLegMatch(LocalDate date, Team team1, Team team2, Referee referee, Formation team1Formation, Formation team2Formation, Stadium stadium) {
         super(date, team1, team2, referee, team1Formation, team2Formation, stadium);
     }
-
-
 
     @Override
     public Team getWinner() {
@@ -26,10 +23,9 @@ public class FinalMatch extends KnockoutMatch {
             super.setWinningCriteria("Higher number of goals in 90 minutes");
             return getTeam2();
         }
-        //se define por penales
-        super.setWinningCriteria("Won on penalties");
         PenaltyShootout penaltyShootout = super.getPenalties();
         return penaltyShootout == null ? null : penaltyShootout.getWinner();
     }
+
 
 }

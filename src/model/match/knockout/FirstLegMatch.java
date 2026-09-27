@@ -1,5 +1,7 @@
-package model.match;
+package model.match.knockout;
 
+import model.match.Formation;
+import model.match.Match;
 import model.place.Stadium;
 import model.Team;
 import model.person.Referee;

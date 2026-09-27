@@ -4,6 +4,8 @@ import model.FileReader;
 import model.MatchSimulator;
 import model.Tournament;
 import model.match.*;
+import model.match.knockout.FirstLegMatch;
+import model.match.knockout.SecondLegMatch;
 import model.zone.TeamStanding;
 import model.zone.Zone;
 import model.Team;
@@ -12,7 +14,7 @@ import model.Team;
 public class GroupStageDemo {
 
     public static void main(String[] args) throws Exception {
-
+/*
         Tournament tournament = FileReader.fileReader("torneo.json");
 
         tournament.zoneDraw();
@@ -172,7 +174,7 @@ public class GroupStageDemo {
 
         System.out.println("\n===== SIMULANDO FINAL =====");
 
-        for (Match match : tournament.getMatches()) {
+        for (Match match : tournament.getAllMatches()) {
 
             if (match instanceof FinalMatch) {
 
@@ -196,7 +198,7 @@ public class GroupStageDemo {
         }
         System.out.println("\n===== FINAL =====");
 
-        for (Match match : tournament.getMatches()) {
+        for (Match match : tournament.getAllMatches()) {
 
             if (match instanceof FinalMatch) {
 
@@ -207,7 +209,7 @@ public class GroupStageDemo {
                 );
             }
         }
-
+*/
     }
 
 }

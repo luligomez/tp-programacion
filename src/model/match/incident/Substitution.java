@@ -32,4 +32,11 @@ public class Substitution extends Incident {
     public void setPlayerIn(Player playerIn) {
         this.playerIn = playerIn;
     }
+
+    @Override
+    public String toString() {
+        String outName = (playerOut != null) ? playerOut.getName() : "Out";
+        String inName = (playerIn != null) ? playerIn.getName() : "In";
+        return super.toString()+" | 🔄 Sub: Out " + outName + " ➔ In " + inName;
+    }
 }

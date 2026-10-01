@@ -16,8 +16,10 @@ import view.mainwindow.MainWindowView;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import static model.MatchSimulator.simulateMatch;
+import static model.MatchSimulator.simulatePenaltyShootout;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -25,14 +27,16 @@ public class Main {
         testTorneo();
         //testGroupMatch();
         //testSingleMatch();
-/*
+        /*
         Tournament tournament = model.FileReader.fileReader("torneo.json");
-
+        StadiumLoader.initDatabase();
+        tournament.setStadiums(StadiumLoader.loadStadiums());
         tournament.zoneDraw();
-
         tournament.generateGroupStageMatches();
+        testGroupMatch(tournament,0);
+        */
+        //simulateGroupStage(tournament);
 
- */
 
     }
 
@@ -139,37 +143,7 @@ public class Main {
         System.out.println("\n=== INCIDENCIAS DEL PARTIDO (" + incidents.size() + " en total) ===");
 
         for (Incident incident : incidents) {
-            int min = incident.getMinute();
-
-            if (incident instanceof Goal) {
-                Goal g = (Goal) incident;
-                String detail = g.isOwnGoal() ? " (En Contra)" : (g.isPenalty() ? " (Penal)" : "");
-                String gkInfo = (g.getGoalkeeper() != null) ? " [Arquero rival: " + g.getGoalkeeper().getName() + "]" : "";
-                System.out.printf("Min %2d' | ⚽ GOL de %s %s%s%n",
-                        min, g.getScorer().getName(), detail, gkInfo);
-
-            } else if (incident instanceof Substitution) {
-                Substitution sub = (Substitution) incident;
-                System.out.printf("Min %2d' | 🔄 CAMBIO: Sale %s ➔ Entra %s %n",
-                        min, sub.getPlayerOut().getName(),
-                        sub.getPlayerIn().getName());
-
-            } else if (incident instanceof Expulsion) {
-                Expulsion exp = (Expulsion) incident;
-                System.out.printf("Min %2d' | 🟥 EXPULSIÓN: %s %n",
-                        min, exp.getPlayer().getName());
-
-            } else if (incident instanceof YellowCard) {
-                YellowCard yc = (YellowCard) incident;
-                System.out.printf("Min %2d' | 🟨 AMARILLA: %s %n",
-                        min, yc.getPlayer().getName());
-
-            } else if (incident instanceof PenaltyTaken) {
-                PenaltyTaken pt = (PenaltyTaken) incident;
-                String estado = pt.isScored() ? "Convertido" : "Errado/Atajado";
-                System.out.printf("Min %2d' | 🥅 PENAL EJECUTADO por %s: %s%n",
-                        min, pt.getPlayer().getName(), estado);
-            }
+            System.out.println(incident.toString());
         }
         // 5. Revisar las participaciones y minutos jugados
         System.out.println("\n=== PARTICIPACIONES (PlayerParticipations) ===");
@@ -218,37 +192,7 @@ public class Main {
             System.out.println("\n=== INCIDENCIAS DEL PARTIDO (" + incidents.size() + " en total) ===");
 
             for (Incident incident : incidents) {
-                int min = incident.getMinute();
-
-                if (incident instanceof Goal) {
-                    Goal g = (Goal) incident;
-                    String detail = g.isOwnGoal() ? " (En Contra)" : (g.isPenalty() ? " (Penal)" : "");
-                    String gkInfo = (g.getGoalkeeper() != null) ? " [Arquero rival: " + g.getGoalkeeper().getName() + "]" : "";
-                    System.out.printf("Min %2d' | ⚽ GOL de %s %s%s%n",
-                            min, g.getScorer().getName(), detail, gkInfo);
-
-                } else if (incident instanceof Substitution) {
-                    Substitution sub = (Substitution) incident;
-                    System.out.printf("Min %2d' | 🔄 CAMBIO: Sale %s (%s)➔ Entra %s (%s) %n",
-                            min, sub.getPlayerOut().getName(), sub.getPlayerOut().getPosition(),
-                            sub.getPlayerIn().getName(), sub.getPlayerIn().getPosition());
-
-                } else if (incident instanceof Expulsion) {
-                    Expulsion exp = (Expulsion) incident;
-                    System.out.printf("Min %2d' | 🟥 EXPULSIÓN: %s %n",
-                            min, exp.getPlayer().getName());
-
-                } else if (incident instanceof YellowCard) {
-                    YellowCard yc = (YellowCard) incident;
-                    System.out.printf("Min %2d' | 🟨 AMARILLA: %s %n",
-                            min, yc.getPlayer().getName());
-
-                } else if (incident instanceof PenaltyTaken) {
-                    PenaltyTaken pt = (PenaltyTaken) incident;
-                    String estado = pt.isScored() ? "Convertido" : "Errado/Atajado";
-                    System.out.printf("Min %2d' | 🥅 PENAL EJECUTADO por %s: %s%n",
-                            min, pt.getPlayer().getName(), estado);
-                }
+                System.out.println(incident.toString());
             }
         }
     }
@@ -320,15 +264,18 @@ public class Main {
         System.out.println("\n---> SIMULANDO PARTIDOS DE IDA <---");
         for (KnockoutTie tie : tournament.getKnockoutTies()) {
             FirstLegMatch firstLeg = tie.getFirstLeg();
+            printMatchIncidents(firstLeg);
             System.out.println(" Ida: " + firstLeg.getTeam1().getName() + " "
                     + firstLeg.getTeam1Goals() + " - "
                     + firstLeg.getTeam2Goals() + " " + firstLeg.getTeam2().getName());
+
         }
         tournament.simulateKnockoutSecondLeg(KnockoutPhase.QUARTER_FINAL);
 
         System.out.println("\n---> SIMULANDO PARTIDOS DE VUELTA Y RESOLUCIÓN <---");
         for (KnockoutTie tie : tournament.getKnockoutTies()) {
             SecondLegMatch secondLegMatch = tie.getSecondLeg();
+            printMatchIncidents(secondLegMatch);
 
             // 1. Calcular marcador acumulado (Global)
             int totalGolesTeam1 = tie.getFirstLeg().getTeam1Goals() + secondLegMatch.getTeam2Goals();
@@ -372,6 +319,7 @@ public class Main {
         for (KnockoutTie tie : tournament.getKnockoutTies()) {
             if(tie.getPhase().equals(KnockoutPhase.SEMI_FINAL)) {
                 FirstLegMatch firstLeg = tie.getFirstLeg();
+                printMatchIncidents(firstLeg);
                 System.out.println(" Ida: " + firstLeg.getTeam1().getName() + " "
                         + firstLeg.getTeam1Goals() + " - "
                         + firstLeg.getTeam2Goals() + " " + firstLeg.getTeam2().getName());
@@ -383,6 +331,7 @@ public class Main {
         for (KnockoutTie tie : tournament.getKnockoutTies()) {
             if(tie.getPhase().equals(KnockoutPhase.SEMI_FINAL)) {
                 SecondLegMatch secondLegMatch = tie.getSecondLeg();
+                printMatchIncidents(secondLegMatch);
 
                 // 1. Calcular marcador acumulado (Global)
                 int totalGolesTeam1 = tie.getFirstLeg().getTeam1Goals() + secondLegMatch.getTeam2Goals();
@@ -423,6 +372,7 @@ public class Main {
         // FASE 5: SIMULACIÓN DE FINAL
         // -------------------------------------------------------------
         System.out.println("\n---> SIMULANDO FINAL <---");
+        printMatchIncidents(m);
         System.out.println(" Final: " + m.getTeam1().getName() + " "
                         + m.getTeam1Goals() + " - "
                         + m.getTeam2Goals() + " " + m.getTeam2().getName());
@@ -436,8 +386,22 @@ public class Main {
         // 5. Imprimir el ganador de la llave
         System.out.println(" ==> GANADOR: " + m.getWinner().getName().toUpperCase());
 
-
-
     }
+
+    private static void printMatchIncidents(Match match) {
+        ArrayList<Incident> incidents = new ArrayList<>(match.getIncidents());
+        incidents.sort(Comparator.comparingInt(Incident::getMinute));
+
+        if (incidents.isEmpty()) {
+            System.out.println("   (No incidents)");
+            return;
+        }
+
+        System.out.println("   --- Incidents (" + incidents.size() + ") ---");
+        for (Incident incident : incidents) {
+            System.out.println("   " + incident);
+        }
+    }
+
 
 }

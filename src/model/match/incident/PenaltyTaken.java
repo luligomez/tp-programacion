@@ -32,4 +32,11 @@ public class PenaltyTaken extends Incident {
     public void setScored(boolean scored) {
         this.scored = scored;
     }
+
+    @Override
+    public String toString() {
+        String shooter = (player != null) ? player.getName() : "Unknown";
+        String scoredStr = (scored) ? "Penalty Scored!" : "Penalty Missed!";
+        return super.toString()+" | 🥅 "+scoredStr+" Shooter: " + shooter;
+    }
 }

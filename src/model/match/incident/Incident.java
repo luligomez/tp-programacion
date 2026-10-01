@@ -19,4 +19,8 @@ public abstract class Incident implements Serializable {
     public void setMinute(int minute) {
         this.minute = minute;
     }
+
+    public String toString(){
+        return "Min " + minute + "'";
+    }
 }

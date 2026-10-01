@@ -25,4 +25,10 @@ public class Expulsion extends Incident {
         return doubleYellow;
     }
 
+    @Override
+    public String toString() {
+        String pName = (player != null) ? player.getName() : "Player";
+        String type = doubleYellow ? " (2nd Yellow)" : " (Direct Red)";
+        return super.toString()+ " | 🟥 Red Card: " + pName + type;
+    }
 }

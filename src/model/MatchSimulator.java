@@ -354,9 +354,9 @@ public class MatchSimulator {
                 default -> weight = 10.0;
             }
 
-            // REDUCCIÓN POR PRUDENCIA: Si ya tiene 1 amarilla, juega con más cuidado (se reduce su peso un 40%)
+            // REDUCCIÓN POR PRUDENCIA: Si ya tiene 1 amarilla, juega con más cuidado (se reduce su peso un 35%)
             if (yellowCardsMap.getOrDefault(p, 0) == 1) {
-                weight *= 0.6;
+                weight *= 0.65;
             }
 
             weights.put(p, weight);

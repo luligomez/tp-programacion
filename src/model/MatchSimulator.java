@@ -51,12 +51,8 @@ public class MatchSimulator {
     }
 
     private static boolean simulatePenaltyKick(Team team, Player shooter, KnockoutMatch match, Random random) {
-        double conversionChance = 0.75; // base
-        if (shooter instanceof FieldPlayer fieldPlayer) {
-            conversionChance = 0.55 + (fieldPlayer.getATTRIBUTES().getFINISHING() / 250.0); // ajustable
-        }
+        double conversionChance = shooter.getPenaltyConversionChance();
         boolean scored = random.nextDouble() < conversionChance;
-
         match.getPenalties().addKick(team, shooter, scored);
         return scored;
     }
@@ -312,19 +308,7 @@ public class MatchSimulator {
         // Calcular el peso para cada jugador según su posición y Finishing
         for (Player p : activePlayers) {
             double weight = 0.0;
-
-            // Obtener el Finishing si es un FieldPlayer
-            int finishing = 0;
-            if (p instanceof FieldPlayer) {
-                finishing = ((FieldPlayer) p).getATTRIBUTES().getFINISHING();
-            }
-
-            weight = switch (p.getPosition()) {
-                case FORWARD -> 60.0 + finishing;
-                case MIDFIELDER -> 20.0 + (finishing * 0.5);
-                case DEFENDER -> 3.0 + (finishing * 0.1);
-                case GOALKEEPER -> 0.0001;
-            };
+            weight = p.getGoalScoringWeight();
 
             weights.put(p, weight);
             totalWeight += weight;

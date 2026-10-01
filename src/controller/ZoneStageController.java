@@ -75,12 +75,6 @@ public class ZoneStageController {
                 standingsPanel.setMatchdayLabel(tournament.getCurrentMatchday());
             }
         }
-        JOptionPane.showMessageDialog(
-                view,
-                "Matchday " + currentDay + " successfully simulated!",
-                "Matchday Complete",
-                JOptionPane.INFORMATION_MESSAGE
-        );
     }
 
     private void onDrawCompleted() {

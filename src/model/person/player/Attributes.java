@@ -10,4 +10,8 @@ public abstract class Attributes implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public abstract double calculateScore(Position position);
+
+    public abstract double calculatePenaltyConversionChance();
+
+    public abstract double calculateGoalScoringWeight(Position position);
 }

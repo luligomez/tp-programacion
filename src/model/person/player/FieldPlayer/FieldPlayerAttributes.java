@@ -76,4 +76,20 @@ public class FieldPlayerAttributes extends Attributes {
                 throw new IllegalArgumentException("Invalid position for FieldPlayer: " + position);
         }
     }
+
+    @Override
+    public double calculatePenaltyConversionChance() {
+        return 0.55 + (FINISHING / 250.0);
+    }
+
+    @Override
+    public double calculateGoalScoringWeight(Position position) {
+        return switch (position) {
+            case FORWARD -> 60.0 + FINISHING;
+            case MIDFIELDER -> 20.0 + (FINISHING * 0.5);
+            case DEFENDER -> 3.0 + (FINISHING * 0.1);
+            case null, default -> 0.0001;
+        };
+    }
 }
+

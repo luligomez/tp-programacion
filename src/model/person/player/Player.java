@@ -13,17 +13,21 @@ public abstract class Player extends Person {
     private Position position;
     private final int RATING;
     private TournamentStats tournamentStats;
+    protected Attributes attributes;
+    protected CareerStats careerStats;
 
 
     public Player(String name, LocalDate birthDate,
                   String documentType, String documentNumber,
-                  Position position, int rating) {
+                  Position position, int rating, Attributes attributes, CareerStats careerStats) {
 
         super(name, birthDate, documentType, documentNumber);
 
         this.position = position;
         this.RATING = rating;
         this.tournamentStats = new TournamentStats();
+        this.attributes=attributes;
+        this.careerStats=careerStats;
     }
 
     public Position getPosition() {
@@ -40,6 +44,21 @@ public abstract class Player extends Person {
 
     public TournamentStats getTournamentStats() {
         return tournamentStats;
+    }
+
+    public Attributes getAttributes() {
+        return attributes;
+    }
+
+    public CareerStats getCareerStats() {
+        return careerStats;
+    }
+
+    public double getPenaltyConversionChance(){
+        return attributes.calculatePenaltyConversionChance();
+    }
+    public double getGoalScoringWeight() {
+        return attributes.calculateGoalScoringWeight(position);
     }
 
 }

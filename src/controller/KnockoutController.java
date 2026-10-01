@@ -14,8 +14,6 @@ public class KnockoutController {
 
     private final KnockoutView view;
     private final Tournament tournament;
-    private boolean firstLegPlayed=false;
-    private boolean secondLegPlayed = false;
 
     public KnockoutController(KnockoutView view, Tournament tournament) {
         this.view = view;
@@ -27,40 +25,41 @@ public class KnockoutController {
     private void initController() {
         view.setOnSimulateListener(this::simulateNextRound);
 
-        // Los cuartos se generan solo la primera vez
-        if (tournament.getKnockoutTies().isEmpty()) {
-            tournament.generateQuarterFinals();
-        }
-
         view.setPhaseTitle("Quarter Finals");
-        view.setSimulateButtonText("Simulate Quarter Finals: First Leg ⚽");
-        view.showTies(tournament.getKnockoutTies(), false);
+
+        updateView();
     }
 
-    private void assignSecondLegFormations() {
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
-            if (tie.getPhase() == KnockoutPhase.QUARTER_FINAL) {
-                SecondLegMatch secondLeg = tie.getSecondLeg();
-                secondLeg.setTeam1Formation(FormationCreator.createAutomaticFormation(secondLeg.getTeam1()));
-                secondLeg.setTeam2Formation(FormationCreator.createAutomaticFormation(secondLeg.getTeam2()));
-            }
+    private void updateView() {
+        // Consultar el estado real de los partidos en el modelo
+        boolean firstLegPlayed = tournament.isFirstLegPlayed(KnockoutPhase.QUARTER_FINAL);
+        boolean secondLegPlayed = tournament.isSecondLegPlayed(KnockoutPhase.QUARTER_FINAL);
+
+        if (!firstLegPlayed) {
+            // Estado 1: No se jugó la ida
+            view.setSimulateButtonText("Simulate Quarter Finals: First Leg ⚽");
+            view.showTies(tournament.getKnockoutTies(), false);
+        } else if (!secondLegPlayed) {
+            // Estado 2: Ya se jugó la ida, falta la vuelta (se muestran los resultados de la ida)
+            view.setSimulateButtonText("Simulate Quarter Finals: Second Leg ⚽");
+            view.showTies(tournament.getKnockoutTies(), true);
+        } else {
+            // Estado 3: Serie de cuartos completada
+            view.setSimulateButtonText("Quarter Finals completed 🏁");
+            view.disableSimulateButton();
+            view.showTies(tournament.getKnockoutTies(), true);
         }
     }
 
     private void simulateNextRound() {
+        boolean firstLegPlayed = tournament.isFirstLegPlayed(KnockoutPhase.QUARTER_FINAL);
+        boolean secondLegPlayed = tournament.isSecondLegPlayed(KnockoutPhase.QUARTER_FINAL);
         if (!firstLegPlayed) {
-            MatchSimulator.simulateFirstLeg(tournament, KnockoutPhase.QUARTER_FINAL);
-            firstLegPlayed = true;
-            view.showTies(tournament.getKnockoutTies(), true);
-            view.setSimulateButtonText("Simulate Quarter Finals: Second Leg ⚽");
+            tournament.simulateKnockoutFirstLeg(KnockoutPhase.QUARTER_FINAL);
         } else if (!secondLegPlayed) {
             // Paso 2: simula la vuelta (((los penales los resuelve el simulador solo))
-            assignSecondLegFormations(); //rearmar la formacion antes de la vuelta
-            MatchSimulator.simulateSecondLeg(tournament, KnockoutPhase.QUARTER_FINAL);
-            secondLegPlayed = true;
-            view.showTies(tournament.getKnockoutTies(), true);
-            view.setSimulateButtonText("Quarter Finals completed 🏁");
-            view.disableSimulateButton();
+            tournament.simulateKnockoutSecondLeg(KnockoutPhase.QUARTER_FINAL);
         }
+        updateView();
     }
 }

@@ -1,5 +1,6 @@
 package model;
 
+import model.match.FinalMatch;
 import model.match.Formation;
 import model.match.Match;
 import model.match.PlayerParticipation;
@@ -13,45 +14,7 @@ import java.util.*;
 
 public class MatchSimulator {
 
-    //simular X fecha de la fase de grupos, de cada zona (fecha 1, 2, o 3)
-    public static void simulateMatchday(Tournament tournament, int matchday) {
-        tournament.getZones().forEach(zone -> {
-            zone.getGroupStageMatches().stream()
-                    .filter(match -> match.getMATCHDAY() == matchday && !match.isPlayed())
-                    .forEach(match -> {
-                        simulateMatch(match);
-                        zone.registerMatchResult(match);
-                    });
-        });
-    }
-
-
-    public static void simulateFirstLeg(Tournament tournament, KnockoutPhase phase) {
-
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
-            if(tie.getPhase().equals(phase))
-                simulateMatch(tie.getFirstLeg());
-        }
-    }
-
-    public static void simulateSecondLeg(Tournament tournament, KnockoutPhase phase) {
-
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
-            if(tie.getPhase().equals(phase)) {
-                Match match = tie.getSecondLeg();
-                simulateMatch(match);
-                resolveTieIfNeeded(tie);
-            }
-        }
-    }
-
-    public static void resolveTieIfNeeded(KnockoutTie tie) {
-        if (tie.needsPenaltyShootout()) {
-            simulatePenaltyShootout(tie.getSecondLeg());
-        }
-    }
-
-    private static void simulatePenaltyShootout(KnockoutMatch knockoutMatch) {
+    public static void simulatePenaltyShootout(KnockoutMatch knockoutMatch) {
 
         knockoutMatch.setPenalties(new PenaltyShootout(knockoutMatch.getTeam1(), knockoutMatch.getTeam2()));
         Team team1 = knockoutMatch.getTeam1();
@@ -88,12 +51,8 @@ public class MatchSimulator {
     }
 
     private static boolean simulatePenaltyKick(Team team, Player shooter, KnockoutMatch match, Random random) {
-        double conversionChance = 0.75; // base
-        if (shooter instanceof FieldPlayer fieldPlayer) {
-            conversionChance = 0.55 + (fieldPlayer.getATTRIBUTES().getFINISHING() / 250.0); // ajustable
-        }
+        double conversionChance = shooter.getPenaltyConversionChance();
         boolean scored = random.nextDouble() < conversionChance;
-
         match.getPenalties().addKick(team, shooter, scored);
         return scored;
     }
@@ -105,9 +64,7 @@ public class MatchSimulator {
     }
 
 
-    public static void simulateFinal(Tournament tournament) {
-
-        KnockoutMatch match = tournament.getFinalMatch();
+    public static void simulateFinal(FinalMatch match) {
         simulateMatch(match);
         if(match.getWinner()==null){
             simulatePenaltyShootout(match);
@@ -351,19 +308,7 @@ public class MatchSimulator {
         // Calcular el peso para cada jugador según su posición y Finishing
         for (Player p : activePlayers) {
             double weight = 0.0;
-
-            // Obtener el Finishing si es un FieldPlayer
-            int finishing = 0;
-            if (p instanceof FieldPlayer) {
-                finishing = ((FieldPlayer) p).getATTRIBUTES().getFINISHING();
-            }
-
-            weight = switch (p.getPosition()) {
-                case FORWARD -> 60.0 + finishing;
-                case MIDFIELDER -> 20.0 + (finishing * 0.5);
-                case DEFENDER -> 3.0 + (finishing * 0.1);
-                case GOALKEEPER -> 0.0001;
-            };
+            weight = p.getGoalScoringWeight();
 
             weights.put(p, weight);
             totalWeight += weight;
@@ -409,9 +354,9 @@ public class MatchSimulator {
                 default -> weight = 10.0;
             }
 
-            // REDUCCIÓN POR PRUDENCIA: Si ya tiene 1 amarilla, juega con más cuidado (se reduce su peso un 40%)
+            // REDUCCIÓN POR PRUDENCIA: Si ya tiene 1 amarilla, juega con más cuidado (se reduce su peso un 35%)
             if (yellowCardsMap.getOrDefault(p, 0) == 1) {
-                weight *= 0.6;
+                weight *= 0.65;
             }
 
             weights.put(p, weight);
@@ -587,16 +532,5 @@ public class MatchSimulator {
             }
         }
     }
-   /*
-    public static void simulateSemiFinals(Tournament tournament) {
 
-        for (FirstLegMatch match : tournament.getSemiFinalMatches()) {
-            simulateMatch(match);
-        }
-
-        for (SecondLegMatch match : tournament.getSemiFinalSecondLegMatches()) {
-            simulateMatch(match);
-        }
-    }
-*/
 }

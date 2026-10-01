@@ -55,4 +55,12 @@ public class Goal extends Incident {
     public void setGoalkeeper(Player goalkeeper) {
         this.goalkeeper = goalkeeper;
     }
+
+    @Override
+    public String toString() {
+        String detail = ownGoal ? " (Own Goal)" : penalty ? " (Penalty)" : "";
+        String author = (scorer != null) ? scorer.getName() : "Unknown";
+        String gk = (goalkeeper != null) ? " (GK: " + goalkeeper.getName() + ")" : "";
+        return super.toString()+" | ⚽ GOAL! " + author + detail + gk;
+    }
 }

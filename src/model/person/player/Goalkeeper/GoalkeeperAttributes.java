@@ -56,5 +56,16 @@ public class GoalkeeperAttributes extends Attributes {
                             AERIALGAME * 0.15 + FOOTWORK * 0.10 + RUSHINGOUT * 0.10
             );
         }
-        throw new IllegalArgumentException("Invalid position for Goalkeeper: " + position);    }
+        throw new IllegalArgumentException("Invalid position for Goalkeeper: " + position);
+    }
+
+    @Override
+    public double calculatePenaltyConversionChance() {
+        return 0.35 + (FOOTWORK / 250.0);
+    }
+
+    @Override
+    public double calculateGoalScoringWeight(Position position) {
+        return 0.0001;
+    }
 }

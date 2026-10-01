@@ -55,23 +55,7 @@ public class MatchDetailController {
     }
 
     private String formatIncident(Incident inc) {
-        if (inc instanceof Goal g) {
-            String author = (g.getScorer() != null) ? g.getScorer().getName() : "Unknown";
-            String gk = (g.getGoalkeeper() != null) ? " (GK: " + g.getGoalkeeper().getName() + ")" : "";
-            return "Min " + g.getMinute() + "' | ⚽ GOAL! " + author + gk;
-        } else if (inc instanceof YellowCard y) {
-            String pName = (y.getPlayer() != null) ? y.getPlayer().getName() : "Player";
-            return "Min " + y.getMinute() + "' | 🟨 Yellow Card: " + pName;
-        } else if (inc instanceof Expulsion e) {
-            String pName = (e.getPlayer() != null) ? e.getPlayer().getName() : "Player";
-            String type = e.isDoubleYellow() ? " (2nd Yellow)" : " (Direct Red)";
-            return "Min " + e.getMinute() + "' | 🟥 Red Card: " + pName + type;
-        } else if (inc instanceof Substitution s) {
-            String outName = (s.getPlayerOut() != null) ? s.getPlayerOut().getName() : "Out";
-            String inName = (s.getPlayerIn() != null) ? s.getPlayerIn().getName() : "In";
-            return "Min " + s.getMinute() + "' | 🔄 Sub: Out " + outName + " ➔ In " + inName;
-        }
-        return "Min " + inc.getMinute() + "' | Incident registered";
+        return inc.toString();
     }
 
 }

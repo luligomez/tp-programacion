@@ -22,4 +22,10 @@ public class YellowCard extends Incident {
     public void setPlayer(Player player) {
         this.player = player;
     }
+
+    @Override
+    public String toString() {
+        String pName = (player != null) ? player.getName() : "Player";
+        return super.toString()+ " | 🟨 Yellow Card: " + pName;
+    }
 }

@@ -4,6 +4,7 @@ import controller.ZoneStageController;
 import model.FileReader;
 import model.StadiumLoader;
 import model.Tournament;
+import model.TournamentState;
 import view.knockout.KnockoutView;
 import view.mainwindow.MainWindowView;
 import view.mainwindow.SidebarItem;
@@ -15,9 +16,6 @@ public class MainWindowController {
 
     private final MainWindowView view;
     private Tournament tournament;
-
-    // Guardamos la referencia al controlador activo de la pantalla actual (opcional)
-    private ZoneStageController currentZoneStageController;
 
     public MainWindowController(MainWindowView view, Tournament tournament) {
         this.view = view;
@@ -50,7 +48,7 @@ public class MainWindowController {
         ZoneStageView zoneStageView = new ZoneStageView();
 
         // PASO 2: Crear el controlador hijo (él solito se vincula con la vista y el torneo)
-        this.currentZoneStageController = new ZoneStageController(zoneStageView, tournament);
+        new ZoneStageController(zoneStageView, tournament);
 
         // PASO 3: Indicarle a la ventana principal que muestre el panel de la vista hija
         view.showScreen(zoneStageView, SidebarItem.GROUPS);
@@ -91,7 +89,7 @@ public class MainWindowController {
     }
 
     private void navigateToKnockout(){
-        if (tournament.getCurrentMatchday() <= 3) {
+        if (!tournament.getState().equals(TournamentState.KNOCKOUT_STAGE)) {
             JOptionPane.showMessageDialog(
                     view,
                     "You must complete the group stage before accessing the knockout stage.",

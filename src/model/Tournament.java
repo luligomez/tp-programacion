@@ -1,6 +1,7 @@
 package model;
 
 import model.match.*;
+import model.match.knockout.FirstLegMatch;
 import model.match.knockout.KnockoutPhase;
 import model.match.knockout.KnockoutTie;
 import model.match.knockout.SecondLegMatch;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static model.MatchSimulator.*;
 import static model.TournamentState.GROUP_STAGE;
 
 public class Tournament implements Serializable {
@@ -255,10 +257,11 @@ public class Tournament implements Serializable {
         Referee ref1 = Tournament.pickValidReferee(team1, team2, referees);
         Stadium st1 = Tournament.pickRandomUnusedStadium(stadiums);
         finalMatch = new FinalMatch(LocalDate.now(),team1, team2, ref1, f1, f2, st1);
+
     }
 
     public void simulateFinal() {
-
+        MatchSimulator.simulateFinal(finalMatch);
     }
 
     public int getCurrentMatchday() {
@@ -344,19 +347,88 @@ public class Tournament implements Serializable {
         }
     }
 
-    public void assignFormationsForSecondLeg(KnockoutPhase phase) { //TODO llamar a este metodo luego de simular firstleg de cuartos/semis en controlador
-        this.knockoutTies.stream()
-                .filter(tie -> tie.getPhase() == phase)
-            .map(KnockoutTie::getSecondLeg)
-                .forEach(secondLeg -> {
-            // 1. Crear las formaciones automáticas para el partido de vuelta
-            Formation f1 = FormationCreator.createAutomaticFormation(secondLeg.getTeam1());
-            Formation f2 = FormationCreator.createAutomaticFormation(secondLeg.getTeam2());
+    public void simulateCurrentMatchday() {
+        if (this.currentMatchday > 3) {
+            return;
+        }
 
-            // 2. Asignarlas al partido de vuelta
-            secondLeg.setTeam1Formation(f1);
-            secondLeg.setTeam2Formation(f2);
+        // 1. Delegar la simulación de los partidos de la fecha actual
+        zones.forEach(zone -> {
+            zone.getGroupStageMatches().stream()
+                    .filter(match -> match.getMATCHDAY() == currentMatchday && !match.isPlayed())
+                    .forEach(match -> {
+                        simulateMatch(match);
+                        zone.registerMatchResult(match);
+                    });
         });
+
+        // 2. Avanzar de fecha
+        this.currentMatchday++;
+
+        // 3. Evaluar cambio de estado o preparar la siguiente fecha
+        if (this.currentMatchday <= 3) {
+            this.assignFormationsForMatchday(this.currentMatchday);
+        } else {
+            this.state = TournamentState.KNOCKOUT_STAGE;
+            this.generateQuarterFinals();
+        }
+    }
+
+    private void assignFirstLegFormations(KnockoutPhase phase) {
+        for (KnockoutTie tie : knockoutTies) {
+            if (tie.getPhase() == phase) {
+                FirstLegMatch firstLegMatch = tie.getFirstLeg();
+                firstLegMatch.setTeam1Formation(FormationCreator.createAutomaticFormation(firstLegMatch.getTeam1()));
+                firstLegMatch.setTeam2Formation(FormationCreator.createAutomaticFormation(firstLegMatch.getTeam2()));
+            }
+        }
+    }
+
+    private void assignSecondLegFormations(KnockoutPhase phase) {
+        for (KnockoutTie tie : knockoutTies) {
+            if (tie.getPhase() == phase) {
+                SecondLegMatch secondLeg = tie.getSecondLeg();
+                secondLeg.setTeam1Formation(FormationCreator.createAutomaticFormation(secondLeg.getTeam1()));
+                secondLeg.setTeam2Formation(FormationCreator.createAutomaticFormation(secondLeg.getTeam2()));
+            }
+        }
+    }
+
+    public boolean isFirstLegPlayed(KnockoutPhase phase) {
+        return knockoutTies.stream()
+                .filter(tie -> tie.getPhase() == phase)
+                .allMatch(tie -> tie.getFirstLeg().isPlayed());
+    }
+
+    public boolean isSecondLegPlayed(KnockoutPhase phase) {
+        return knockoutTies.stream()
+                .filter(tie -> tie.getPhase() == phase)
+                .allMatch(tie -> tie.getSecondLeg().isPlayed());
+    }
+
+    public void simulateKnockoutFirstLeg(KnockoutPhase phase) {
+        // 2. Simular los partidos de ida de la fase
+        for (KnockoutTie tie : knockoutTies) {
+            if(tie.getPhase() == phase)
+                simulateMatch(tie.getFirstLeg());
+        }
+        this.assignSecondLegFormations(phase);
+    }
+
+    public void simulateKnockoutSecondLeg(KnockoutPhase phase) {
+        for (KnockoutTie tie : knockoutTies) {
+            if(tie.getPhase() == phase) {
+                Match match = tie.getSecondLeg();
+                simulateMatch(match);
+                resolveTieIfNeeded(tie);
+            }
+        }
+    }
+
+    public static void resolveTieIfNeeded(KnockoutTie tie) {
+        if (tie.needsPenaltyShootout()) {
+            simulatePenaltyShootout(tie.getSecondLeg());
+        }
     }
 
 }

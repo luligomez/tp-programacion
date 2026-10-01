@@ -1,5 +1,6 @@
 package model;
 
+import model.match.FinalMatch;
 import model.match.Formation;
 import model.match.Match;
 import model.match.PlayerParticipation;
@@ -13,45 +14,7 @@ import java.util.*;
 
 public class MatchSimulator {
 
-    //simular X fecha de la fase de grupos, de cada zona (fecha 1, 2, o 3)
-    public static void simulateMatchday(Tournament tournament, int matchday) {
-        tournament.getZones().forEach(zone -> {
-            zone.getGroupStageMatches().stream()
-                    .filter(match -> match.getMATCHDAY() == matchday && !match.isPlayed())
-                    .forEach(match -> {
-                        simulateMatch(match);
-                        zone.registerMatchResult(match);
-                    });
-        });
-    }
-
-
-    public static void simulateFirstLeg(Tournament tournament, KnockoutPhase phase) {
-
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
-            if(tie.getPhase().equals(phase))
-                simulateMatch(tie.getFirstLeg());
-        }
-    }
-
-    public static void simulateSecondLeg(Tournament tournament, KnockoutPhase phase) {
-
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
-            if(tie.getPhase().equals(phase)) {
-                Match match = tie.getSecondLeg();
-                simulateMatch(match);
-                resolveTieIfNeeded(tie);
-            }
-        }
-    }
-
-    public static void resolveTieIfNeeded(KnockoutTie tie) {
-        if (tie.needsPenaltyShootout()) {
-            simulatePenaltyShootout(tie.getSecondLeg());
-        }
-    }
-
-    private static void simulatePenaltyShootout(KnockoutMatch knockoutMatch) {
+    public static void simulatePenaltyShootout(KnockoutMatch knockoutMatch) {
 
         knockoutMatch.setPenalties(new PenaltyShootout(knockoutMatch.getTeam1(), knockoutMatch.getTeam2()));
         Team team1 = knockoutMatch.getTeam1();
@@ -105,9 +68,7 @@ public class MatchSimulator {
     }
 
 
-    public static void simulateFinal(Tournament tournament) {
-
-        KnockoutMatch match = tournament.getFinalMatch();
+    public static void simulateFinal(FinalMatch match) {
         simulateMatch(match);
         if(match.getWinner()==null){
             simulatePenaltyShootout(match);
@@ -587,16 +548,5 @@ public class MatchSimulator {
             }
         }
     }
-   /*
-    public static void simulateSemiFinals(Tournament tournament) {
 
-        for (FirstLegMatch match : tournament.getSemiFinalMatches()) {
-            simulateMatch(match);
-        }
-
-        for (SecondLegMatch match : tournament.getSemiFinalSecondLegMatches()) {
-            simulateMatch(match);
-        }
-    }
-*/
 }

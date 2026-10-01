@@ -59,9 +59,9 @@ public class Main {
                 //  registrar resultados!!!!!!
             }
         }
-        MatchSimulator.simulateMatchday(tournament,1);
-        MatchSimulator.simulateMatchday(tournament,2);
-        MatchSimulator.simulateMatchday(tournament,3);
+        tournament.simulateCurrentMatchday();
+        tournament.simulateCurrentMatchday();
+        tournament.simulateCurrentMatchday();
         for (Zone zone : tournament.getZones()) {
             // tabla DESPUÉS de los partidos con todos los datos
             System.out.println("\n=== Sorted Standings ===");
@@ -298,11 +298,9 @@ public class Main {
 
         tournament.zoneDraw();
         tournament.confirmDraw();
-        MatchSimulator.simulateMatchday(tournament,1);
-        tournament.assignFormationsForMatchday(2);
-        MatchSimulator.simulateMatchday(tournament,2);
-        tournament.assignFormationsForMatchday(3);
-        MatchSimulator.simulateMatchday(tournament,3);
+        tournament.simulateCurrentMatchday(); //1
+        tournament.simulateCurrentMatchday(); //2
+        tournament.simulateCurrentMatchday(); //3
         // -------------------------------------------------------------
         // FASE 2: GENERACIÓN DE CUARTOS DE FINAL
         // -------------------------------------------------------------
@@ -315,7 +313,7 @@ public class Main {
             System.out.println(" * " + tie.getTeam1().getName() + " vs " + tie.getTeam2().getName());
         }
 
-        MatchSimulator.simulateFirstLeg(tournament, KnockoutPhase.QUARTER_FINAL);
+        tournament.simulateKnockoutFirstLeg(KnockoutPhase.QUARTER_FINAL);
         // -------------------------------------------------------------
         // FASE 3: SIMULACIÓN DE IDA Y VUELTA DE CUARTOS
         // -------------------------------------------------------------
@@ -326,8 +324,7 @@ public class Main {
                     + firstLeg.getTeam1Goals() + " - "
                     + firstLeg.getTeam2Goals() + " " + firstLeg.getTeam2().getName());
         }
-        tournament.assignFormationsForSecondLeg(KnockoutPhase.QUARTER_FINAL);
-        MatchSimulator.simulateSecondLeg(tournament, KnockoutPhase.QUARTER_FINAL);
+        tournament.simulateKnockoutSecondLeg(KnockoutPhase.QUARTER_FINAL);
 
         System.out.println("\n---> SIMULANDO PARTIDOS DE VUELTA Y RESOLUCIÓN <---");
         for (KnockoutTie tie : tournament.getKnockoutTies()) {
@@ -367,7 +364,7 @@ public class Main {
                 System.out.println(" * " + tie.getTeam1().getName() + " vs " + tie.getTeam2().getName());
         }
 
-        MatchSimulator.simulateFirstLeg(tournament, KnockoutPhase.SEMI_FINAL);
+        tournament.simulateKnockoutFirstLeg(KnockoutPhase.SEMI_FINAL);
         // -------------------------------------------------------------
         // FASE 5: SIMULACIÓN DE IDA Y VUELTA DE SEMIS
         // -------------------------------------------------------------
@@ -380,8 +377,7 @@ public class Main {
                         + firstLeg.getTeam2Goals() + " " + firstLeg.getTeam2().getName());
             }
         }
-        tournament.assignFormationsForSecondLeg(KnockoutPhase.SEMI_FINAL);
-        MatchSimulator.simulateSecondLeg(tournament, KnockoutPhase.SEMI_FINAL);
+        tournament.simulateKnockoutSecondLeg(KnockoutPhase.SEMI_FINAL);
 
         System.out.println("\n---> SIMULANDO PARTIDOS DE VUELTA Y RESOLUCIÓN <---");
         for (KnockoutTie tie : tournament.getKnockoutTies()) {
@@ -422,8 +418,7 @@ public class Main {
         System.out.println(" * " + m.getTeam1().getName() + " vs " + m.getTeam2().getName());
 
 
-        MatchSimulator.simulateFinal(tournament);
-
+        tournament.simulateFinal();
         // -------------------------------------------------------------
         // FASE 5: SIMULACIÓN DE FINAL
         // -------------------------------------------------------------

@@ -2,6 +2,7 @@ package controller;
 
 import model.MatchSimulator;
 import model.Tournament;
+import model.TournamentState;
 import view.zonestage.ZoneStageView;
 import view.zonestage.StandingsPanel;
 
@@ -28,9 +29,9 @@ public class ZoneStageController {
     }
 
     public void updateView() {
-        if (!tournament.hasZonesDrawn()) {
+        if (tournament.getState().equals(TournamentState.NOT_DRAWN)) {
             view.showDrawPotsState(tournament);
-        } else if (!tournament.isDrawConfirmed()) {
+        } else if (tournament.getState().equals(TournamentState.DRAWN_UNCONFIRMED)) {
             view.showDrawResultState(tournament);
         } else {
             view.showStandingsState(tournament);
@@ -62,31 +63,24 @@ public class ZoneStageController {
         }
 
         // 1. Simular la fecha actual obtenida del torneo
-        MatchSimulator.simulateMatchday(tournament, currentDay);
-
-        // 2. Avanzar la fecha en el Modelo
-        tournament.setCurrentMatchday(currentDay + 1);
+        tournament.simulateCurrentMatchday();
 
         // 3. Refrescar la UI
         StandingsPanel standingsPanel = view.getStandingsPanel();
         if (standingsPanel != null) {
             standingsPanel.updateGroups(tournament);
+            if (tournament.getState() == TournamentState.KNOCKOUT_STAGE) {
+                standingsPanel.disableSimulateButton();
+            } else {
+                standingsPanel.setMatchdayLabel(tournament.getCurrentMatchday());
+            }
         }
-
         JOptionPane.showMessageDialog(
                 view,
                 "Matchday " + currentDay + " successfully simulated!",
                 "Matchday Complete",
                 JOptionPane.INFORMATION_MESSAGE
         );
-
-        // 4. Si acabamos de completar la fecha 3, deshabilitamos el botón
-        if (tournament.getCurrentMatchday() > 3 && standingsPanel != null) {
-            standingsPanel.disableSimulateButton();
-        } else {
-            tournament.assignFormationsForMatchday(tournament.getCurrentMatchday());
-            standingsPanel.setMatchdayLabel(tournament.getCurrentMatchday());
-        }
     }
 
     private void onDrawCompleted() {

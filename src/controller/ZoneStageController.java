@@ -35,8 +35,8 @@ public class ZoneStageController {
         } else {
             view.showStandingsState(tournament);
             setupStandingsListeners();
-
-            // 💡 SI YA SE JUGARON LAS 3 FECHAS, MANTENEMOS EL BOTÓN DESHABILITADO
+            view.getStandingsPanel().setMatchdayLabel(tournament.getCurrentMatchday());
+            // SI YA SE JUGARON LAS 3 FECHAS, MANTENEMOS EL BOTÓN DESHABILITADO
             // aunque el usuario vuelva a hacer clic en "Groups" desde el Sidebar
             if (tournament.getCurrentMatchday() > 3) {
                 StandingsPanel standingsPanel = view.getStandingsPanel();
@@ -85,6 +85,7 @@ public class ZoneStageController {
             standingsPanel.disableSimulateButton();
         } else {
             tournament.assignFormationsForMatchday(tournament.getCurrentMatchday());
+            standingsPanel.setMatchdayLabel(tournament.getCurrentMatchday());
         }
     }
 

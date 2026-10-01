@@ -4,6 +4,7 @@ import controller.ZoneStageController;
 import model.FileReader;
 import model.StadiumLoader;
 import model.Tournament;
+import view.knockout.KnockoutView;
 import view.mainwindow.MainWindowView;
 import view.mainwindow.SidebarItem;
 import view.zonestage.ZoneStageView;
@@ -37,13 +38,7 @@ public class MainWindowController {
     private void onSidebarItemSelected(SidebarItem item) {
         switch (item) {
             case GROUPS -> navigateToGroups();
-            case KNOCKOUT -> {
-                // Cuando tengas KnockoutView y KnockoutController:
-                // KnockoutView knockoutView = new KnockoutView();
-                // new KnockoutController(knockoutView, tournament);
-                // view.showScreen(knockoutView, item);
-                JOptionPane.showMessageDialog(view, "Knockout Stage in development");
-            }
+            case KNOCKOUT -> navigateToKnockout();
             case TEAMS, REFEREES, PLAYERS, RANKINGS, CREDENTIALS, ADMIN -> {
                 JOptionPane.showMessageDialog(view, "Screen in development: " + item);
             }
@@ -95,4 +90,18 @@ public class MainWindowController {
         }
     }
 
+    private void navigateToKnockout(){
+        if (tournament.getCurrentMatchday() <= 3) {
+            JOptionPane.showMessageDialog(
+                    view,
+                    "You must complete the group stage before accessing the knockout stage.",
+                    "Group stage not finished",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        KnockoutView knockoutView = new KnockoutView();
+        new KnockoutController(knockoutView, tournament);
+        view.showScreen(knockoutView, SidebarItem.KNOCKOUT);
+    }
 }

@@ -90,4 +90,16 @@ public class KnockoutTie implements Serializable {
         return (goalsTeam1 == goalsTeam2) && (awayGoalsTeam1 == awayGoalsTeam2);
     }
 
+    public String getWinningCriteria() {
+        if (!isResolved()) return null;
+
+        int goalsTeam1 = firstLeg.getTeam1Goals() + secondLeg.getTeam2Goals();
+        int goalsTeam2 = firstLeg.getTeam2Goals() + secondLeg.getTeam1Goals();
+        if (goalsTeam1 != goalsTeam2) return "Aggregate goals";
+
+        if (secondLeg.getTeam2Goals() != firstLeg.getTeam2Goals()) return "Away goals";
+
+        return "Penalties";
+    }
+
 }

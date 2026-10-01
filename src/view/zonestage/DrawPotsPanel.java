@@ -66,6 +66,7 @@ public class DrawPotsPanel extends JPanel {
         drawButton.setForeground(Color.WHITE);
         drawButton.setOpaque(true);
         drawButton.setBorderPainted(false);
+        drawButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         drawButton.addActionListener(e -> {
             tournament.zoneDraw();
             onDrawExecuted.run();

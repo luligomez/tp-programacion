@@ -66,6 +66,7 @@ public class DrawResultPanel extends JPanel {
 
         JButton redrawButton = new JButton("Redraw");
         redrawButton.setFocusPainted(false);
+        redrawButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         redrawButton.addActionListener(e -> onRedraw.run());
 
         JButton confirmButton = new JButton("Confirm Draw");
@@ -75,6 +76,7 @@ public class DrawResultPanel extends JPanel {
         confirmButton.setForeground(Color.WHITE);
         confirmButton.setOpaque(true);
         confirmButton.setBorderPainted(false);
+        confirmButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         confirmButton.addActionListener(e -> onConfirmed.run());
 
         panel.add(redrawButton);

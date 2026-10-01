@@ -30,11 +30,18 @@ public class StandingsPanel extends JPanel {
         // 1. BARRA SUPERIOR (Botón de Simulación)
         // ------------------------------------------------------------------
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
-        btnSimulateMatchday = new JButton("Simulate Next Matchday ⚽");
-        btnSimulateMatchday.setFont(new Font("SansSerif", Font.BOLD, 13));
+        btnSimulateMatchday = new JButton("Simulate Next Matchday 1 ⚽");
+        btnSimulateMatchday.setFont(new Font("SansSerif", Font.BOLD, 14));
         btnSimulateMatchday.setBackground(new Color(35, 95, 190));
-        btnSimulateMatchday.setForeground(Color.WHITE);
+        btnSimulateMatchday.setForeground(Color.BLACK);
         btnSimulateMatchday.setFocusPainted(false);
+        btnSimulateMatchday.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(35, 95, 190), 2, true),
+                BorderFactory.createEmptyBorder(8, 20, 8, 20)));
+        btnSimulateMatchday.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnSimulateMatchday.setOpaque(true);
+
+
         topPanel.add(btnSimulateMatchday);
         add(topPanel, BorderLayout.NORTH);
 
@@ -161,5 +168,9 @@ public class StandingsPanel extends JPanel {
     public void disableSimulateButton() {
         btnSimulateMatchday.setEnabled(false);
         btnSimulateMatchday.setText("Group Stage Completed 🏁");
+    }
+
+    public void setMatchdayLabel(int matchday) {
+        btnSimulateMatchday.setText("Simulate Matchday " + matchday + " ⚽");
     }
 }

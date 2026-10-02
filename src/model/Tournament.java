@@ -188,7 +188,6 @@ public class Tournament implements Serializable {
                 });
     }
 
-
     public boolean hasZonesDrawn() {
         return state != TournamentState.NOT_DRAWN;
     }
@@ -424,6 +423,24 @@ public class Tournament implements Serializable {
             }
         }
     }
+    //?????????????????????????? esta bien preguntar si la fase es cuartos o semi?
+    public void generateNextKnockoutPhase(KnockoutPhase phase) {
+        if (phase == KnockoutPhase.QUARTER_FINAL) {
+            generateSemiFinals();
+        } else if (phase == KnockoutPhase.SEMI_FINAL) {
+            generateFinal();
+        }
+    }
+
+    public boolean hasKnockoutPhase(KnockoutPhase phase) {
+        return knockoutTies.stream().anyMatch(tie -> tie.getPhase() == phase);
+    }
+
+    public List<KnockoutTie> getKnockoutTies(KnockoutPhase phase) {
+        return knockoutTies.stream()
+                .filter(tie -> tie.getPhase() == phase)
+                .collect(Collectors.toList());
+    }
 
     public static void resolveTieIfNeeded(KnockoutTie tie) {
         if (tie.needsPenaltyShootout()) {
@@ -431,6 +448,13 @@ public class Tournament implements Serializable {
         }
     }
 
+    public boolean hasFinal() {
+        return finalMatch != null;
+    }
+
+    public boolean isFinalPlayed() {
+        return finalMatch != null && finalMatch.isPlayed();
+    }
 }
 
 

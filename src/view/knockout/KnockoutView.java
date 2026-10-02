@@ -1,10 +1,12 @@
 package view.knockout;
 
+import model.match.FinalMatch;
 import model.match.knockout.KnockoutTie;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.function.IntConsumer;
 
 public class KnockoutView extends JPanel {
 
@@ -12,6 +14,7 @@ public class KnockoutView extends JPanel {
     private Runnable onSimulateListener;
     private final JLabel lblPhase = new JLabel("Quarter Finals", SwingConstants.CENTER);
     private JPanel centerPanel;
+    private final PhaseStepBar stepBar;
 
     public KnockoutView() {
         setLayout(new BorderLayout());
@@ -43,7 +46,13 @@ public class KnockoutView extends JPanel {
 
         topPanel.add(new JLabel()); // columna vacía para equilibrar
 
-        add(topPanel, BorderLayout.NORTH);
+        stepBar = new PhaseStepBar("Quarter Finals", "Semi Finals", "Final");
+        stepBar.update(0, 0);
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.add(stepBar, BorderLayout.NORTH);
+        header.add(topPanel, BorderLayout.CENTER);
+        add(header, BorderLayout.NORTH);
     }
 
     public void setOnSimulateListener(Runnable listener) {
@@ -79,6 +88,33 @@ public class KnockoutView extends JPanel {
 
     public void disableSimulateButton() {
         btnSimulate.setEnabled(false);
+    }
+
+    public void setOnStepSelectedListener(IntConsumer listener) {
+        stepBar.setOnStepSelectedListener(listener);
+    }
+
+    public void updateStepBar(int activeIndex, int lastUnlockedIndex) {
+        stepBar.update(activeIndex, lastUnlockedIndex);
+    }
+
+    public void enableSimulateButton() {
+        btnSimulate.setEnabled(true);
+    }
+
+    public void showFinal(FinalMatch match, boolean played) {
+        if (centerPanel != null) remove(centerPanel);
+
+        centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+
+        FinalCardPanel card = new FinalCardPanel(match, played);
+        card.setPreferredSize(new Dimension(520, 230));
+        centerPanel.add(card);
+
+        add(centerPanel, BorderLayout.CENTER);
+        revalidate();
+        repaint();
     }
 
 }

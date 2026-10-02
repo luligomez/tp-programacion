@@ -7,6 +7,8 @@ import model.match.knockout.KnockoutTie;
 import model.match.knockout.SecondLegMatch;
 import model.person.Referee;
 import model.place.Stadium;
+import model.reports.RefereeReportData;
+import model.reports.RefereeReportItem;
 import model.zone.Zone;
 
 import java.io.Serial;
@@ -454,6 +456,20 @@ public class Tournament implements Serializable {
 
     public boolean isFinalPlayed() {
         return finalMatch != null && finalMatch.isPlayed();
+    }
+
+    public RefereeReportData getRefereesReportData() {
+        List<RefereeReportItem> items = new ArrayList<>();
+        int matchesOfficiated, totalYears=0, yrsExp;
+        for(Referee ref : referees){
+            yrsExp = ref.getYearsOfExperience();
+            totalYears+= yrsExp;
+            matchesOfficiated = (int) getAllMatches().stream().filter(match -> match != null && match.isPlayed() && match.getReferee() != null && match.getReferee().equals(ref)).count();
+            items.add(new RefereeReportItem(ref.getName(), ref.getNationality().getName(), matchesOfficiated, yrsExp));
+        }
+        items.sort((r1, r2) -> Integer.compare(r2.getMatchesOfficiated(), r1.getMatchesOfficiated()));
+        double avgYears = referees.isEmpty() ? 0.0 : (double) totalYears /referees.size();
+        return new RefereeReportData(items,avgYears);
     }
 }
 

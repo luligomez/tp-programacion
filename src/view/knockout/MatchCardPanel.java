@@ -78,17 +78,18 @@ public class MatchCardPanel extends JPanel {
         }
 
         boolean firstPlayed = tie.getFirstLeg().isPlayed();
+        boolean secondPlayed = tie.isSecondLegPlayed();
         boolean resolved = tie.isResolved();
 
         String score1 = firstPlayed ? String.valueOf(tie.getTotalGoals(tie.getTeam1())) : "-";
         String score2 = firstPlayed ? String.valueOf(tie.getTotalGoals(tie.getTeam2())) : "-";
 
         int winnerIndex = -1;
-        if (resolved && tie.getWinner() != null) {
+        if (resolved) {
             winnerIndex = tie.getWinner().equals(tie.getTeam1()) ? 0 : 1;
         }
 
-        String status = resolved ? "Finished" : (firstPlayed ? "1st leg played" : "Pending");
+        String status = resolved ? "Finished" : (secondPlayed ? "Pending Penalties" : "1st leg played");
         show(status, "Global", tie.getTeam1().getName(), tie.getTeam2().getName(), score1, score2, winnerIndex);
 
         details.showTie(tie);

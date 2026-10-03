@@ -64,10 +64,6 @@ public class MatchSimulator {
 
     public static void simulateFinal(FinalMatch match) {
         simulateMatch(match);
-        if(match.getWinner()==null){
-            simulatePenaltyShootout(match);
-        }
-
     }
 
     public static void simulateMatch(Match match) {

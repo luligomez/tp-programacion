@@ -227,15 +227,6 @@ public class Tournament implements Serializable {
 
     }
 
-    public List<SecondLegMatch> getQuarterFinalSecondLegMatches() {
-
-        return knockoutTies.stream()
-                .filter(tie -> tie.getPhase() == KnockoutPhase.QUARTER_FINAL)
-                .map(KnockoutTie::getSecondLeg)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-
     public ArrayList<Team> getKnockoutWinners(KnockoutPhase phase) {
 
         return knockoutTies.stream()
@@ -261,13 +252,12 @@ public class Tournament implements Serializable {
     public void simulateFinal() {
         MatchSimulator.simulateFinal(finalMatch);
     }
+    public void resolveFinal(){
+        simulatePenaltyShootout(finalMatch);
+    }
 
     public int getCurrentMatchday() {
         return currentMatchday;
-    }
-
-    public void setCurrentMatchday (int currentMatchday){
-        this.currentMatchday = currentMatchday;
     }
 
     public static Stadium pickRandomUnusedStadium(ArrayList<Stadium> stadiums) {
@@ -372,16 +362,6 @@ public class Tournament implements Serializable {
         }
     }
 
-    private void assignFirstLegFormations(KnockoutPhase phase) {
-        for (KnockoutTie tie : knockoutTies) {
-            if (tie.getPhase() == phase) {
-                FirstLegMatch firstLegMatch = tie.getFirstLeg();
-                firstLegMatch.setTeam1Formation(FormationCreator.createAutomaticFormation(firstLegMatch.getTeam1()));
-                firstLegMatch.setTeam2Formation(FormationCreator.createAutomaticFormation(firstLegMatch.getTeam2()));
-            }
-        }
-    }
-
     private void assignSecondLegFormations(KnockoutPhase phase) {
         for (KnockoutTie tie : knockoutTies) {
             if (tie.getPhase() == phase) {
@@ -418,7 +398,6 @@ public class Tournament implements Serializable {
             if(tie.getPhase() == phase) {
                 Match match = tie.getSecondLeg();
                 simulateMatch(match);
-                resolveTieIfNeeded(tie);
             }
         }
     }
@@ -441,10 +420,10 @@ public class Tournament implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    public static void resolveTieIfNeeded(KnockoutTie tie) {
-        if (tie.getWinner() == null) {
-            simulatePenaltyShootout(tie.getSecondLeg());
-        }
+    public void resolveTies(KnockoutPhase phase) {
+        knockoutTies.stream()
+                .filter(tie -> tie.getPhase() == phase && tie.getWinner() == null)
+                .forEach(tie -> simulatePenaltyShootout(tie.getSecondLeg()));
     }
 
     public boolean hasFinal() {
@@ -467,6 +446,16 @@ public class Tournament implements Serializable {
         items.sort((r1, r2) -> Integer.compare(r2.getMatchesOfficiated(), r1.getMatchesOfficiated()));
         double avgYears = referees.isEmpty() ? 0.0 : (double) totalYears /referees.size();
         return new RefereeReportData(items,avgYears);
+    }
+
+    public boolean hasUnresolvedTies(KnockoutPhase phase){
+        return knockoutTies.stream()
+                .anyMatch(tie -> phase == tie.getPhase() && tie.getWinner() == null);
+
+    }
+
+    public boolean hasUnresolvedFinal(){
+        return finalMatch.getWinner()==null;
     }
 }
 

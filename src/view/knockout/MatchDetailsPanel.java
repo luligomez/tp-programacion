@@ -8,6 +8,7 @@ import model.person.Referee;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.format.DateTimeFormatter;
 
 public class MatchDetailsPanel extends JPanel {
 
@@ -48,8 +49,8 @@ public class MatchDetailsPanel extends JPanel {
         if (secondPlayed) {
             int p1 = tie.getSecondLeg().getPenaltiesScored(t1);
             int p2 = tie.getSecondLeg().getPenaltiesScored(t2);
-            t1Leg2 = cell(tie.getSecondLegGoals(t1), p1, pens);
-            t2Leg2 = cell(tie.getSecondLegGoals(t2), p2, pens);
+            t1Leg2 = String.valueOf(tie.getSecondLegGoals(t1));
+            t2Leg2 = String.valueOf(tie.getSecondLegGoals(t2));
             t1Total = cell(tie.getTotalGoals(t1), p1, pens);
             t2Total = cell(tie.getTotalGoals(t2), p2, pens);
         }
@@ -152,9 +153,12 @@ public class MatchDetailsPanel extends JPanel {
         component.setAlignmentX(Component.LEFT_ALIGNMENT);
         return component;
     }
-    // Dos líneas por partido: 1ra cuál es y quién es local, 2da estadio y árbitro
+    // Dos líneas por partido: 1ra cuál es y quién es local, 2da fecha y hora, estadio, árbitro
     private JPanel infoBlock(String legName, Match match) {
         String stadium = match.getStadium() != null ? match.getStadium().getName() : "-";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM HH:mm");
+        String formattedDate = match.getDate().format(formatter);
+
 
         JPanel block = new JPanel();
         block.setLayout(new BoxLayout(block, BoxLayout.Y_AXIS));
@@ -162,7 +166,8 @@ public class MatchDetailsPanel extends JPanel {
         block.setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
 
         block.add(left(smallLabel(legName + " · Home: " + match.getTeam1().getName(), true)));
-        block.add(left(smallLabel(stadium + " · Ref: " + refereeName(match.getReferee()), false)));
+        block.add(left(smallLabel(formattedDate + " · " + stadium,false)));
+        block.add(left(smallLabel("Ref: " + refereeName(match.getReferee()), false)));
         return block;
     }
 
@@ -175,7 +180,9 @@ public class MatchDetailsPanel extends JPanel {
 
     private JLabel finalInfoLabel(Match match) {
         String stadium = match.getStadium() != null ? match.getStadium().getName() : "-";
-        JLabel label = smallLabel(stadium + " · Ref: " + refereeName(match.getReferee()), false);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM HH:mm");
+        String formattedDate = match.getDate().format(formatter);
+        JLabel label = smallLabel(formattedDate + " · " + stadium + " · Ref: " + refereeName(match.getReferee()), false);
         label.setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
         return label;
     }

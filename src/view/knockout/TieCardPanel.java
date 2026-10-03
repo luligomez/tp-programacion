@@ -5,7 +5,7 @@ import model.match.knockout.KnockoutTie;
 import javax.swing.*;
 import java.awt.*;
 
-public class TieCardPanel extends JPanel {
+public class TieCardPanel extends JPanel { /// TODO borrar clase?
 
     private static final Color BLUE = new Color(35, 95, 190);
 
@@ -21,7 +21,7 @@ public class TieCardPanel extends JPanel {
         title.setForeground(BLUE);
         add(title, BorderLayout.NORTH);
 
-        boolean secondLegPlayed = tie.isResolved();
+        boolean secondLegPlayed = tie.isSecondLegPlayed();
 
         String leg1Team1 = firstLegPlayed ? String.valueOf(tie.getTeam1FirstLegGoals()) : "-";
         String leg1Team2 = firstLegPlayed ? String.valueOf(tie.getTeam2FirstLegGoals()) : "-";

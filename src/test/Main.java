@@ -117,10 +117,14 @@ public class Main {
 
             // 3. Imprimir marcador global
             System.out.print(" | Global: (" + totalGolesTeam1 + " - " + totalGolesTeam2 + ")");
-
+        }
+        if(tournament.hasUnresolvedTies(KnockoutPhase.QUARTER_FINAL)) {
+            tournament.resolveTies(KnockoutPhase.QUARTER_FINAL);
+        }
+        for (KnockoutTie tie : tournament.getKnockoutTies()) {
             // 4. Si hubo penales, imprimir el resultado de la tanda
-            if (secondLegMatch.getPenalties() != null) {
-                PenaltyShootout pen = secondLegMatch.getPenalties();
+            if (tie.getSecondLeg().getPenalties() != null) {
+                PenaltyShootout pen = tie.getSecondLeg().getPenalties();
                 System.out.print(" | Penales: " + pen.getTeam1Goals() + " - " + pen.getTeam2Goals());
             }
 
@@ -158,7 +162,7 @@ public class Main {
 
         System.out.println("\n---> SIMULANDO PARTIDOS DE VUELTA Y RESOLUCIÓN <---");
         for (KnockoutTie tie : tournament.getKnockoutTies()) {
-            if(tie.getPhase().equals(KnockoutPhase.SEMI_FINAL)) {
+            if (tie.getPhase().equals(KnockoutPhase.SEMI_FINAL)) {
                 SecondLegMatch secondLegMatch = tie.getSecondLeg();
                 printMatchIncidents(secondLegMatch);
 
@@ -173,16 +177,19 @@ public class Main {
 
                 // 3. Imprimir marcador global
                 System.out.print(" | Global: (" + totalGolesTeam1 + " - " + totalGolesTeam2 + ")");
-
-                // 4. Si hubo penales, imprimir el resultado de la tanda
-                if (secondLegMatch.getPenalties() != null) {
-                    PenaltyShootout pen = secondLegMatch.getPenalties();
-                    System.out.print(" | Penales: " + pen.getTeam1Goals() + " - " + pen.getTeam2Goals());
-                }
-
-                // 5. Imprimir el ganador de la llave
-                System.out.println(" ==> CLASIFICA: " + tie.getWinner().getName().toUpperCase());
             }
+        }
+        if(tournament.hasUnresolvedTies(KnockoutPhase.SEMI_FINAL)) {
+            tournament.resolveTies(KnockoutPhase.SEMI_FINAL);
+        }
+        for (KnockoutTie tie : tournament.getKnockoutTies()) {
+            // 4. Si hubo penales, imprimir el resultado de la tanda
+            if (tie.getSecondLeg().getPenalties() != null) {
+                PenaltyShootout pen = tie.getSecondLeg().getPenalties();
+                System.out.print(" | Penales: " + pen.getTeam1Goals() + " - " + pen.getTeam2Goals());
+            }
+            // 5. Imprimir el ganador de la llave
+            System.out.println(" ==> CLASIFICA: " + tie.getWinner().getName().toUpperCase());
         }
         // -------------------------------------------------------------
         // FASE 6: GENERACIÓN DE Final
@@ -205,9 +212,8 @@ public class Main {
         System.out.println(" Final: " + m.getTeam1().getName() + " "
                         + m.getTeam1Goals() + " - "
                         + m.getTeam2Goals() + " " + m.getTeam2().getName());
-
-        // 4. Si hubo penales, imprimir el resultado de la tanda
-        if (m.getPenalties() != null) {
+        if(tournament.hasUnresolvedFinal()) {
+            tournament.resolveFinal();
             PenaltyShootout pen = m.getPenalties();
             System.out.print(" | Penales: " + pen.getTeam1Goals() + " - " + pen.getTeam2Goals());
         }

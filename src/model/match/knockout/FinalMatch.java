@@ -14,7 +14,6 @@ public class FinalMatch extends KnockoutMatch {
     }
 
 
-
     @Override
     public Team getWinner() {
         if (getTeam1Goals() > getTeam2Goals()) {

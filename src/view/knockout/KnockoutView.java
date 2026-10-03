@@ -63,9 +63,12 @@ public class KnockoutView extends JPanel {
         btnSimulate.setText(switch (step) {
             case QUARTERS_FIRST_LEG -> "Simulate Quarter Finals: First Leg ⚽";
             case QUARTERS_SECOND_LEG -> "Simulate Quarter Finals: Second Leg ⚽";
+            case QUARTERS_PENALTIES -> "Simulate Quarter Finals: Penalties ⚽";
             case SEMIS_FIRST_LEG -> "Simulate Semi Finals: First Leg ⚽";
             case SEMIS_SECOND_LEG -> "Simulate Semi Finals: Second Leg ⚽";
+            case SEMIS_PENALTIES -> "Simulate Semi Finals: Penalties ⚽";
             case FINAL -> "Simulate Final ⚽";
+            case FINAL_PENALTIES -> "Simulate Final: Penalties ⚽";
             case DONE -> "Tournament completed 🏁";
         });
         btnSimulate.setEnabled(step != KnockoutStep.DONE);

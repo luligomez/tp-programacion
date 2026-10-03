@@ -1,6 +1,5 @@
 package view.zonestage;
 
-import model.Tournament;
 import model.match.GroupStageMatch;
 import model.zone.Zone;
 import view.zonestage.shared.TeamStandingGroupCard;
@@ -11,7 +10,6 @@ import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class StandingsPanel extends JPanel {
 
@@ -20,6 +18,8 @@ public class StandingsPanel extends JPanel {
     private static final Color CARD_BG_ALT = new Color(246, 248, 252);
     private static final Color SELECTED_BG = new Color(222, 234, 252);
     private static final Color MUTED = new Color(120, 125, 135);
+
+    private List<Zone> zones;
 
     private final JPanel groupsGrid;
     private final JButton btnSimulateMatchday;
@@ -32,6 +32,7 @@ public class StandingsPanel extends JPanel {
     private final DefaultListModel<MatchRow> matchesListModel;
     private final JList<MatchRow> matchesList;
 
+    /** Fila del fixture: partido + nombre de la zona a la que pertenece. */
     public static class MatchRow {
         final String zoneName;
         final GroupStageMatch match;
@@ -45,7 +46,8 @@ public class StandingsPanel extends JPanel {
         public String getZoneName() { return zoneName; }
     }
 
-    public StandingsPanel(Tournament tournament) {
+    public StandingsPanel(List<Zone> zones) {
+        this.zones = zones;
         setLayout(new BorderLayout(15, 15));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
@@ -63,7 +65,6 @@ public class StandingsPanel extends JPanel {
                 BorderFactory.createEmptyBorder(8, 20, 8, 20)));
         btnSimulateMatchday.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnSimulateMatchday.setOpaque(true);
-
 
         topPanel.add(btnSimulateMatchday);
         add(topPanel, BorderLayout.NORTH);
@@ -85,7 +86,6 @@ public class StandingsPanel extends JPanel {
 
         // Barra de filtros horizontal
         JPanel filterBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 4));
-
         comboZoneFilter = new JComboBox<>(new String[]{"All", "Zone A", "Zone B", "Zone C", "Zone D"});
         comboMatchdayFilter = new JComboBox<>(new String[]{"All", "Matchday 1", "Matchday 2", "Matchday 3"});
 
@@ -96,7 +96,7 @@ public class StandingsPanel extends JPanel {
         filterBar.add(comboMatchdayFilter);
         fixtureContainer.add(filterBar, BorderLayout.NORTH);
 
-        // Lista de Partidos
+        // Lista de partidos con renderer de tarjetas
         matchesListModel = new DefaultListModel<>();
         matchesList = new JList<>(matchesListModel);
         matchesList.setCellRenderer(new MatchCellRenderer());
@@ -108,9 +108,8 @@ public class StandingsPanel extends JPanel {
         matchesScroll.getVerticalScrollBar().setUnitIncrement(16);
         fixtureContainer.add(matchesScroll, BorderLayout.CENTER);
 
-        // Eventos de Filtro
-        comboZoneFilter.addActionListener(e -> refreshMatchesList(tournament));
-        comboMatchdayFilter.addActionListener(e -> refreshMatchesList(tournament));
+        comboZoneFilter.addActionListener(e -> refreshMatchesList());
+        comboMatchdayFilter.addActionListener(e -> refreshMatchesList());
 
         // Divisor VERTICAL: tablas arriba, fixture abajo
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, groupsScroll, fixtureContainer);
@@ -118,17 +117,16 @@ public class StandingsPanel extends JPanel {
         splitPane.setBorder(null);
         add(splitPane, BorderLayout.CENTER);
 
-        // Cargar datos iniciales
-        updateGroups(tournament);
+        updateGroups(zones);
     }
 
     /**
      * Refresca tanto las tablas como la lista filtrada de partidos.
      */
-    public void updateGroups(Tournament tournament) {
+    public void updateGroups(List<Zone> zones) {
+        this.zones = zones;
         groupsGrid.removeAll();
-        if (tournament != null && tournament.getZones() != null) {
-            List<Zone> zones = tournament.getZones();
+        if (zones != null) {
             for (int i = 0; i < zones.size(); i++) {
                 Zone zone = zones.get(i);
                 String title = "Zone " + (char) ('A' + i);
@@ -138,67 +136,32 @@ public class StandingsPanel extends JPanel {
         groupsGrid.revalidate();
         groupsGrid.repaint();
 
-        // 2. Refrescar Lista de Partidos con los filtros actuales
-        refreshMatchesList(tournament);
+        refreshMatchesList();
     }
 
     /**
-     * Aplica los filtros de Zona y Matchday sobre los partidos del torneo.
+     * Aplica los filtros de Zona y Matchday sobre los partidos de las zonas.
      */
-    /*
-    public void refreshMatchesList(Tournament tournament) {
+    public void refreshMatchesList() {
         matchesListModel.clear();
-        if (tournament == null || tournament.getZones() == null) return;
+        if (zones == null) return;
 
-        int selectedZone = comboZoneFilter.getSelectedIndex();       // 0 = All, 1 = Zone A, ...
-        int selectedMatchday = comboMatchdayFilter.getSelectedIndex(); // 0 = All, 1 = M1, ...
-
-        List<Zone> zones = tournament.getZones();
+        int selectedZone = comboZoneFilter.getSelectedIndex();         // 0 = All
+        int selectedMatchday = comboMatchdayFilter.getSelectedIndex(); // 0 = All
 
         for (int i = 0; i < zones.size(); i++) {
-            // Filtrar por Zona si no es "All"
-            if (selectedZone != 0 && (selectedZone - 1) != i) {
-                Zone zone = zones.get(i);
-                String zoneName = "Zone " + (char) ('A' + i);
+            if (selectedZone != 0 && (selectedZone - 1) != i) continue;
 
-                for (GroupStageMatch match : zone.getGroupStageMatches()) {
-                    if (selectedMatchday != 0 && match.getMATCHDAY() != selectedMatchday)
-                        matchesListModel.addElement(new MatchRow(zoneName, match));
-                }
-            }
-        }
-    }
-    */
-    public void refreshMatchesList(Tournament tournament) {
-        matchesListModel.clear();
-        if (tournament == null || tournament.getZones() == null) {
-            return;
-        }
+            Zone zone = zones.get(i);
+            String zoneName = "Zone " + (char) ('A' + i);
 
-        int selectedZone = comboZoneFilter.getSelectedIndex();       // 0 = All, 1 = Zone A, ...
-        int selectedMatchday = comboMatchdayFilter.getSelectedIndex(); // 0 = All, 1 = M1, ...
-
-        List<Zone> zones = tournament.getZones();
-
-        for (int i = 0; i < zones.size(); i++) {
-            boolean matchesZone = (selectedZone == 0 || (selectedZone - 1) == i);
-
-            if (matchesZone) {
-                Zone zone = zones.get(i);
-                String zoneName = "Zone " + (char) ('A' + i);
-
-                for (GroupStageMatch match : zone.getGroupStageMatches()) {
-                    boolean matchesMatchday = (selectedMatchday == 0 || match.getMATCHDAY() == selectedMatchday);
-
-                    if (matchesMatchday) {
-                        matchesListModel.addElement(new MatchRow(zoneName, match));
-                    }
-                }
+            for (GroupStageMatch match : zone.getGroupStageMatches()) {
+                if (selectedMatchday != 0 && match.getMATCHDAY() != selectedMatchday) continue;
+                matchesListModel.addElement(new MatchRow(zoneName, match));
             }
         }
     }
 
-    /** Formatea el horario del partido. Ajustar acá si tu getter se llama distinto. */
     private static String formatKickoff(GroupStageMatch match) {
         LocalDateTime dt = match.getDate();
         if (dt == null) return "TBD";

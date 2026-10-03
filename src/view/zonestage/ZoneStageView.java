@@ -1,24 +1,26 @@
 package view.zonestage;
 
-import model.Tournament;
+import model.Team;
+import model.zone.Zone;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class ZoneStageView extends JPanel {
 
-    private Runnable onDrawCompletedListener;
+    private Runnable onDrawRequestedListener;
     private Runnable onDrawConfirmedListener;
     private Runnable onRedrawListener;
+    private Runnable onSimulateMatchdayListener;
     private StandingsPanel standingsPanel;
 
     public ZoneStageView() {
         setLayout(new BorderLayout());
     }
 
-    // Setters de listeners para el controlador
-    public void setOnDrawCompletedListener(Runnable listener) {
-        this.onDrawCompletedListener = listener;
+    public void setOnDrawRequestedListener(Runnable listener) {
+        this.onDrawRequestedListener = listener;
     }
 
     public void setOnDrawConfirmedListener(Runnable listener) {
@@ -29,37 +31,63 @@ public class ZoneStageView extends JPanel {
         this.onRedrawListener = listener;
     }
 
-    // Métodos de renderizado invocados por el controlador
-    public void showDrawPotsState(Tournament tournament) {
+    public void setOnSimulateMatchdayListener(Runnable listener) {
+        this.onSimulateMatchdayListener = listener;
+    }
+
+    public void showDrawPotsState(List<List<Team>> pots) {
         removeAll();
-        add(new DrawPotsPanel(tournament, () -> {
-            if (onDrawCompletedListener != null) onDrawCompletedListener.run();
+        add(new DrawPotsPanel(pots, () -> {
+            if (onDrawRequestedListener != null) onDrawRequestedListener.run();
         }), BorderLayout.CENTER);
         revalidate();
         repaint();
     }
 
-    public void showDrawResultState(Tournament tournament) {
+    public void showDrawResultState(List<Zone> zones) {
         removeAll();
         add(new DrawResultPanel(
-                tournament,
+                zones,
                 () -> { if (onDrawConfirmedListener != null) onDrawConfirmedListener.run(); },
-        () -> { if (onRedrawListener != null) onRedrawListener.run(); }
+                () -> { if (onRedrawListener != null) onRedrawListener.run(); }
         ), BorderLayout.CENTER);
         revalidate();
         repaint();
     }
 
-    public void showStandingsState(Tournament tournament) {
+    public void showStandingsState(List<Zone> zones) {
         removeAll();
         if (standingsPanel == null) {
-            standingsPanel = new StandingsPanel(tournament);
-        } else { standingsPanel.updateGroups(tournament);
+            standingsPanel = new StandingsPanel(zones);
+            if (onSimulateMatchdayListener != null) {
+                standingsPanel.setOnSimulateMatchdayListener(onSimulateMatchdayListener);
+            }
+        } else {
+            standingsPanel.updateGroups(zones);
         }
         add(standingsPanel, BorderLayout.CENTER);
         revalidate();
         repaint();
     }
+
+    public void updateStandings(List<Zone> zones) {
+        if (standingsPanel != null) {
+            standingsPanel.updateGroups(zones);
+        }
+    }
+
+    public void setMatchdayLabel(int matchday) {
+        if (standingsPanel != null) {
+            standingsPanel.setMatchdayLabel(matchday);
+        }
+    }
+
+    public void disableSimulateButton() {
+        if (standingsPanel != null) {
+            standingsPanel.disableSimulateButton();
+        }
+    }
+
     public StandingsPanel getStandingsPanel() {
         return standingsPanel;
     }

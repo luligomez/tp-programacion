@@ -1,7 +1,6 @@
 package view.zonestage;
 
 import model.Team;
-import model.Tournament;
 import view.zonestage.shared.TeamGroupCard;
 
 import javax.swing.*;
@@ -11,19 +10,14 @@ import java.util.List;
 public class DrawPotsPanel extends JPanel {
     private static final Color BACKGROUND = new Color(245, 245, 247);
 
-    private Tournament tournament;
-    private Runnable onDrawExecuted;
-
-    public DrawPotsPanel(Tournament tournament, Runnable onDrawExecuted) {
-        this.tournament = tournament;
-        this.onDrawExecuted = onDrawExecuted;
+    public DrawPotsPanel(List<List<Team>> pots, Runnable onDrawRequested) {
         setLayout(new BorderLayout(0, 20));
         setBackground(BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
         add(buildHeader(), BorderLayout.NORTH);
-        add(buildPotsPanel(), BorderLayout.CENTER);
-        add(buildDrawButton(), BorderLayout.SOUTH);
+        add(buildPotsPanel(pots), BorderLayout.CENTER);
+        add(buildDrawButton(onDrawRequested), BorderLayout.SOUTH);
     }
 
     private JPanel buildHeader() {
@@ -46,10 +40,9 @@ public class DrawPotsPanel extends JPanel {
         return header;
     }
 
-    private JPanel buildPotsPanel() {
+    private JPanel buildPotsPanel(List<List<Team>> pots) {
         JPanel panel = new JPanel(new GridLayout(1, 4, 20, 0));
         panel.setOpaque(false);
-        List<List<Team>> pots = tournament.getPots();
 
         for (int i = 0; i < pots.size(); i++) {
             panel.add(new TeamGroupCard("Pot " + (i + 1), pots.get(i)));
@@ -57,7 +50,7 @@ public class DrawPotsPanel extends JPanel {
         return panel;
     }
 
-    private JPanel buildDrawButton() {
+    private JPanel buildDrawButton(Runnable onDrawRequested) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton drawButton = new JButton("Draw");
         drawButton.setFont(drawButton.getFont().deriveFont(Font.BOLD, 14f));
@@ -68,8 +61,7 @@ public class DrawPotsPanel extends JPanel {
         drawButton.setBorderPainted(false);
         drawButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         drawButton.addActionListener(e -> {
-            tournament.zoneDraw();
-            onDrawExecuted.run();
+            if (onDrawRequested != null) onDrawRequested.run();
         });
         panel.add(drawButton);
         return panel;

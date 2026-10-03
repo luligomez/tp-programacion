@@ -9,7 +9,7 @@ import model.person.Referee;
 import model.place.Stadium;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class KnockoutTie implements Serializable {
@@ -32,11 +32,11 @@ public class KnockoutTie implements Serializable {
         Stadium st1 = Tournament.pickRandomUnusedStadium(stadiums);
         Formation formation1 = FormationCreator.createAutomaticFormation(team1);
         Formation formation2 = FormationCreator.createAutomaticFormation(team2);
-        this.firstLeg = new FirstLegMatch(LocalDate.now(), team1, team2, ref1, formation1, formation2, st1);
+        this.firstLeg = new FirstLegMatch(LocalDateTime.now(), team1, team2, ref1, formation1, formation2, st1);
 
         Referee ref2 = Tournament.pickValidReferee(team2, team1, referees);
         Stadium st2 = Tournament.pickRandomUnusedStadium(stadiums);
-        this.secondLeg = new SecondLegMatch(LocalDate.now(), team2, team1, ref2, null, null, st2); //TODO CAMBIAR HORARIO
+        this.secondLeg = new SecondLegMatch(LocalDateTime.now(), team2, team1, ref2, null, null, st2); //TODO CAMBIAR HORARIO
     }
 
     public KnockoutPhase getPhase() { return phase; }
@@ -58,16 +58,16 @@ public class KnockoutTie implements Serializable {
         // 1. Goles globales acumulados
         // team1 es local en la ida (firstLeg) y visitante en la vuelta (secondLeg)
         // team2 es visitante en la ida (firstLeg) y local en la vuelta (secondLeg)
-        int goalsTeam1 = firstLeg.getTeam1Goals() + secondLeg.getTeam2Goals();
-        int goalsTeam2 = firstLeg.getTeam2Goals() + secondLeg.getTeam1Goals();
+        int goalsTeam1 = getTeam1AggregateGoals();
+        int goalsTeam2 = getTeam2AggregateGoals();
 
         if (goalsTeam1 != goalsTeam2) {
             return goalsTeam1 > goalsTeam2 ? team1 : team2;
         }
 
         // 2. Gol de visitante
-        int awayGoalsTeam1 = secondLeg.getTeam2Goals(); // team1 fue visitante en la vuelta
-        int awayGoalsTeam2 = firstLeg.getTeam2Goals();  // team2 fue visitante en la ida
+        int awayGoalsTeam1 = getTeam1AwayGoals(); // team1 fue visitante en la vuelta
+        int awayGoalsTeam2 = getTeam2AwayGoals();  // team2 fue visitante en la ida
 
         if (awayGoalsTeam1 != awayGoalsTeam2) {
             return awayGoalsTeam1 > awayGoalsTeam2 ? team1 : team2;
@@ -81,26 +81,53 @@ public class KnockoutTie implements Serializable {
         return null;
     }
 
-    public boolean needsPenaltyShootout() {
-        if (!isResolved())
-            return false;
-        int goalsTeam1 = firstLeg.getTeam1Goals() + secondLeg.getTeam2Goals();
-        int goalsTeam2 = firstLeg.getTeam2Goals() + secondLeg.getTeam1Goals();
-        int awayGoalsTeam1 = secondLeg.getTeam2Goals();
-        int awayGoalsTeam2 = firstLeg.getTeam2Goals();
-        return (goalsTeam1 == goalsTeam2) && (awayGoalsTeam1 == awayGoalsTeam2);
-    }
 
     public String getWinningCriteria() {
-        if (!isResolved()) return null;
+        if (!isResolved()) return "";
 
-        int goalsTeam1 = firstLeg.getTeam1Goals() + secondLeg.getTeam2Goals();
-        int goalsTeam2 = firstLeg.getTeam2Goals() + secondLeg.getTeam1Goals();
+        int goalsTeam1 = getTeam1AggregateGoals();
+        int goalsTeam2 = getTeam2AggregateGoals();
         if (goalsTeam1 != goalsTeam2) return "Aggregate goals";
 
-        if (secondLeg.getTeam2Goals() != firstLeg.getTeam2Goals()) return "Away goals";
+        if (getTeam1AwayGoals() != getTeam2AwayGoals()) return "Away goals";
 
-        return "Penalties";
+        if (secondLeg.getPenalties() != null) {
+            return "Penalties";
+        }
+
+        return "";
+    }
+
+    public int getTeam1AggregateGoals() {
+        return firstLeg.getTeam1Goals() + secondLeg.getTeam2Goals();
+    }
+
+    public int getTeam2AggregateGoals() {
+        return firstLeg.getTeam2Goals() + secondLeg.getTeam1Goals();
+    }
+
+    public int getTeam1AwayGoals() {
+        return secondLeg.getTeam2Goals();
+    }
+
+    public int getTeam2AwayGoals() {
+        return firstLeg.getTeam2Goals();
+    }
+
+    public int getTeam1FirstLegGoals() {
+        return firstLeg.getTeam1Goals();
+    }
+
+    public int getTeam2FirstLegGoals() {
+        return firstLeg.getTeam2Goals();
+    }
+
+    public int getTeam1SecondLegGoals() {
+        return secondLeg.getTeam2Goals();
+    }
+
+    public int getTeam2SecondLegGoals() {
+        return secondLeg.getTeam1Goals();
     }
 
     public int getFirstLegGoals(Team team) {

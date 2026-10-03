@@ -157,7 +157,9 @@ public class RefereesView extends JPanel {
 
     // --- MÉTODOS PARA POBLAR LA TABLA DESDE EL CONTROLADOR ---
 
-    public void setRefereesData(List<RefereeReportItem> referees, double averageYears) {
+    public void setRefereesData(RefereeReportData data) {
+        List<RefereeReportItem> referees = data.getItems();
+        double averageYears= data.getAverageYears();
         tableModel.setRowCount(0); // Limpiar tabla
 
         int rank = 1;

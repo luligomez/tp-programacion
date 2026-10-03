@@ -1,20 +1,22 @@
 package view.knockout;
 
-import model.match.FinalMatch;
+import model.match.knockout.FinalMatch;
+import model.match.knockout.KnockoutStep;
 import model.match.knockout.KnockoutTie;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import java.util.function.IntConsumer;
+
+import static model.match.knockout.KnockoutStep.SEMIS_SECOND_LEG;
 
 public class KnockoutView extends JPanel {
 
+    private static final Color BLUE = new Color(35, 95, 190);
+
     private final JButton btnSimulate;
+    private final BracketPanel bracketPanel = new BracketPanel();
     private Runnable onSimulateListener;
-    private final JLabel lblPhase = new JLabel("Quarter Finals", SwingConstants.CENTER);
-    private JPanel centerPanel;
-    private final PhaseStepBar stepBar;
 
     public KnockoutView() {
         setLayout(new BorderLayout());
@@ -22,9 +24,9 @@ public class KnockoutView extends JPanel {
         JPanel topPanel = new JPanel(new GridLayout(1, 3));
         topPanel.setBorder(BorderFactory.createEmptyBorder(15, 30, 5, 30));
 
-        lblPhase.setFont(new Font("SansSerif", Font.BOLD, 22));
-        lblPhase.setHorizontalAlignment(SwingConstants.LEFT);
-        topPanel.add(lblPhase);
+        JLabel lblTitle = new JLabel("Knockout Stage");
+        lblTitle.setFont(new Font("SansSerif", Font.BOLD, 22));
+        topPanel.add(lblTitle);
 
         btnSimulate = new JButton("Simulate Next Round ⚽");
         btnSimulate.setFont(new Font("SansSerif", Font.BOLD, 15));
@@ -46,75 +48,38 @@ public class KnockoutView extends JPanel {
 
         topPanel.add(new JLabel()); // columna vacía para equilibrar
 
-        stepBar = new PhaseStepBar("Quarter Finals", "Semi Finals", "Final");
-        stepBar.update(0, 0);
+        add(topPanel, BorderLayout.NORTH);
 
-        JPanel header = new JPanel(new BorderLayout());
-        header.add(stepBar, BorderLayout.NORTH);
-        header.add(topPanel, BorderLayout.CENTER);
-        add(header, BorderLayout.NORTH);
+        JScrollPane scroll = new JScrollPane(bracketPanel);
+        scroll.setBorder(null);
+        add(scroll, BorderLayout.CENTER);
     }
 
     public void setOnSimulateListener(Runnable listener) {
         this.onSimulateListener = listener;
     }
 
-    public void setPhaseTitle(String title) {
-        lblPhase.setText(title);
-    }
-
-    public void setSimulateButtonText(String text) {
-        btnSimulate.setText(text);
-    }
-
-
-    private static final Color BLUE = new Color(35, 95, 190);
-
-    public void showTies(List<KnockoutTie> ties, boolean firstLegPlayed) {
-        if (centerPanel != null) remove(centerPanel);
-
-        centerPanel = new JPanel(new GridLayout(0, 2, 20, 20));
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
-
-        int number = 1;
-        for (KnockoutTie tie : ties) {
-            centerPanel.add(new TieCardPanel(tie, number++, firstLegPlayed));
-        }
-
-        add(centerPanel, BorderLayout.CENTER);
-        revalidate();
-        repaint();
-    }
-
-    public void disableSimulateButton() {
-        btnSimulate.setEnabled(false);
-    }
-
-    public void setOnStepSelectedListener(IntConsumer listener) {
-        stepBar.setOnStepSelectedListener(listener);
-    }
-
-    public void updateStepBar(int activeIndex, int lastUnlockedIndex) {
-        stepBar.update(activeIndex, lastUnlockedIndex);
+    public void setStep(KnockoutStep step) {
+        btnSimulate.setText(switch (step) {
+            case QUARTERS_FIRST_LEG -> "Simulate Quarter Finals: First Leg ⚽";
+            case QUARTERS_SECOND_LEG -> "Simulate Quarter Finals: Second Leg ⚽";
+            case SEMIS_FIRST_LEG -> "Simulate Semi Finals: First Leg ⚽";
+            case SEMIS_SECOND_LEG -> "Simulate Semi Finals: Second Leg ⚽";
+            case FINAL -> "Simulate Final ⚽";
+            case DONE -> "Tournament completed 🏁";
+        });
+        btnSimulate.setEnabled(step != KnockoutStep.DONE);
     }
 
     public void enableSimulateButton() {
         btnSimulate.setEnabled(true);
     }
 
-    public void showFinal(FinalMatch match, boolean played) {
-        if (centerPanel != null) remove(centerPanel);
-
-        centerPanel = new JPanel(new GridBagLayout());
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
-
-        FinalCardPanel card = new FinalCardPanel(match, played);
-        card.setPreferredSize(new Dimension(520, 230));
-        centerPanel.add(card);
-
-        add(centerPanel, BorderLayout.CENTER);
-        revalidate();
-        repaint();
+    public void disableSimulateButton() {
+        btnSimulate.setEnabled(false);
     }
 
+    public void showBracket(List<KnockoutTie> quarters, List<KnockoutTie> semis, FinalMatch finalMatch) {
+        bracketPanel.update(quarters, semis, finalMatch);
+    }
 }

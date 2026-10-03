@@ -4,6 +4,7 @@ import model.FormationCreator;
 import model.Team;
 import model.Tournament;
 import model.match.Formation;
+import model.match.Match;
 import model.person.Referee;
 import model.place.Stadium;
 
@@ -100,6 +101,23 @@ public class KnockoutTie implements Serializable {
         if (secondLeg.getTeam2Goals() != firstLeg.getTeam2Goals()) return "Away goals";
 
         return "Penalties";
+    }
+
+    public int getFirstLegGoals(Team team) {
+        return goalsOf(firstLeg, team);
+    }
+
+    public int getSecondLegGoals(Team team) {
+        return goalsOf(secondLeg, team);
+    }
+
+    public int getTotalGoals(Team team) {
+        return getFirstLegGoals(team) + getSecondLegGoals(team);
+    }
+
+    private int goalsOf(Match match, Team team) {
+        if (!match.isPlayed()) return 0;
+        return match.getTeam1().equals(team) ? match.getTeam1Goals() : match.getTeam2Goals();
     }
 
 }

@@ -40,4 +40,8 @@ public abstract class KnockoutMatch extends Match {
         return winningCriteria;
     }
 
+    public int getPenaltiesScored(Team team) {
+        return penalties == null ? 0 : penalties.getGoals(team);
+    }
+
 }

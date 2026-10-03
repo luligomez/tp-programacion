@@ -1,13 +1,11 @@
 package model;
 
-import model.match.FinalMatch;
 import model.match.Formation;
 import model.match.Match;
 import model.match.PlayerParticipation;
 import model.match.incident.*;
 import model.match.knockout.*;
 import model.person.Position;
-import model.person.player.FieldPlayer.FieldPlayer;
 import model.person.player.Player;
 
 import java.util.*;

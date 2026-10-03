@@ -62,4 +62,8 @@ public class PenaltyShootout implements Serializable {
         public Player getKicker() { return kicker; }
         public boolean isScored() { return scored; }
     }
+
+    public int getGoals(Team team) {
+        return team.equals(team1) ? team1Goals : team2Goals;
+    }
 }

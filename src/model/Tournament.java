@@ -1,10 +1,7 @@
 package model;
 
 import model.match.*;
-import model.match.knockout.FirstLegMatch;
-import model.match.knockout.KnockoutPhase;
-import model.match.knockout.KnockoutTie;
-import model.match.knockout.SecondLegMatch;
+import model.match.knockout.*;
 import model.person.Referee;
 import model.place.Stadium;
 import model.reports.RefereeReportData;

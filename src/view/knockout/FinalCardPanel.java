@@ -1,7 +1,7 @@
 package view.knockout;
 
 import model.Team;
-import model.match.FinalMatch;
+import model.match.knockout.FinalMatch;
 
 import javax.swing.*;
 import java.awt.*;

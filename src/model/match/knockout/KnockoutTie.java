@@ -47,11 +47,15 @@ public class KnockoutTie implements Serializable {
 
 
     public boolean isResolved() {
+        return secondLeg != null && secondLeg.isPlayed() && getWinner()!=null;
+    }
+
+    public boolean isSecondLegPlayed() {
         return secondLeg != null && secondLeg.isPlayed();
     }
 
     public Team getWinner() {
-        if (!isResolved()) {
+        if (!isSecondLegPlayed()) {
             return null;
         }
 

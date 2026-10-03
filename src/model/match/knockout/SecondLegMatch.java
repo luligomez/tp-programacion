@@ -5,11 +5,11 @@ import model.place.Stadium;
 import model.Team;
 import model.person.Referee;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class SecondLegMatch extends KnockoutMatch {
 
-    public SecondLegMatch(LocalDate date, Team team1, Team team2, Referee referee, Formation team1Formation, Formation team2Formation, Stadium stadium) {
+    public SecondLegMatch(LocalDateTime date, Team team1, Team team2, Referee referee, Formation team1Formation, Formation team2Formation, Stadium stadium) {
         super(date, team1, team2, referee, team1Formation, team2Formation, stadium);
     }
 

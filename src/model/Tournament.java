@@ -10,7 +10,7 @@ import model.zone.Zone;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -254,7 +254,7 @@ public class Tournament implements Serializable {
         Formation f2 = FormationCreator.createAutomaticFormation(team2);
         Referee ref1 = Tournament.pickValidReferee(team1, team2, referees);
         Stadium st1 = Tournament.pickRandomUnusedStadium(stadiums);
-        finalMatch = new FinalMatch(LocalDate.now(),team1, team2, ref1, f1, f2, st1);
+        finalMatch = new FinalMatch(LocalDateTime.now(),team1, team2, ref1, f1, f2, st1);
 
     }
 

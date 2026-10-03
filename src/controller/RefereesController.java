@@ -21,8 +21,7 @@ public class RefereesController {
     }
 
     public void loadReportData() {
-        RefereeReportData data = tournament.getRefereesReportData();
-        view.setRefereesData(data.getItems(), data.getAverageYears());
+        view.setRefereesData(tournament.getRefereesReportData());
     }
 }
 

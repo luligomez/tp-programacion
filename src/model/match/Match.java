@@ -11,14 +11,14 @@ import model.person.Referee;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public abstract class Match implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    private LocalDate date;
+    private LocalDateTime date;
     private Team team1;
     private Team team2;
     private Formation team1Formation;
@@ -30,7 +30,7 @@ public abstract class Match implements Serializable {
     private ArrayList<PlayerParticipation> playerParticipations = new ArrayList<>();
     private Stadium stadium;
 
-    public Match(LocalDate date, Team team1, Team team2, Referee referee,
+    public Match(LocalDateTime date, Team team1, Team team2, Referee referee,
                  Formation team1Formation, Formation team2Formation, Stadium stadium) {
 
         this.date = date;
@@ -44,7 +44,7 @@ public abstract class Match implements Serializable {
         this.team2Formation = team2Formation;
         this.stadium = stadium;
     }
-    public Match(LocalDate date, Team team1, Team team2, Referee referee, Stadium stadium) {
+    public Match(LocalDateTime date, Team team1, Team team2, Referee referee, Stadium stadium) {
 
         this.date = date;
         this.team1 = team1;
@@ -73,7 +73,7 @@ public abstract class Match implements Serializable {
 
         }
     }
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 

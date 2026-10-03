@@ -8,7 +8,7 @@ import model.place.Stadium;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -235,7 +235,7 @@ public class Zone implements Serializable {
 
             // Crear partido
                 GroupStageMatch match = new GroupStageMatch(
-                        LocalDate.now(),
+                        LocalDateTime.now(),
                         team1,
                         team2,
                         referee,

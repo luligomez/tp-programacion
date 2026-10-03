@@ -50,8 +50,12 @@ public class KnockoutView extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
 
-        JScrollPane scroll = new JScrollPane(bracketPanel);
+        JPanel centerContainer = new JPanel(new GridBagLayout());
+        // GridBagLayout centra automáticamente
+        centerContainer.add(bracketPanel);
+        JScrollPane scroll = new JScrollPane(centerContainer);
         scroll.setBorder(null);
+        scroll.getVerticalScrollBar().setUnitIncrement(16); // Para un scroll fluido
         add(scroll, BorderLayout.CENTER);
     }
 

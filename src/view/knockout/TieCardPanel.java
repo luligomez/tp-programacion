@@ -23,18 +23,13 @@ public class TieCardPanel extends JPanel {
 
         boolean secondLegPlayed = tie.isResolved();
 
-        // En la vuelta los equipos están invertidos
-        String leg1Team1 = firstLegPlayed ? String.valueOf(tie.getFirstLeg().getTeam1Goals()) : "-";
-        String leg1Team2 = firstLegPlayed ? String.valueOf(tie.getFirstLeg().getTeam2Goals()) : "-";
-        String leg2Team1 = secondLegPlayed ? String.valueOf(tie.getSecondLeg().getTeam2Goals()) : "-";
-        String leg2Team2 = secondLegPlayed ? String.valueOf(tie.getSecondLeg().getTeam1Goals()) : "-";
+        String leg1Team1 = firstLegPlayed ? String.valueOf(tie.getTeam1FirstLegGoals()) : "-";
+        String leg1Team2 = firstLegPlayed ? String.valueOf(tie.getTeam2FirstLegGoals()) : "-";
+        String leg2Team1 = secondLegPlayed ? String.valueOf(tie.getTeam1SecondLegGoals()) : "-";
+        String leg2Team2 = secondLegPlayed ? String.valueOf(tie.getTeam2SecondLegGoals()) : "-";
 
-        String global1 = "-";
-        String global2 = "-";
-        if (secondLegPlayed) {
-            global1 = String.valueOf(tie.getFirstLeg().getTeam1Goals() + tie.getSecondLeg().getTeam2Goals());
-            global2 = String.valueOf(tie.getFirstLeg().getTeam2Goals() + tie.getSecondLeg().getTeam1Goals());
-        }
+        String global1 = secondLegPlayed ? String.valueOf(tie.getTeam1AggregateGoals()) : "-";
+        String global2 = secondLegPlayed ? String.valueOf(tie.getTeam2AggregateGoals()) : "-";
 
         Color gray = new Color(130, 130, 130);
         JPanel body = new JPanel(new GridLayout(3, 1, 0, 10));

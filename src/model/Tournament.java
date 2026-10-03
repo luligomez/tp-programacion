@@ -442,7 +442,7 @@ public class Tournament implements Serializable {
     }
 
     public static void resolveTieIfNeeded(KnockoutTie tie) {
-        if (tie.needsPenaltyShootout()) {
+        if (tie.getWinner() == null) {
             simulatePenaltyShootout(tie.getSecondLeg());
         }
     }

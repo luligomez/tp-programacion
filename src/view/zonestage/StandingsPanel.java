@@ -51,9 +51,9 @@ public class StandingsPanel extends JPanel {
         setLayout(new BorderLayout(15, 15));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // ------------------------------------------------------------------
-        // 1. BARRA SUPERIOR (Botón de Simulación)
-        // ------------------------------------------------------------------
+// ------------------------------------------------------------------
+// 1. BARRA SUPERIOR (Botón de Simulación)
+// ------------------------------------------------------------------
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         btnSimulateMatchday = new JButton("Simulate Next Matchday 1 ⚽");
         btnSimulateMatchday.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -69,22 +69,25 @@ public class StandingsPanel extends JPanel {
         topPanel.add(btnSimulateMatchday);
         add(topPanel, BorderLayout.NORTH);
 
-        // ------------------------------------------------------------------
-        // 2. PANEL SUPERIOR: Tablas de Posiciones (Grilla 2x2)
-        // ------------------------------------------------------------------
-        groupsGrid = new JPanel(new GridLayout(2, 2, 12, 12));
-        JScrollPane groupsScroll = new JScrollPane(groupsGrid);
-        groupsScroll.setBorder(null);
-        groupsScroll.getVerticalScrollBar().setUnitIncrement(16);
+// ------------------------------------------------------------------
+// 2. PANEL CONTENEDOR PRINCIPAL (Agrupa verticalmente)
+// ------------------------------------------------------------------
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
-        // ------------------------------------------------------------------
-        // 3. PANEL INFERIOR: Fixture con Filtros de Zona y Fecha
-        // ------------------------------------------------------------------
+// A) Tablas de Posiciones (Grilla 2x2)
+        groupsGrid = new JPanel(new GridLayout(2, 2, 12, 12));
+        groupsGrid.setPreferredSize(new Dimension(0, 600));
+        contentPanel.add(groupsGrid);
+
+// Espaciador entre las tablas y el fixture
+        contentPanel.add(Box.createVerticalStrut(20));
+
+// B) Fixture con Filtros de Zona y Fecha
         JPanel fixtureContainer = new JPanel(new BorderLayout(0, 8));
-        fixtureContainer.setPreferredSize(new Dimension(0, 260));
         fixtureContainer.setBorder(BorderFactory.createTitledBorder("MATCHES & FIXTURE"));
 
-        // Barra de filtros horizontal
+// Barra de filtros horizontal
         JPanel filterBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 4));
         comboZoneFilter = new JComboBox<>(new String[]{"All", "Zone A", "Zone B", "Zone C", "Zone D"});
         comboMatchdayFilter = new JComboBox<>(new String[]{"All", "Matchday 1", "Matchday 2", "Matchday 3"});
@@ -96,26 +99,31 @@ public class StandingsPanel extends JPanel {
         filterBar.add(comboMatchdayFilter);
         fixtureContainer.add(filterBar, BorderLayout.NORTH);
 
-        // Lista de partidos con renderer de tarjetas
+// Lista de partidos (Sin JScrollPane propio para que expanda su altura)
         matchesListModel = new DefaultListModel<>();
         matchesList = new JList<>(matchesListModel);
         matchesList.setCellRenderer(new MatchCellRenderer());
         matchesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         matchesList.setFixedCellHeight(40);
+        matchesList.setLayoutOrientation(JList.VERTICAL);
+        matchesList.setVisibleRowCount(-1); // Permite que el JList crezca a lo largo según la cantidad de partidos
 
-        JScrollPane matchesScroll = new JScrollPane(matchesList);
-        matchesScroll.setBorder(BorderFactory.createLineBorder(new Color(220, 224, 232)));
-        matchesScroll.getVerticalScrollBar().setUnitIncrement(16);
-        fixtureContainer.add(matchesScroll, BorderLayout.CENTER);
+        fixtureContainer.add(matchesList, BorderLayout.CENTER);
 
         comboZoneFilter.addActionListener(e -> refreshMatchesList());
         comboMatchdayFilter.addActionListener(e -> refreshMatchesList());
 
-        // Divisor VERTICAL: tablas arriba, fixture abajo
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, groupsScroll, fixtureContainer);
-        splitPane.setResizeWeight(0.65);
-        splitPane.setBorder(null);
-        add(splitPane, BorderLayout.CENTER);
+        contentPanel.add(fixtureContainer);
+
+// ------------------------------------------------------------------
+// 3. UN SOLO JSCROLLPANE PARA TODA LA PANTALLA
+// ------------------------------------------------------------------
+        JScrollPane mainScrollPane = new JScrollPane(contentPanel);
+        mainScrollPane.setBorder(null);
+        mainScrollPane.getVerticalScrollBar().setUnitIncrement(16); // Scroll fluido con la rueda del mouse
+        mainScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        add(mainScrollPane, BorderLayout.CENTER);
 
         updateGroups(zones);
     }
@@ -150,14 +158,19 @@ public class StandingsPanel extends JPanel {
         int selectedMatchday = comboMatchdayFilter.getSelectedIndex(); // 0 = All
 
         for (int i = 0; i < zones.size(); i++) {
-            if (selectedZone != 0 && (selectedZone - 1) != i) continue;
+            boolean matchesZone = (selectedZone == 0 || (selectedZone - 1) == i);
 
-            Zone zone = zones.get(i);
-            String zoneName = "Zone " + (char) ('A' + i);
+            if (matchesZone) {
+                Zone zone = zones.get(i);
+                String zoneName = "Zone " + (char) ('A' + i);
 
-            for (GroupStageMatch match : zone.getGroupStageMatches()) {
-                if (selectedMatchday != 0 && match.getMATCHDAY() != selectedMatchday) continue;
-                matchesListModel.addElement(new MatchRow(zoneName, match));
+                for (GroupStageMatch match : zone.getGroupStageMatches()) {
+                    boolean matchesMatchday = (selectedMatchday == 0 || match.getMATCHDAY() == selectedMatchday);
+
+                    if (matchesMatchday) {
+                        matchesListModel.addElement(new MatchRow(zoneName, match));
+                    }
+                }
             }
         }
     }

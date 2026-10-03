@@ -16,7 +16,8 @@ public class DrawPotsPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
         add(buildHeader(), BorderLayout.NORTH);
-        add(buildPotsPanel(pots), BorderLayout.CENTER);
+        // Usamos el wrapper para que las columnas no se estiren verticalmente
+        add(buildPotsWrapper(pots), BorderLayout.CENTER);
         add(buildDrawButton(onDrawRequested), BorderLayout.SOUTH);
     }
 
@@ -40,8 +41,25 @@ public class DrawPotsPanel extends JPanel {
         return header;
     }
 
+    private JPanel buildPotsWrapper(List<List<Team>> pots) {
+        JPanel wrapper = new JPanel(new GridBagLayout());
+        wrapper.setOpaque(false);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0; // Se expande a lo ancho de la pantalla
+        gbc.weighty = 0.0; // No absorbe espacio vertical sobrante
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.CENTER; // Mantiene los bombos pegados arriba
+
+        wrapper.add(buildPotsPanel(pots), gbc);
+
+        return wrapper;
+    }
+
     private JPanel buildPotsPanel(List<List<Team>> pots) {
-        JPanel panel = new JPanel(new GridLayout(1, 4, 20, 0));
+        JPanel panel = new JPanel(new GridLayout(2, 2, 20, 20));
         panel.setOpaque(false);
 
         for (int i = 0; i < pots.size(); i++) {
@@ -52,6 +70,8 @@ public class DrawPotsPanel extends JPanel {
 
     private JPanel buildDrawButton(Runnable onDrawRequested) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panel.setOpaque(false);
+
         JButton drawButton = new JButton("Draw");
         drawButton.setFont(drawButton.getFont().deriveFont(Font.BOLD, 14f));
         drawButton.setFocusPainted(false);

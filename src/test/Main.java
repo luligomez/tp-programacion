@@ -47,6 +47,8 @@ public class Main {
             // 3\. Crear el controlador que conecta la vista con el modelo
             MainWindowController mainController = new MainWindowController(windowView, tournament);
             // 4\. Mostrar la aplicación
+
+            windowView.setExtendedState(JFrame.MAXIMIZED_BOTH);
             windowView.setVisible(true);
         });
     }

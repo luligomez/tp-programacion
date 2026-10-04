@@ -176,7 +176,7 @@ public class StandingsPanel extends JPanel {
     }
 
     private static String formatKickoff(GroupStageMatch match) {
-        LocalDateTime dt = match.getDate();
+        LocalDateTime dt = match.getDateTime();
         if (dt == null) return "TBD";
         return dt.format(DateTimeFormatter.ofPattern("dd/MM · HH:mm"));
     }

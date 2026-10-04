@@ -15,6 +15,7 @@ public class TournamentStats implements Serializable {
     private int doubleYellowExpulsions;
     private int directRedCards;
     private boolean suspended;
+    private int goalsConceded;
 
     public TournamentStats() {
         this.matchesPlayed = 0;
@@ -49,6 +50,10 @@ public class TournamentStats implements Serializable {
     public void registerDirectRed() {
         directRedCards++;
         suspended = true;
+    }
+
+    public void registerGoalConceded() {
+        this.goalsConceded++;
     }
 
     public int getMatchesPlayed() {
@@ -86,4 +91,9 @@ public class TournamentStats implements Serializable {
     public void setSuspended(boolean suspended) {
         this.suspended=suspended;
     }
+
+    public int getGoalsConceded() {
+        return goalsConceded;
+    }
+
 }

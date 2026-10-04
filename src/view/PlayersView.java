@@ -75,6 +75,8 @@ public class PlayersView extends JPanel {
         table.setAutoCreateRowSorter(true);
         table.setColumnSuffix(3," yrs");
         table.setColumnSuffix(5,"'");
+        table.setNumericFormatWithFallback(7, null); // Goles recibidos
+        table.setNumericFormatWithFallback(8, "%.2f"); //Promedio
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 220), 1));
@@ -168,8 +170,8 @@ public class PlayersView extends JPanel {
                         item.getMatchesPlayed(),
                         item.getMinutesPlayed(),
                         item.getGoalsScored(),
-                        isGoalkeeper ? item.getGoalsConceded() : "-",
-                        isGoalkeeper ? String.format("%.2f", item.getGoalsConcededPerMatch()) : "-"
+                        isGoalkeeper ? item.getGoalsConceded() : -1,
+                        isGoalkeeper ? item.getGoalsConcededPerMatch() : -1.0
                 });
             }
         }

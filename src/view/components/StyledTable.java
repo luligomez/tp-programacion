@@ -76,4 +76,24 @@ public class StyledTable extends JTable {
         });
     }
 
+    public void setNumericFormatWithFallback(int columnIndex, String formatPattern) {
+        getColumnModel().getColumn(columnIndex).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            protected void setValue(Object value) {
+                if (value instanceof Number num) {
+                    if (num.doubleValue() < 0) {
+                        setText("-");
+                    } else if (formatPattern != null) {
+                        setText(String.format(formatPattern, num.doubleValue()));
+                    } else {
+                        setText(String.valueOf(num.intValue()));
+                    }
+                } else {
+                    super.setValue(value);
+                }
+                setHorizontalAlignment(SwingConstants.CENTER);
+            }
+        });
+    }
+
 }

@@ -3,7 +3,6 @@ package test;
 import controller.MainWindowController;
 import model.*;
 
-import model.match.GroupStageMatch;
 import model.match.knockout.*;
 
 import model.zone.TeamStanding;
@@ -23,7 +22,7 @@ import static model.MatchSimulator.simulateMatch;
 public class Main {
     public static void main(String[] args) throws Exception {
         testUI();
-        testTorneo();
+        //testTorneo();
     }
 
     private static void testUI() {

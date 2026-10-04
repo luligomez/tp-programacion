@@ -13,6 +13,7 @@ import model.zone.Zone;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,10 +53,6 @@ public class Tournament implements Serializable {
         return state;
     }
 
-    public void setState(TournamentState state) {
-        this.state = state;
-    }
-
     public ArrayList<Team> getTeams() {
         return teams;
     }
@@ -63,20 +60,6 @@ public class Tournament implements Serializable {
     public ArrayList<Zone> getZones() {
         return zones;
     }
-
-    /*
-    public ArrayList<FirstLegMatch> getQuarterFinalMatches() {
-        return quarterFinalMatches;
-    }
-
-    public ArrayList<FirstLegMatch> getSemiFinalMatches() {
-        return semiFinalMatches;
-    }
-
-    public ArrayList<SecondLegMatch> getSemiFinalSecondLegMatches() {
-        return semiFinalSecondLegMatches;
-    }
-*/
 
     public void generateSemiFinals() {
 
@@ -88,6 +71,7 @@ public class Tournament implements Serializable {
 
         knockoutTies.add(new KnockoutTie(KnockoutPhase.SEMI_FINAL, winnerI, winnerII, referees, stadiums)); //V
         knockoutTies.add(new KnockoutTie(KnockoutPhase.SEMI_FINAL, winnerIII, winnerIV, referees, stadiums)); // VI
+        FixtureScheduler.scheduleSemiFinals(getKnockoutTies(KnockoutPhase.SEMI_FINAL),getLastMatchDate());
 
     }
 
@@ -168,6 +152,7 @@ public class Tournament implements Serializable {
                 }
             }
         }
+        FixtureScheduler.scheduleZoneStage(zones, LocalDate.now());
     }
 
     public void syncUsedStadiums() { //actualizamos el booleano used al abrir el programa, luego de cargar los estadios desde la bbdd.
@@ -228,6 +213,7 @@ public class Tournament implements Serializable {
         knockoutTies.add(new KnockoutTie(KnockoutPhase.QUARTER_FINAL, firstC, secondA, referees, stadiums)); // III
         knockoutTies.add(new KnockoutTie(KnockoutPhase.QUARTER_FINAL, firstD, secondB, referees, stadiums)); // IV
 
+        FixtureScheduler.scheduleQuarterFinals(getKnockoutTies(KnockoutPhase.QUARTER_FINAL),getLastMatchDate());
     }
 
     public ArrayList<Team> getKnockoutWinners(KnockoutPhase phase) {
@@ -248,8 +234,8 @@ public class Tournament implements Serializable {
         Formation f2 = FormationCreator.createAutomaticFormation(team2);
         Referee ref1 = Tournament.pickValidReferee(team1, team2, referees);
         Stadium st1 = Tournament.pickRandomUnusedStadium(stadiums);
-        finalMatch = new FinalMatch(LocalDateTime.now(),team1, team2, ref1, f1, f2, st1);
-
+        finalMatch = new FinalMatch(team1, team2, ref1, f1, f2, st1);
+        FixtureScheduler.scheduleFinal(finalMatch,getLastMatchDate());
     }
 
     public void simulateFinal() {
@@ -561,8 +547,7 @@ public class Tournament implements Serializable {
 
                 // Si es Arquero, se pueden calcular los goles recibidos desde sus participaciones en partidos
                 if (player.getPosition() == Position.GOALKEEPER) {
-                    // Si tenés los goles recibidos guardados en el jugador o en sus participaciones:
-                    //goalsConceded = playerStats.getGoalsConceded(); //TODO
+                    goalsConceded = playerStats.getGoalsConceded();
                     if (matchesPlayed > 0) {
                         goalsConcededPerMatch = (double) goalsConceded / matchesPlayed;
                     }
@@ -586,6 +571,21 @@ public class Tournament implements Serializable {
         items.sort((p1, p2) -> p1.getPlayerName().compareToIgnoreCase(p2.getPlayerName()));
 
         return new PlayerReportData(items);
+    }
+
+    public LocalDate getLastMatchDate() {
+        List<Match> matches = getAllMatches();
+        if (matches == null) {
+            return LocalDate.now(); // O una fecha por defecto si la lista no existe
+        }
+
+        return matches.stream()
+                .filter(Objects::nonNull)                // 1. Filtra partidos nulos PRIMERO
+                .map(Match::getDateTime)                 // 2. Obtiene la fecha/hora
+                .filter(Objects::nonNull)                // 3. Filtra fechas/horas nulas (sin programar)
+                .map(LocalDateTime::toLocalDate)         // 4. Convierte a LocalDate
+                .max(LocalDate::compareTo)               // 5. Busca la fecha más lejana
+                .orElse(LocalDate.now());
     }
 
 

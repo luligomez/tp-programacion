@@ -181,9 +181,6 @@ public class StandingsPanel extends JPanel {
         return dt.format(DateTimeFormatter.ofPattern("dd/MM · HH:mm"));
     }
 
-    // ------------------------------------------------------------------
-    // RENDERER: cada partido como una tarjeta
-    // ------------------------------------------------------------------
     private static class MatchCellRenderer extends JPanel implements ListCellRenderer<MatchRow> {
 
         private final JLabel lblBadge = new JLabel("", SwingConstants.CENTER);
@@ -203,28 +200,46 @@ public class StandingsPanel extends JPanel {
             lblBadge.setOpaque(true);
             lblBadge.setBackground(PRIMARY);
             lblBadge.setBorder(BorderFactory.createEmptyBorder(3, 8, 3, 8));
-            lblBadge.setPreferredSize(new Dimension(90, 22));
+            lblBadge.setPreferredSize(new Dimension(140, 22));
 
             JPanel badgeWrap = new JPanel(new GridBagLayout());
             badgeWrap.setOpaque(false);
             badgeWrap.add(lblBadge);
-
+            // 1. Configuración y alineación de las etiquetas
             lblTeam1.setFont(new Font("SansSerif", Font.BOLD, 13));
+            lblTeam1.setHorizontalAlignment(SwingConstants.RIGHT); // Pegado al marcador
+            lblTeam1.setPreferredSize(new Dimension(0, 24));       // TRUCO: Ancho 0 para forzar reparto 50/50
+
             lblTeam2.setFont(new Font("SansSerif", Font.BOLD, 13));
+            lblTeam2.setHorizontalAlignment(SwingConstants.LEFT);  // Pegado al marcador
+            lblTeam2.setPreferredSize(new Dimension(0, 24));       // TRUCO: Ancho 0 para forzar reparto 50/50
+
             lblScore.setFont(new Font("SansSerif", Font.BOLD, 14));
+            lblScore.setHorizontalAlignment(SwingConstants.CENTER);// Texto en el centro
+            lblScore.setPreferredSize(new Dimension(60, 24));
+
             lblStatus.setFont(new Font("SansSerif", Font.PLAIN, 12));
             lblStatus.setPreferredSize(new Dimension(110, 20));
 
+            // 2. Armado del panel central (tu código GridBagLayout se mantiene igual)
             JPanel center = new JPanel(new GridBagLayout());
             center.setOpaque(false);
             GridBagConstraints gc = new GridBagConstraints();
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.gridy = 0;
-            gc.gridx = 0; gc.weightx = 1; center.add(lblTeam1, gc);
-            gc.gridx = 1; gc.weightx = 0; gc.insets = new Insets(0, 12, 0, 12);
-            lblScore.setPreferredSize(new Dimension(60, 24));
+
+            gc.gridx = 0;
+            gc.weightx = 1;
+            center.add(lblTeam1, gc);
+
+            gc.gridx = 1;
+            gc.weightx = 0;
+            gc.insets = new Insets(0, 12, 0, 12);
             center.add(lblScore, gc);
-            gc.gridx = 2; gc.weightx = 1; gc.insets = new Insets(0, 0, 0, 0);
+
+            gc.gridx = 2;
+            gc.weightx = 1;
+            gc.insets = new Insets(0, 0, 0, 0);
             center.add(lblTeam2, gc);
 
             add(badgeWrap, BorderLayout.WEST);
@@ -237,14 +252,13 @@ public class StandingsPanel extends JPanel {
                                                       int index, boolean isSelected, boolean cellHasFocus) {
             GroupStageMatch m = row.getMatch();
 
-            lblBadge.setText(row.getZoneName().replace("Zone ", "Z") + " · M" + m.getMATCHDAY());
+            lblBadge.setText(row.getZoneName() + " · Matchday " + m.getMATCHDAY());
             lblTeam1.setText(m.getTeam1().getName());
             lblTeam2.setText(m.getTeam2().getName());
 
             if (m.isPlayed()) {
                 lblScore.setText(m.getTeam1Goals() + " - " + m.getTeam2Goals());
                 lblScore.setForeground(Color.BLACK);
-                lblStatus.setText("Final");
                 lblStatus.setForeground(MUTED);
             } else {
                 lblScore.setText("vs");

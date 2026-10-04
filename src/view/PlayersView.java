@@ -58,11 +58,23 @@ public class PlayersView extends JPanel {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                // Le indica a Swing el tipo real (Integer, Double, String) de la celda
+                if (getRowCount() > 0 && getValueAt(0, columnIndex) != null) {
+                    return getValueAt(0, columnIndex).getClass();
+                }
+                return Object.class;
+            }
         };
 
         table = new StyledTable(tableModel);
         table.centerAllRows();
         table.setColumnWidths(new int[]{180, 150, 110, 40, 100, 50, 50, 120, 120});
+        table.setAutoCreateRowSorter(true);
+        table.setColumnSuffix(3," yrs");
+        table.setColumnSuffix(5,"'");
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 220), 1));
@@ -152,9 +164,9 @@ public class PlayersView extends JPanel {
                         item.getPlayerName(),
                         item.getTeamName(),
                         posString,
-                        item.getAge() > 0 ? item.getAge() + " yrs" : "N/A",
+                        item.getAge(),
                         item.getMatchesPlayed(),
-                        item.getMinutesPlayed() + "'",
+                        item.getMinutesPlayed(),
                         item.getGoalsScored(),
                         isGoalkeeper ? item.getGoalsConceded() : "-",
                         isGoalkeeper ? String.format("%.2f", item.getGoalsConcededPerMatch()) : "-"

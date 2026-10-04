@@ -50,7 +50,6 @@ public class StyledTable extends JTable {
         }
     }
 
-    // Funcion de conveniencia para alinear columnas específicas (Centro, Izquierda, Derecha)
     public void setColumnAlignment(int columnIndex, int alignment) {
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
         renderer.setHorizontalAlignment(alignment);
@@ -61,6 +60,20 @@ public class StyledTable extends JTable {
         for (int i = 0; i < widths.length && i < getColumnCount(); i++) {
             getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
         }
+    }
+
+    public void setColumnSuffix(int columnIndex, String suffix) {
+        getColumnModel().getColumn(columnIndex).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            protected void setValue(Object value) {
+                if (value instanceof Number) {
+                    setText(value + suffix);
+                } else {
+                    super.setValue(value);
+                }
+                setHorizontalAlignment(SwingConstants.CENTER);
+            }
+        });
     }
 
 }

@@ -6,6 +6,7 @@ import model.StadiumLoader;
 import model.Tournament;
 import model.TournamentState;
 import view.RefereesView;
+import view.TeamsView;
 import view.knockout.KnockoutView;
 import view.mainwindow.MainWindowView;
 import view.mainwindow.SidebarItem;
@@ -38,8 +39,9 @@ public class MainWindowController {
         switch (item) {
             case GROUPS -> navigateToGroups();
             case KNOCKOUT -> navigateToKnockout();
+            case TEAMS -> navigateToTeams();
             case REFEREES -> navigateToReferees();
-            case TEAMS, PLAYERS, RANKINGS, CREDENTIALS, ADMIN -> {
+            case PLAYERS, RANKINGS, CREDENTIALS, ADMIN -> {
                 JOptionPane.showMessageDialog(view, "Screen in development: " + item);
             }
         }
@@ -103,6 +105,12 @@ public class MainWindowController {
         KnockoutView knockoutView = new KnockoutView();
         new KnockoutController(knockoutView, tournament);
         view.showScreen(knockoutView, SidebarItem.KNOCKOUT);
+    }
+
+    private void navigateToTeams() {
+        TeamsView teamsView = new TeamsView();
+        new TeamsController(teamsView, tournament);
+        view.showScreen(teamsView, SidebarItem.TEAMS);
     }
 
     private void navigateToReferees() {

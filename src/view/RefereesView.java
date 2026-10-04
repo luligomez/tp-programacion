@@ -2,6 +2,7 @@ package view;
 
 import model.reports.RefereeReportData;
 import model.reports.RefereeReportItem;
+import view.components.StyledTable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class RefereesView extends JPanel {
 
-    private final JTable table;
+    private final StyledTable table;
     private final DefaultTableModel tableModel;
     private final JLabel lblAverageYears;
     private final JLabel lblTotalReferees;
@@ -43,8 +44,8 @@ public class RefereesView extends JPanel {
 
         };
 
-        table = new JTable(tableModel);
-        setupTableStyle();
+        table = new StyledTable(tableModel);
+        table.centerAllRows();
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 220), 1));
@@ -79,57 +80,6 @@ public class RefereesView extends JPanel {
 
         panel.add(textPanel, BorderLayout.WEST);
         return panel;
-    }
-
-    private void setupTableStyle() {
-        table.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        table.setRowHeight(32);
-        table.setGridColor(new Color(230, 233, 240));
-        table.setShowVerticalLines(false);
-        table.setSelectionBackground(new Color(220, 235, 252));
-        table.setSelectionForeground(TEXT_DARK);
-
-
-        // Estilo de los encabezados
-        JTableHeader header = table.getTableHeader();
-        header.setFont(new Font("SansSerif", Font.BOLD, 14));
-        header.setBackground(PRIMARY_BLUE);
-        header.setForeground(Color.BLUE);
-        header.setPreferredSize(new Dimension(0, 38));
-        header.setReorderingAllowed(false);
-
-        // Renderizador personalizado para centrar datos y resaltar la FILA EXTRA DE PROMEDIO
-        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus,
-                                                           int row, int column) {
-
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-                boolean isSummaryRow = (row == table.getRowCount() - 1);
-
-                if (isSummaryRow) {
-                    // Estilo diferenciado para la fila extra del promedio
-                    c.setBackground(SUMMARY_ROW_BG);
-                    c.setFont(new Font("SansSerif", Font.BOLD, 14));
-                    c.setForeground(PRIMARY_BLUE);
-                } else {
-                    c.setBackground(isSelected ? table.getSelectionBackground() : Color.WHITE);
-                    c.setFont(new Font("SansSerif", Font.PLAIN, 14));
-                    c.setForeground(TEXT_DARK);
-                }
-
-                // Alineación al centro para columnas numéricas y ranking
-                if (column == 0 || column == 3 || column == 4) {
-                    setHorizontalAlignment(SwingConstants.CENTER);
-                } else {
-                    setHorizontalAlignment(SwingConstants.LEFT);
-                }
-
-                return c;
-            }
-        });
     }
 
     private JPanel createFooterPanel() {

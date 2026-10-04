@@ -5,6 +5,7 @@ import model.FileReader;
 import model.StadiumLoader;
 import model.Tournament;
 import model.TournamentState;
+import view.PlayersView;
 import view.RefereesView;
 import view.TeamsView;
 import view.knockout.KnockoutView;
@@ -40,8 +41,9 @@ public class MainWindowController {
             case GROUPS -> navigateToGroups();
             case KNOCKOUT -> navigateToKnockout();
             case TEAMS -> navigateToTeams();
+            case PLAYERS -> navigateToPlayers();
             case REFEREES -> navigateToReferees();
-            case PLAYERS, RANKINGS, CREDENTIALS, ADMIN -> {
+            case RANKINGS, CREDENTIALS, ADMIN -> {
                 JOptionPane.showMessageDialog(view, "Screen in development: " + item);
             }
         }
@@ -111,6 +113,12 @@ public class MainWindowController {
         TeamsView teamsView = new TeamsView();
         new TeamsController(teamsView, tournament);
         view.showScreen(teamsView, SidebarItem.TEAMS);
+    }
+
+    private void navigateToPlayers() {
+        PlayersView playersView = new PlayersView();
+        new PlayersController(playersView, tournament);
+        view.showScreen(playersView, SidebarItem.PLAYERS);
     }
 
     private void navigateToReferees() {

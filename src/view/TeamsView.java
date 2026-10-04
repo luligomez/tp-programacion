@@ -28,8 +28,8 @@ public class TeamsView extends JPanel {
 
         // Tabla y columnas
         String[] columns = {
-                "Equipo", "Edad Prom. Jugadores", "DT Edad",
-                "DT Nacionalidad", "GF", "GC", "Efectividad"
+                "Team", "Avg. Player Age", "Coach Age",
+                "Coach Nationality", "GF", "GA", "Effectiveness"
         };
 
         tableModel = new DefaultTableModel(columns, 0) {
@@ -54,7 +54,7 @@ public class TeamsView extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
 
-        JLabel lblTitle = new JLabel("Reporte VI: Alphabetical Team Overview");
+        JLabel lblTitle = new JLabel("Team Overview");
         lblTitle.setFont(new Font("SansSerif", Font.BOLD, 22));
         lblTitle.setForeground(TEXT_DARK);
 

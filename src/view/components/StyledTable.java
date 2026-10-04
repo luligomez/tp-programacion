@@ -26,6 +26,7 @@ public class StyledTable extends JTable {
         // 🔒 Bloquear reordenamiento de columnas globalmente
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setPreferredSize(new Dimension(0, 38));
+        getTableHeader().setResizingAllowed(false);
 
         // 🎨 Aplicar el header azul estilizado
         applyHeaderStyle();
@@ -55,4 +56,11 @@ public class StyledTable extends JTable {
         renderer.setHorizontalAlignment(alignment);
         getColumnModel().getColumn(columnIndex).setCellRenderer(renderer);
     }
+    
+    public void setColumnWidths(int[] widths) {
+        for (int i = 0; i < widths.length && i < getColumnCount(); i++) {
+            getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
+        }
+    }
+
 }

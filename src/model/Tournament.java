@@ -3,13 +3,12 @@ package model;
 import model.match.*;
 import model.match.knockout.*;
 import model.person.Coach;
+import model.person.Position;
 import model.person.Referee;
 import model.person.player.Player;
+import model.person.player.TournamentStats;
 import model.place.Stadium;
-import model.reports.RefereeReportData;
-import model.reports.RefereeReportItem;
-import model.reports.TeamReportData;
-import model.reports.TeamReportItem;
+import model.reports.*;
 import model.zone.Zone;
 
 import java.io.Serial;
@@ -539,6 +538,56 @@ public class Tournament implements Serializable {
 
         return new TeamReportData(items);
     }
+    
+    public PlayerReportData getPlayersReportData() {
+        List<PlayerReportItem> items = new ArrayList<>();
+
+        for (Team team : this.getTeams()) {
+            if (team.getPlayers() == null) continue;
+
+            for (Player player : team.getPlayers()) {
+                int age = 0;
+                if (player.getBirthDate() != null) {
+                    age = java.time.Period.between(player.getBirthDate(), java.time.LocalDate.now()).getYears();
+                }
+                TournamentStats playerStats = player.getTournamentStats();
+
+                int matchesPlayed = playerStats.getMatchesPlayed();
+                int minutesPlayed = playerStats.getMinutesPlayed();
+                int goalsScored = playerStats.getGoals();
+
+                int goalsConceded = 0;
+                double goalsConcededPerMatch = 0.0;
+
+                // Si es Arquero, se pueden calcular los goles recibidos desde sus participaciones en partidos
+                if (player.getPosition() == Position.GOALKEEPER) {
+                    // Si tenés los goles recibidos guardados en el jugador o en sus participaciones:
+                    //goalsConceded = playerStats.getGoalsConceded(); //TODO
+                    if (matchesPlayed > 0) {
+                        goalsConcededPerMatch = (double) goalsConceded / matchesPlayed;
+                    }
+                }
+
+                items.add(new PlayerReportItem(
+                        player.getName(),
+                        team.getName(),
+                        player.getPosition(),
+                        age,
+                        matchesPlayed,
+                        minutesPlayed,
+                        goalsScored,
+                        goalsConceded,
+                        goalsConcededPerMatch
+                ));
+            }
+        }
+
+        // Ordenar alfabéticamente por nombre del jugador
+        items.sort((p1, p2) -> p1.getPlayerName().compareToIgnoreCase(p2.getPlayerName()));
+
+        return new PlayerReportData(items);
+    }
+
 
 }
 

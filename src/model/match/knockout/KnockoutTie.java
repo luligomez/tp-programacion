@@ -9,7 +9,6 @@ import model.person.Referee;
 import model.place.Stadium;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class KnockoutTie implements Serializable {
@@ -32,11 +31,11 @@ public class KnockoutTie implements Serializable {
         Stadium st1 = Tournament.pickRandomUnusedStadium(stadiums);
         Formation formation1 = FormationCreator.createAutomaticFormation(team1);
         Formation formation2 = FormationCreator.createAutomaticFormation(team2);
-        this.firstLeg = new FirstLegMatch(LocalDateTime.now(), team1, team2, ref1, formation1, formation2, st1);
+        this.firstLeg = new FirstLegMatch(team1, team2, ref1, formation1, formation2, st1);
 
         Referee ref2 = Tournament.pickValidReferee(team2, team1, referees);
         Stadium st2 = Tournament.pickRandomUnusedStadium(stadiums);
-        this.secondLeg = new SecondLegMatch(LocalDateTime.now(), team2, team1, ref2, null, null, st2); //TODO CAMBIAR HORARIO
+        this.secondLeg = new SecondLegMatch(team2, team1, ref2, st2);
     }
 
     public KnockoutPhase getPhase() { return phase; }

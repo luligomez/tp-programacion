@@ -4,7 +4,6 @@ import model.reports.TeamReportItem;
 import view.components.StyledTable;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;

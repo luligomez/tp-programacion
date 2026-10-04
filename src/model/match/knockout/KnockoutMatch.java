@@ -6,16 +6,17 @@ import model.match.Match;
 import model.person.Referee;
 import model.place.Stadium;
 
-import java.time.LocalDateTime;
-
 public abstract class KnockoutMatch extends Match {
     private PenaltyShootout penalties;
     private String winningCriteria;
 
-    public KnockoutMatch(LocalDateTime date, Team team1, Team team2, Referee referee, Formation team1Formation, Formation team2Formation, Stadium stadium) {
-        super(date, team1, team2, referee, team1Formation, team2Formation, stadium);
+    public KnockoutMatch(Team team1, Team team2, Referee referee, Formation team1Formation, Formation team2Formation, Stadium stadium) {
+        super(team1, team2, referee, team1Formation, team2Formation, stadium);
     }
 
+    public KnockoutMatch(Team team1, Team team2, Referee referee, Stadium stadium) {
+        super(team1, team2, referee, stadium);
+    }
 
     public PenaltyShootout getPenalties() {
         return penalties;

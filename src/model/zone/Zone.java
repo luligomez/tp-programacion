@@ -3,12 +3,12 @@ package model.zone;
 import model.Team;
 import model.Tournament;
 import model.match.GroupStageMatch;
+import model.match.Match;
 import model.person.Referee;
 import model.place.Stadium;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -225,17 +225,14 @@ public class Zone implements Serializable {
         int matchesPerDay = numTeams / 2;
 
         for (int day = 1; day <= numMatchdays; day++) {
-            for (int j = 0; j <matchesPerDay; j++) {
+            for (int j = 0; j < matchesPerDay; j++) {
                 Team team1 = teamsInZone.get(j);
-                Team team2 = teamsInZone.get(numTeams-1-j);
+                Team team2 = teamsInZone.get(numTeams - 1 - j);
                 Referee referee = Tournament.pickValidReferee(team1, team2, referees);
-                //asignar estadio una vez hecha la BD
-
                 Stadium stadium = Tournament.pickRandomStadium(stadiums);
 
-            // Crear partido
+                // Creamos el partido sin fecha (se le asigna después)
                 GroupStageMatch match = new GroupStageMatch(
-                        LocalDateTime.now(),
                         team1,
                         team2,
                         referee,
@@ -245,7 +242,7 @@ public class Zone implements Serializable {
 
                 addMatch(match);
             }
-            // Rotación Round-Robin (mantiene fijo el índice 0)
+            // Rotación Round-Robin
             Team lastTeam = teamsInZone.remove(numTeams - 1);
             teamsInZone.add(1, lastTeam);
         }
@@ -265,4 +262,11 @@ public class Zone implements Serializable {
     }
 
 
+    public List<Match> getMatchesForMatchday(int matchday) {
+        return new ArrayList<>(
+                groupStageMatches.stream()
+                        .filter(m -> m.getMATCHDAY() == matchday)
+                .toList()
+        );
+    }
 }

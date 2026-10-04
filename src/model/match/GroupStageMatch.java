@@ -6,15 +6,14 @@ import model.place.Stadium;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 public class GroupStageMatch extends Match implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private final int MATCHDAY;
 
-    public GroupStageMatch(LocalDateTime date, Team team1, Team team2, Referee referee, Stadium stadium, int matchday) {
-        super(date, team1, team2, referee, stadium);
+    public GroupStageMatch(Team team1, Team team2, Referee referee, Stadium stadium, int matchday) {
+        super(team1, team2, referee, stadium);
         this.MATCHDAY = matchday;
     }
 

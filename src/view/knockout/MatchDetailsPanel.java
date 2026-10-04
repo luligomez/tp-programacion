@@ -157,7 +157,7 @@ public class MatchDetailsPanel extends JPanel {
     private JPanel infoBlock(String legName, Match match) {
         String stadium = match.getStadium() != null ? match.getStadium().getName() : "-";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM HH:mm");
-        String formattedDate = match.getDate().format(formatter);
+        String formattedDate = match.getDateTime().format(formatter);
 
 
         JPanel block = new JPanel();
@@ -181,7 +181,7 @@ public class MatchDetailsPanel extends JPanel {
     private JLabel finalInfoLabel(Match match) {
         String stadium = match.getStadium() != null ? match.getStadium().getName() : "-";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM HH:mm");
-        String formattedDate = match.getDate().format(formatter);
+        String formattedDate = match.getDateTime().format(formatter);
         JLabel label = smallLabel(formattedDate + " · " + stadium + " · Ref: " + refereeName(match.getReferee()), false);
         label.setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
         return label;

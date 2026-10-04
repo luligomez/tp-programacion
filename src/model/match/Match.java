@@ -18,7 +18,7 @@ public abstract class Match implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    private LocalDateTime date;
+    private LocalDateTime dateTime;
     private Team team1;
     private Team team2;
     private Formation team1Formation;
@@ -30,10 +30,8 @@ public abstract class Match implements Serializable {
     private ArrayList<PlayerParticipation> playerParticipations = new ArrayList<>();
     private Stadium stadium;
 
-    public Match(LocalDateTime date, Team team1, Team team2, Referee referee,
+    public Match(Team team1, Team team2, Referee referee,
                  Formation team1Formation, Formation team2Formation, Stadium stadium) {
-
-        this.date = date;
         this.team1 = team1;
         this.team2 = team2;
         this.referee = referee;
@@ -44,9 +42,7 @@ public abstract class Match implements Serializable {
         this.team2Formation = team2Formation;
         this.stadium = stadium;
     }
-    public Match(LocalDateTime date, Team team1, Team team2, Referee referee, Stadium stadium) {
-
-        this.date = date;
+    public Match(Team team1, Team team2, Referee referee, Stadium stadium) {
         this.team1 = team1;
         this.team2 = team2;
         this.referee = referee;
@@ -73,8 +69,8 @@ public abstract class Match implements Serializable {
 
         }
     }
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
     public Team getTeam1() {
@@ -106,6 +102,9 @@ public abstract class Match implements Serializable {
                     goal.getScorer()
                             .getTournamentStats()
                             .registerGoal(goal.isPenalty());
+                    goal.getGoalkeeper()
+                            .getTournamentStats()
+                            .registerGoalConceded();
                 }
             }
             // 2. AMARILLAS
@@ -206,5 +205,9 @@ public abstract class Match implements Serializable {
 
     public void setTeam2Formation(Formation team2Formation) {
         this.team2Formation = team2Formation;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 }

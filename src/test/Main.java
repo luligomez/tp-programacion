@@ -1,23 +1,18 @@
 package test;
 
+import DAO.CityDAO;
+import DAO.StadiumDAO;
 import controller.MainWindowController;
 import model.*;
-
 import model.match.knockout.*;
-
-import model.zone.TeamStanding;
-import model.zone.Zone;
-import model.person.player.Player;
 import model.match.incident.*;
 import model.match.*;
 import view.mainwindow.MainWindowView;
-
-
 import javax.swing.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import static model.MatchSimulator.simulateMatch;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -36,8 +31,7 @@ public class Main {
             Tournament tournament = null;
             try {
                 tournament = FileReader.fileReader("torneo.json");
-                StadiumLoader.initDatabase();
-                tournament.setStadiums(StadiumLoader.loadStadiums());
+                loadStadiums(tournament);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -60,8 +54,7 @@ public class Main {
         Tournament tournament = null;
         try {
             tournament = FileReader.fileReader("torneo.json");
-            StadiumLoader.initDatabase();
-            tournament.setStadiums(StadiumLoader.loadStadiums());
+            loadStadiums(tournament);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -239,5 +232,16 @@ public class Main {
         }
     }
 
+    private static void loadStadiums(Tournament tournament) throws SQLException {
+        CityDAO cityDAO = new CityDAO();
+        StadiumDAO stadiumDAO = new StadiumDAO();
 
+        // Cities first: stadium has a foreign key to city
+        cityDAO.createTable();
+        stadiumDAO.createTable();
+        cityDAO.insertSampleData();
+        stadiumDAO.insertSampleData();
+
+        tournament.setStadiums(stadiumDAO.getAllStadiums());
+    }
 }

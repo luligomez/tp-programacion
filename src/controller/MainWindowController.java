@@ -1,8 +1,7 @@
 package controller;
 
-import controller.ZoneStageController;
+import DAO.StadiumDAO;
 import model.FileReader;
-import model.StadiumLoader;
 import model.Tournament;
 import model.TournamentState;
 import view.PlayersView;
@@ -73,7 +72,7 @@ public class MainWindowController {
             try {
                 // 1. Recargamos el modelo desde el JSON
                 this.tournament = FileReader.fileReader("torneo.json");
-                this.tournament.setStadiums(StadiumLoader.loadStadiums());
+                this.tournament.setStadiums(new StadiumDAO().getAllStadiums());
                 // 2. Volvemos a cargar la pantalla de grupos limpia con el nuevo torneo
                 navigateToGroups();
 

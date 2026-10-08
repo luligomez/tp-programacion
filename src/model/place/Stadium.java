@@ -5,17 +5,31 @@ import java.io.Serializable;
 public class Stadium implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private boolean used;
+    private long id;
+    private boolean used = false;
     private String name;
     private int capacity;
     private City city;
 
 
-    public Stadium (String name, int capacity, City city) {
-        this.used = false;
+
+    public Stadium(String name, int capacity, City city) {
+        this(0, name, capacity, city); //llama al constructor de abajo
+    }
+
+    public Stadium(long id ,String name, int capacity, City city) {
         this.name = name;
         this.capacity = capacity;
         this.city = city;
+        this.id = id;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public boolean isUsed() {

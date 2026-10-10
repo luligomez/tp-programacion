@@ -1,10 +1,12 @@
 package view.knockout;
 
+import model.match.Match;
 import model.match.knockout.FinalMatch;
 import model.match.knockout.KnockoutTie;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Consumer;
 
 public class MatchCardPanel extends JPanel {
 
@@ -145,5 +147,9 @@ public class MatchCardPanel extends JPanel {
             scores[i].setFont(new Font("SansSerif", Font.BOLD, 15));
             scores[i].setForeground(winner ? BLUE : GRAY);
         }
+    }
+
+    public void setOnMatchSelectedListener(Consumer<Match> listener) {
+        details.setOnMatchSelectedListener(listener);
     }
 }

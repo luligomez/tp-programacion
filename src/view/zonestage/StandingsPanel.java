@@ -1,15 +1,19 @@
 package view.zonestage;
 
 import model.match.GroupStageMatch;
+import model.match.Match;
 import model.zone.Zone;
 import view.zonestage.shared.TeamStandingGroupCard;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class StandingsPanel extends JPanel {
 
@@ -31,6 +35,9 @@ public class StandingsPanel extends JPanel {
     // LISTA DE PARTIDOS (FIXTURE)
     private final DefaultListModel<MatchRow> matchesListModel;
     private final JList<MatchRow> matchesList;
+
+    private Consumer<Match> matchSelectedListener;
+
 
     /** Fila del fixture: partido + nombre de la zona a la que pertenece. */
     public static class MatchRow {
@@ -97,7 +104,12 @@ public class StandingsPanel extends JPanel {
         filterBar.add(Box.createHorizontalStrut(10));
         filterBar.add(new JLabel("Matchday:"));
         filterBar.add(comboMatchdayFilter);
+        filterBar.add(Box.createHorizontalStrut(20));
+        JLabel hint = new JLabel("Double-click a match to see its details");
+        hint.setForeground(MUTED);
+        filterBar.add(hint);
         fixtureContainer.add(filterBar, BorderLayout.NORTH);
+
 
 // Lista de partidos (Sin JScrollPane propio para que expanda su altura)
         matchesListModel = new DefaultListModel<>();
@@ -107,6 +119,16 @@ public class StandingsPanel extends JPanel {
         matchesList.setFixedCellHeight(40);
         matchesList.setLayoutOrientation(JList.VERTICAL);
         matchesList.setVisibleRowCount(-1); // Permite que el JList crezca a lo largo según la cantidad de partidos
+
+        matchesList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    openMatchAt(e.getPoint());
+                }
+            }
+        });
+
 
         fixtureContainer.add(matchesList, BorderLayout.CENTER);
 
@@ -260,6 +282,7 @@ public class StandingsPanel extends JPanel {
                 lblScore.setText(m.getTeam1Goals() + " - " + m.getTeam2Goals());
                 lblScore.setForeground(Color.BLACK);
                 lblStatus.setForeground(MUTED);
+                lblStatus.setText("Full time");
             } else {
                 lblScore.setText("vs");
                 lblScore.setForeground(MUTED);
@@ -288,4 +311,22 @@ public class StandingsPanel extends JPanel {
     public void setMatchdayLabel(int matchday) {
         btnSimulateMatchday.setText("Simulate Matchday " + matchday + " ⚽");
     }
+
+    public void setOnMatchSelectedListener(Consumer<Match> listener) {
+        this.matchSelectedListener = listener;
+    }
+
+    private void openMatchAt(Point point) {
+        int index = matchesList.locationToIndex(point);
+        if (index < 0) return;
+
+        // locationToIndex devuelve la fila más cercana aunque hayas tocado el espacio vacío debajo
+        Rectangle bounds = matchesList.getCellBounds(index, index);
+        if (bounds == null || !bounds.contains(point)) return;
+
+        if (matchSelectedListener != null) {
+            matchSelectedListener.accept(matchesListModel.get(index).getMatch());
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package view.knockout;
 
+import model.match.Match;
 import model.match.knockout.FinalMatch;
 import model.match.knockout.KnockoutTie;
 import java.awt.event.MouseAdapter;
@@ -9,6 +10,7 @@ import java.util.Arrays;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class BracketPanel extends JPanel {
 
@@ -155,5 +157,11 @@ public class BracketPanel extends JPanel {
         }
         revalidate();
         repaint();
+    }
+
+    public void setOnMatchSelectedListener(Consumer<Match> listener) {
+        for (MatchCardPanel card : allCards()) {
+            card.setOnMatchSelectedListener(listener);
+        }
     }
 }

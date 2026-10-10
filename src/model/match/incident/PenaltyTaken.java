@@ -1,8 +1,11 @@
 package model.match.incident;
 
+import model.match.Match;
 import model.person.player.Player;
+import model.reports.MatchReport.*;
 
 import java.io.Serial;
+import java.util.Optional;
 
 public class PenaltyTaken extends Incident {
 
@@ -38,5 +41,10 @@ public class PenaltyTaken extends Incident {
         String shooter = (player != null) ? player.getName() : "Unknown";
         String scoredStr = (scored) ? "Penalty Scored!" : "Penalty Missed!";
         return super.toString()+" | 🥅 "+scoredStr+" Shooter: " + shooter;
+    }
+
+    @Override
+    public Optional<TimelineEvent> toTimelineEvent(Match match) {
+        return Optional.empty();
     }
 }

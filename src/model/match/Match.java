@@ -210,4 +210,8 @@ public abstract class Match implements Serializable {
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
+
+    public boolean isTeam1Player(Player player) {
+        return team1.getPlayers().contains(player);
+    }
 }

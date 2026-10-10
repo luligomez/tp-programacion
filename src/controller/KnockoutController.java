@@ -1,20 +1,25 @@
 package controller;
 
 import model.Tournament;
+import model.match.Match;
 import model.match.knockout.*;
 import view.knockout.KnockoutView;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class KnockoutController {
 
     private final KnockoutView view;
     private final Tournament tournament;
+    private final Consumer<Match> onOpenMatch;
 
-    public KnockoutController(KnockoutView view, Tournament tournament) {
+    public KnockoutController(KnockoutView view, Tournament tournament, Consumer<Match> onOpenMatch) {
         this.view = view;
         this.tournament = tournament;
+        this.onOpenMatch = onOpenMatch;
 
         view.setOnSimulateListener(this::simulateNextRound);
+        view.setOnMatchSelectedListener(onOpenMatch); // nuevo
         updateView();
     }
 

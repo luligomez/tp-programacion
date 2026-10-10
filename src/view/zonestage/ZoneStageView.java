@@ -1,11 +1,13 @@
 package view.zonestage;
 
 import model.Team;
+import model.match.Match;
 import model.zone.Zone;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ZoneStageView extends JPanel {
 
@@ -14,6 +16,7 @@ public class ZoneStageView extends JPanel {
     private Runnable onRedrawListener;
     private Runnable onSimulateMatchdayListener;
     private StandingsPanel standingsPanel;
+    private Consumer<Match> matchSelectedListener;
 
     public ZoneStageView() {
         setLayout(new BorderLayout());
@@ -62,6 +65,10 @@ public class ZoneStageView extends JPanel {
             if (onSimulateMatchdayListener != null) {
                 standingsPanel.setOnSimulateMatchdayListener(onSimulateMatchdayListener);
             }
+            // la lambda lee el campo al momento del click, no al construir
+            standingsPanel.setOnMatchSelectedListener(match -> {
+                if (matchSelectedListener != null) matchSelectedListener.accept(match);
+            });
         } else {
             standingsPanel.updateGroups(zones);
         }
@@ -90,5 +97,9 @@ public class ZoneStageView extends JPanel {
 
     public StandingsPanel getStandingsPanel() {
         return standingsPanel;
+    }
+
+    public void setOnMatchSelectedListener(Consumer<Match> listener) {
+        this.matchSelectedListener = listener;
     }
 }

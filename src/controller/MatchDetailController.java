@@ -1,26 +1,18 @@
 package controller;
-import model.match.Match;
-import model.match.incident.Incident;
-import model.match.incident.Goal;
-import model.match.incident.YellowCard;
-import model.match.incident.Expulsion;
-import model.match.incident.Substitution;
-import view.MatchDetailView;
 
-import java.awt.Frame;
+import model.match.Match;
+import model.reports.MatchReportBuilder;
+import view.match.MatchDetailView;
 
 public class MatchDetailController {
 
-    private MatchDetailView view;
-    private Match match;
-
-    public MatchDetailController(Frame parent, Match match) {
-        this.match = match;
-        //this.view = new MatchDetailView(parent);
-
-        initViewData();
+    public MatchDetailController(MatchDetailView view, Match match, Runnable onBack) {
+        view.setOnBackListener(onBack);
+        view.showReport(MatchReportBuilder.build(match));
     }
+}
 
+    /*
     private void initViewData() {
         if (match == null) return;
 
@@ -57,5 +49,4 @@ public class MatchDetailController {
     private String formatIncident(Incident inc) {
         return inc.toString();
     }
-
-}
+    */

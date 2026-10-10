@@ -2,15 +2,21 @@ package controller;
 
 import model.Tournament;
 import model.TournamentState;
+import model.match.Match;
 import view.zonestage.ZoneStageView;
+
+import java.util.function.Consumer;
 
 public class ZoneStageController {
     private final ZoneStageView view;
     private final Tournament tournament;
+    private final Consumer<Match> onOpenMatch;
 
-    public ZoneStageController(ZoneStageView view, Tournament tournament) {
+
+    public ZoneStageController(ZoneStageView view, Tournament tournament, Consumer<Match> onOpenMatch) {
         this.view = view;
         this.tournament = tournament;
+        this.onOpenMatch = onOpenMatch;
         initController();
     }
 
@@ -19,6 +25,7 @@ public class ZoneStageController {
         view.setOnDrawConfirmedListener(this::onDrawConfirmed);
         view.setOnRedrawListener(this::onRedraw);
         view.setOnSimulateMatchdayListener(this::simulateNextMatchday);
+        view.setOnMatchSelectedListener(onOpenMatch); // nuevo
         updateView();
     }
 

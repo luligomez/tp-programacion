@@ -9,6 +9,7 @@ import model.person.Referee;
 import javax.swing.*;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
+import java.util.function.Consumer;
 
 public class MatchDetailsPanel extends JPanel {
 
@@ -18,6 +19,8 @@ public class MatchDetailsPanel extends JPanel {
     private static final Font ROW_FONT = new Font("SansSerif", Font.PLAIN, 13);
 
     private boolean hasContent = false;
+
+    private Consumer<Match> matchSelectedListener;
 
     public MatchDetailsPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -89,6 +92,8 @@ public class MatchDetailsPanel extends JPanel {
             add(left(criterionLabel(match.getWinningCriteria())));
         }
         add(left(finalInfoLabel(match)));
+        add(left(detailsButton(match)));
+        end();
 
         end();
     }
@@ -168,6 +173,8 @@ public class MatchDetailsPanel extends JPanel {
         block.add(left(smallLabel(legName + " · Home: " + match.getTeam1().getName(), true)));
         block.add(left(smallLabel(formattedDate + " · " + stadium,false)));
         block.add(left(smallLabel("Ref: " + refereeName(match.getReferee()), false)));
+        block.add(Box.createVerticalStrut(3));
+        block.add(left(detailsButton(match)));
         return block;
     }
 
@@ -185,6 +192,20 @@ public class MatchDetailsPanel extends JPanel {
         JLabel label = smallLabel(formattedDate + " · " + stadium + " · Ref: " + refereeName(match.getReferee()), false);
         label.setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
         return label;
+    }
+
+    private JButton detailsButton(Match match) {
+        JButton button = new JButton("Details");
+        button.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        button.setFocusPainted(false);
+        button.addActionListener(e -> {
+            if (matchSelectedListener != null) matchSelectedListener.accept(match);
+        });
+        return button;
+    }
+
+    public void setOnMatchSelectedListener(Consumer<Match> listener) {
+        this.matchSelectedListener = listener;
     }
 
 }

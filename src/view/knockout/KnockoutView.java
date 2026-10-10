@@ -1,5 +1,6 @@
 package view.knockout;
 
+import model.match.Match;
 import model.match.knockout.FinalMatch;
 import model.match.knockout.KnockoutStep;
 import model.match.knockout.KnockoutTie;
@@ -7,6 +8,7 @@ import model.match.knockout.KnockoutTie;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static model.match.knockout.KnockoutStep.SEMIS_SECOND_LEG;
 
@@ -17,6 +19,8 @@ public class KnockoutView extends JPanel {
     private final JButton btnSimulate;
     private final BracketPanel bracketPanel = new BracketPanel();
     private Runnable onSimulateListener;
+    private Consumer<Match> matchSelectedListener;
+
 
     public KnockoutView() {
         setLayout(new BorderLayout());
@@ -52,6 +56,9 @@ public class KnockoutView extends JPanel {
 
         JPanel centerContainer = new JPanel(new GridBagLayout());
         // GridBagLayout centra automáticamente
+        bracketPanel.setOnMatchSelectedListener(match -> {
+            if (matchSelectedListener != null) matchSelectedListener.accept(match);
+        });
         centerContainer.add(bracketPanel);
         JScrollPane scroll = new JScrollPane(centerContainer);
         scroll.setBorder(null);
@@ -89,4 +96,9 @@ public class KnockoutView extends JPanel {
     public void showBracket(List<KnockoutTie> quarters, List<KnockoutTie> semis, FinalMatch finalMatch) {
         bracketPanel.update(quarters, semis, finalMatch);
     }
+
+    public void setOnMatchSelectedListener(Consumer<Match> listener) {
+        this.matchSelectedListener = listener;
+    }
+
 }

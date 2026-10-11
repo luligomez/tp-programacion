@@ -1,11 +1,11 @@
 package model.match.knockout;
 
-import model.Team;
+import model.team.Team;
 import model.match.Formation;
 import model.match.Match;
 import model.person.Referee;
 import model.place.Stadium;
-import model.reports.MatchReport;
+import model.reports.match.MatchReport;
 import model.match.knockout.PenaltyShootout.*;
 
 import java.util.ArrayList;

@@ -1,4 +1,6 @@
-package model;
+package service;
+import model.team.Team;
+import model.tournament.Tournament;
 import model.person.*;
 import model.person.player.*;
 import model.person.player.FieldPlayer.FieldPlayer;

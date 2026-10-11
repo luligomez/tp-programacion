@@ -3,10 +3,13 @@ package test;
 import DAO.CityDAO;
 import DAO.StadiumDAO;
 import controller.MainWindowController;
-import model.*;
+import model.match.Match;
+import model.match.incident.Incident;
 import model.match.knockout.*;
-import model.match.incident.*;
-import model.match.*;
+import model.tournament.Tournament;
+import model.tournament.knockout.KnockoutPhase;
+import model.tournament.knockout.KnockoutStage;
+import service.FileReader;
 import view.mainwindow.MainWindowView;
 import javax.swing.*;
 import java.sql.SQLException;
@@ -46,7 +49,8 @@ public class Main {
         });
     }
     
-    private static void testTorneo(){
+    private static void testTorneo() {
+
         System.out.println("==================================================");
         System.out.println("   INICIANDO PRUEBA DEL TORNEO - HASTA CUARTOS   ");
         System.out.println("==================================================\n");
@@ -71,21 +75,21 @@ public class Main {
         // -------------------------------------------------------------
         // FASE 2: GENERACIÓN DE CUARTOS DE FINAL
         // -------------------------------------------------------------
+        KnockoutStage knockoutStage = tournament.getKnockoutStage();
         System.out.println("\n==================================================");
         System.out.println("   GENERANDO CRUCES DE CUARTOS DE FINAL   ");
         System.out.println("==================================================");
-        tournament.generateQuarterFinals();
         System.out.println("Llaves de Cuartos armadas:");
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
+        for (KnockoutTie tie : knockoutStage.getTies(KnockoutPhase.QUARTER_FINAL)) {
             System.out.println(" * " + tie.getTeam1().getName() + " vs " + tie.getTeam2().getName());
         }
 
-        tournament.simulateKnockoutFirstLeg(KnockoutPhase.QUARTER_FINAL);
+        knockoutStage.simulateFirstLegs(KnockoutPhase.QUARTER_FINAL);
         // -------------------------------------------------------------
         // FASE 3: SIMULACIÓN DE IDA Y VUELTA DE CUARTOS
         // -------------------------------------------------------------
         System.out.println("\n---> SIMULANDO PARTIDOS DE IDA <---");
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
+        for (KnockoutTie tie : knockoutStage.getTies(KnockoutPhase.QUARTER_FINAL)) {
             FirstLegMatch firstLeg = tie.getFirstLeg();
             printMatchIncidents(firstLeg);
             System.out.println(" Ida: " + firstLeg.getTeam1().getName() + " "
@@ -93,10 +97,10 @@ public class Main {
                     + firstLeg.getTeam2Goals() + " " + firstLeg.getTeam2().getName());
 
         }
-        tournament.simulateKnockoutSecondLeg(KnockoutPhase.QUARTER_FINAL);
+        knockoutStage.simulateSecondLegs(KnockoutPhase.QUARTER_FINAL);
 
         System.out.println("\n---> SIMULANDO PARTIDOS DE VUELTA Y RESOLUCIÓN <---");
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
+        for (KnockoutTie tie : knockoutStage.getTies(KnockoutPhase.QUARTER_FINAL)) {
             SecondLegMatch secondLegMatch = tie.getSecondLeg();
             printMatchIncidents(secondLegMatch);
 
@@ -112,10 +116,11 @@ public class Main {
             // 3. Imprimir marcador global
             System.out.print(" | Global: (" + totalGolesTeam1 + " - " + totalGolesTeam2 + ")");
         }
-        if(tournament.hasUnresolvedTies(KnockoutPhase.QUARTER_FINAL)) {
-            tournament.resolveTies(KnockoutPhase.QUARTER_FINAL);
+        if(knockoutStage.hasUnresolvedTies(KnockoutPhase.QUARTER_FINAL)) {
+            knockoutStage.resolveTies(KnockoutPhase.QUARTER_FINAL);
         }
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
+        tournament.advanceKnockoutIfDecided(KnockoutPhase.QUARTER_FINAL);
+        for (KnockoutTie tie : knockoutStage.getTies(KnockoutPhase.QUARTER_FINAL)) {
             // 4. Si hubo penales, imprimir el resultado de la tanda
             if (tie.getSecondLeg().getPenalties() != null) {
                 PenaltyShootout pen = tie.getSecondLeg().getPenalties();
@@ -131,19 +136,17 @@ public class Main {
         System.out.println("\n==================================================");
         System.out.println("   GENERANDO CRUCES DE SEMIFINALES   ");
         System.out.println("==================================================");
-        tournament.generateSemiFinals();
         System.out.println("Llaves de Semis armadas:");
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
-            if(tie.getPhase().equals(KnockoutPhase.SEMI_FINAL))
-                System.out.println(" * " + tie.getTeam1().getName() + " vs " + tie.getTeam2().getName());
+        for (KnockoutTie tie : knockoutStage.getTies(KnockoutPhase.SEMI_FINAL)) {
+            System.out.println(" * " + tie.getTeam1().getName() + " vs " + tie.getTeam2().getName());
         }
 
-        tournament.simulateKnockoutFirstLeg(KnockoutPhase.SEMI_FINAL);
+        knockoutStage.simulateFirstLegs(KnockoutPhase.SEMI_FINAL);
         // -------------------------------------------------------------
         // FASE 5: SIMULACIÓN DE IDA Y VUELTA DE SEMIS
         // -------------------------------------------------------------
         System.out.println("\n---> SIMULANDO PARTIDOS DE IDA <---");
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
+        for (KnockoutTie tie : knockoutStage.getTies(KnockoutPhase.SEMI_FINAL)) {
             if(tie.getPhase().equals(KnockoutPhase.SEMI_FINAL)) {
                 FirstLegMatch firstLeg = tie.getFirstLeg();
                 printMatchIncidents(firstLeg);
@@ -152,31 +155,27 @@ public class Main {
                         + firstLeg.getTeam2Goals() + " " + firstLeg.getTeam2().getName());
             }
         }
-        tournament.simulateKnockoutSecondLeg(KnockoutPhase.SEMI_FINAL);
+        knockoutStage.simulateSecondLegs(KnockoutPhase.SEMI_FINAL);
 
         System.out.println("\n---> SIMULANDO PARTIDOS DE VUELTA Y RESOLUCIÓN <---");
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
-            if (tie.getPhase().equals(KnockoutPhase.SEMI_FINAL)) {
-                SecondLegMatch secondLegMatch = tie.getSecondLeg();
-                printMatchIncidents(secondLegMatch);
-
-                // 1. Calcular marcador acumulado (Global)
-                int totalGolesTeam1 = tie.getFirstLeg().getTeam1Goals() + secondLegMatch.getTeam2Goals();
-                int totalGolesTeam2 = tie.getFirstLeg().getTeam2Goals() + secondLegMatch.getTeam1Goals();
-
-                // 2. Imprimir resultado de la vuelta
-                System.out.print(" Vuelta: " + secondLegMatch.getTeam1().getName() + " "
-                        + secondLegMatch.getTeam1Goals() + " - "
-                        + secondLegMatch.getTeam2Goals() + " " + secondLegMatch.getTeam2().getName());
-
-                // 3. Imprimir marcador global
-                System.out.print(" | Global: (" + totalGolesTeam1 + " - " + totalGolesTeam2 + ")");
-            }
+        for (KnockoutTie tie : knockoutStage.getTies(KnockoutPhase.SEMI_FINAL)) {
+            SecondLegMatch secondLegMatch = tie.getSecondLeg();
+            printMatchIncidents(secondLegMatch);
+            // 1. Calcular marcador acumulado (Global)
+            int totalGolesTeam1 = tie.getFirstLeg().getTeam1Goals() + secondLegMatch.getTeam2Goals();
+            int totalGolesTeam2 = tie.getFirstLeg().getTeam2Goals() + secondLegMatch.getTeam1Goals();
+            // 2. Imprimir resultado de la vuelta
+            System.out.print(" Vuelta: " + secondLegMatch.getTeam1().getName() + " "
+                    + secondLegMatch.getTeam1Goals() + " - " + secondLegMatch.getTeam2Goals() + " " + secondLegMatch.getTeam2().getName());
+            // 3. Imprimir marcador global
+            System.out.print(" | Global: (" + totalGolesTeam1 + " - " + totalGolesTeam2 + ")");
         }
-        if(tournament.hasUnresolvedTies(KnockoutPhase.SEMI_FINAL)) {
-            tournament.resolveTies(KnockoutPhase.SEMI_FINAL);
+        if(knockoutStage.hasUnresolvedTies(KnockoutPhase.SEMI_FINAL)) {
+            knockoutStage.resolveTies(KnockoutPhase.SEMI_FINAL);
         }
-        for (KnockoutTie tie : tournament.getKnockoutTies()) {
+        tournament.advanceKnockoutIfDecided(KnockoutPhase.SEMI_FINAL);
+
+        for (KnockoutTie tie : knockoutStage.getTies(KnockoutPhase.SEMI_FINAL)) {
             // 4. Si hubo penales, imprimir el resultado de la tanda
             if (tie.getSecondLeg().getPenalties() != null) {
                 PenaltyShootout pen = tie.getSecondLeg().getPenalties();
@@ -191,13 +190,12 @@ public class Main {
         System.out.println("\n==================================================");
         System.out.println("   GENERANDO FINAL   ");
         System.out.println("==================================================");
-        tournament.generateFinal();
         System.out.println("Final armada:");
-        KnockoutMatch m = tournament.getFinalMatch();
+        KnockoutMatch m = knockoutStage.getFinalMatch();
         System.out.println(" * " + m.getTeam1().getName() + " vs " + m.getTeam2().getName());
 
 
-        tournament.simulateFinal();
+        knockoutStage.simulateFinal();
         // -------------------------------------------------------------
         // FASE 5: SIMULACIÓN DE FINAL
         // -------------------------------------------------------------
@@ -206,8 +204,8 @@ public class Main {
         System.out.println(" Final: " + m.getTeam1().getName() + " "
                         + m.getTeam1Goals() + " - "
                         + m.getTeam2Goals() + " " + m.getTeam2().getName());
-        if(tournament.hasUnresolvedFinal()) {
-            tournament.resolveFinal();
+        if(knockoutStage.hasUnresolvedFinal()) {
+            knockoutStage.resolveFinal();
             PenaltyShootout pen = m.getPenalties();
             System.out.print(" | Penales: " + pen.getTeam1Goals() + " - " + pen.getTeam2Goals());
         }
@@ -230,7 +228,11 @@ public class Main {
         for (Incident incident : incidents) {
             System.out.println("   " + incident);
         }
+
+
     }
+
+
 
     private static void loadStadiums(Tournament tournament) throws SQLException {
         CityDAO cityDAO = new CityDAO();
@@ -244,4 +246,8 @@ public class Main {
 
         tournament.setStadiums(stadiumDAO.getAllStadiums());
     }
+
+
 }
+
+

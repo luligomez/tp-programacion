@@ -2,15 +2,13 @@ package view.knockout;
 
 import model.match.Match;
 import model.match.knockout.FinalMatch;
-import model.match.knockout.KnockoutStep;
+import model.tournament.knockout.KnockoutStep;
 import model.match.knockout.KnockoutTie;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.function.Consumer;
-
-import static model.match.knockout.KnockoutStep.SEMIS_SECOND_LEG;
 
 public class KnockoutView extends JPanel {
 

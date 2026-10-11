@@ -1,11 +1,11 @@
-package model.zone;
+package model.tournament.zone;
 
-import model.Team;
-import model.Tournament;
-import model.match.GroupStageMatch;
+import model.team.Team;
+import model.match.zone.GroupStageMatch;
 import model.match.Match;
 import model.person.Referee;
 import model.place.Stadium;
+import service.MatchResourceService;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static model.Tournament.TEAMS_PER_GROUP;
+import static model.tournament.Tournament.TEAMS_PER_GROUP;
 
 public class Zone implements Serializable {
 
@@ -228,8 +228,8 @@ public class Zone implements Serializable {
             for (int j = 0; j < matchesPerDay; j++) {
                 Team team1 = teamsInZone.get(j);
                 Team team2 = teamsInZone.get(numTeams - 1 - j);
-                Referee referee = Tournament.pickValidReferee(team1, team2, referees);
-                Stadium stadium = Tournament.pickRandomStadium(stadiums);
+                Referee referee = MatchResourceService.pickValidReferee(team1, team2, referees);
+                Stadium stadium = MatchResourceService.pickRandomStadium(stadiums);
 
                 // Creamos el partido sin fecha (se le asigna después)
                 GroupStageMatch match = new GroupStageMatch(

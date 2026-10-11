@@ -1,7 +1,7 @@
 package controller;
 
 import model.match.Match;
-import model.reports.MatchReportBuilder;
+import service.MatchReportBuilder;
 import view.match.MatchDetailView;
 
 public class MatchDetailController {

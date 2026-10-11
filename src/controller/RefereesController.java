@@ -1,7 +1,7 @@
 package controller;
 
-import model.Tournament;
-import model.reports.RefereeReportData;
+import model.tournament.Tournament;
+import model.reports.TournamentReportsService;
 import view.RefereesView;
 
 public class RefereesController {
@@ -21,7 +21,7 @@ public class RefereesController {
     }
 
     public void loadReportData() {
-        view.setRefereesData(tournament.getRefereesReportData());
+        view.setRefereesData(TournamentReportsService.generateRefereesReportData(tournament));
     }
 }
 

@@ -1,12 +1,13 @@
 package model.match.knockout;
 
-import model.FormationCreator;
-import model.Team;
-import model.Tournament;
+import model.tournament.knockout.KnockoutPhase;
+import service.FormationCreator;
+import model.team.Team;
 import model.match.Formation;
 import model.match.Match;
 import model.person.Referee;
 import model.place.Stadium;
+import service.MatchResourceService;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,14 +28,14 @@ public class KnockoutTie implements Serializable {
 
     private void initTie(ArrayList<Referee> referees, ArrayList<Stadium> stadiums){
         // La serie se encarga de instanciar la ida y la vuelta con localías invertidas
-        Referee ref1 = Tournament.pickValidReferee(team1, team2, referees);
-        Stadium st1 = Tournament.pickRandomUnusedStadium(stadiums);
+        Referee ref1 = MatchResourceService.pickValidReferee(team1, team2, referees);
+        Stadium st1 = MatchResourceService.pickRandomUnusedStadium(stadiums);
         Formation formation1 = FormationCreator.createAutomaticFormation(team1);
         Formation formation2 = FormationCreator.createAutomaticFormation(team2);
         this.firstLeg = new FirstLegMatch(team1, team2, ref1, formation1, formation2, st1);
 
-        Referee ref2 = Tournament.pickValidReferee(team2, team1, referees);
-        Stadium st2 = Tournament.pickRandomUnusedStadium(stadiums);
+        Referee ref2 = MatchResourceService.pickValidReferee(team2, team1, referees);
+        Stadium st2 = MatchResourceService.pickRandomUnusedStadium(stadiums);
         this.secondLeg = new SecondLegMatch(team2, team1, ref2, st2);
     }
 

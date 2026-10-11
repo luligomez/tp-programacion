@@ -2,7 +2,7 @@ package model.match.incident;
 
 import model.match.Match;
 import model.person.player.Player;
-import model.reports.MatchReport.*;
+import model.reports.match.MatchReport.*;
 
 import java.io.Serial;
 import java.util.Optional;

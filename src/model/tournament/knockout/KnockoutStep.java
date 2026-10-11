@@ -1,4 +1,4 @@
-package model.match.knockout;
+package model.tournament.knockout;
 
 public enum KnockoutStep {
     QUARTERS_FIRST_LEG,

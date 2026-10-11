@@ -1,10 +1,11 @@
-package model.reports;
+package service;
 
-import model.Team;
+import model.team.Team;
 import model.match.Formation;
 import model.match.Match;
 import model.person.player.Player;
-import model.reports.MatchReport.*;
+import model.reports.match.MatchReport;
+import model.reports.match.MatchReport.*;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;

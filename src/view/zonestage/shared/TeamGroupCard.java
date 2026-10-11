@@ -3,7 +3,7 @@ package view.zonestage.shared;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import model.Team;
+import model.team.Team;
 
 public class TeamGroupCard extends JPanel {
     private static final Color CARD_BG = Color.WHITE;

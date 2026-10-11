@@ -1,6 +1,6 @@
 package view;
 
-import model.reports.TeamReportItem;
+import model.reports.team.TeamReportItem;
 import view.components.StyledTable;
 
 import javax.swing.*;

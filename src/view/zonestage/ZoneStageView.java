@@ -1,8 +1,8 @@
 package view.zonestage;
 
-import model.Team;
+import model.team.Team;
 import model.match.Match;
-import model.zone.Zone;
+import model.tournament.zone.Zone;
 
 import javax.swing.*;
 import java.awt.*;

@@ -6,9 +6,10 @@ import java.awt.geom.RoundRectangle2D;
 
 public class EventIcon implements Icon {
 
+
     public enum Kind { YELLOW_CARD, RED_CARD, GOAL, OWN_GOAL, SUBSTITUTION, SUB_IN, SUB_OUT, PENALTY_SCORED, PENALTY_MISSED }
 
-    private static final int SIZE = 16;
+    private final int SIZE;
     private static final Color YELLOW = new Color(249, 190, 0);
     private static final Color RED = new Color(211, 47, 47);
     private static final Color GREEN = new Color(46, 125, 50);
@@ -17,16 +18,24 @@ public class EventIcon implements Icon {
     private final Kind kind;
 
     public EventIcon(Kind kind) {
+        this(kind, 16);
+    }
+
+    public EventIcon(Kind kind, int size) {
         this.kind = kind;
+        this.SIZE = size;
     }
 
     @Override public int getIconWidth() { return SIZE; }
     @Override public int getIconHeight() { return SIZE; }
 
     @Override
-    public void paintIcon(Component c, Graphics g, int x, int y) {
+    public void paintIcon(Component c, Graphics g, int px, int py) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.translate(px, py);
+        g2.scale(SIZE / 16.0, SIZE / 16.0);
+        int x = 0, y = 0;
         switch (kind) {
             case YELLOW_CARD -> card(g2, x, y, YELLOW);
             case RED_CARD -> card(g2, x, y, RED);

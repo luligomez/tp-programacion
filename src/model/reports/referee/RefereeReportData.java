@@ -1,4 +1,4 @@
-package model.reports;
+package model.reports.referee;
 
 import java.util.List;
 

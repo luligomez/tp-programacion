@@ -1,7 +1,7 @@
 package model.match.knockout;
 
 import model.person.player.Player;
-import model.Team;
+import model.team.Team;
 
 import java.io.Serial;
 import java.io.Serializable;

@@ -1,13 +1,11 @@
 package view;
 
-import model.reports.RefereeReportData;
-import model.reports.RefereeReportItem;
+import model.reports.referee.RefereeReportData;
+import model.reports.referee.RefereeReportItem;
 import view.components.StyledTable;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.util.List;
 

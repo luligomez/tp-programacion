@@ -1,5 +1,6 @@
-package model;
+package service;
 
+import model.team.Team;
 import model.match.Formation;
 import model.match.Match;
 import model.match.PlayerParticipation;

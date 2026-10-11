@@ -1,8 +1,9 @@
-package model.match;
+package model.match.zone;
 
-import model.*;
+import model.match.Match;
 import model.person.Referee;
 import model.place.Stadium;
+import model.team.Team;
 
 import java.io.Serial;
 import java.io.Serializable;

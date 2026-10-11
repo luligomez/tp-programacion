@@ -1,4 +1,4 @@
-package model.reports;
+package model.reports.team;
 
 public class TeamReportItem {
     private final String teamName;

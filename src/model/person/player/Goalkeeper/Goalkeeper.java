@@ -1,13 +1,11 @@
 package model.person.player.Goalkeeper;
 
 import model.person.Position;
-import model.person.player.Attributes;
-import model.person.player.CareerStats;
 import model.person.player.Player;
 
 import java.io.Serial;
 import java.time.LocalDate;
-import static model.person.player.RatingCalculator.calculateRating;
+import static service.RatingCalculator.calculateRating;
 
 public class Goalkeeper extends Player {
     @Serial

@@ -2,7 +2,7 @@ package view.zonestage.shared;
 
 import javax.swing.*;
 import java.awt.*;
-import model.Team;
+import model.team.Team;
 
 public class TeamRowPanel extends JPanel {
     private static final Color RANK_BADGE_BG = new Color(235, 240, 250);
@@ -20,7 +20,7 @@ public class TeamRowPanel extends JPanel {
         nameLabel.setOpaque(false);
         nameLabel.setLineWrap(true);
         nameLabel.setWrapStyleWord(true);
-        nameLabel.setFont(nameLabel.getFont().deriveFont(13f));
+        nameLabel.setFont(nameLabel.getFont().deriveFont(15f));
         nameLabel.setBorder(null);
         nameLabel.setHighlighter(null);
 

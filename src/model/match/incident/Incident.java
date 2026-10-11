@@ -5,8 +5,8 @@ import java.io.Serializable;
 
 import model.match.Match;
 import model.person.player.Player;
-import model.reports.MatchReport.PlayerMark;
-import model.reports.MatchReport.TimelineEvent;
+import model.reports.match.MatchReport.PlayerMark;
+import model.reports.match.MatchReport.TimelineEvent;
 import java.util.Optional;
 
 public abstract class Incident implements Serializable {

@@ -1,8 +1,8 @@
 package view.zonestage;
 
-import model.match.GroupStageMatch;
+import model.match.zone.GroupStageMatch;
 import model.match.Match;
-import model.zone.Zone;
+import model.tournament.zone.Zone;
 import view.zonestage.shared.TeamStandingGroupCard;
 
 import javax.swing.*;

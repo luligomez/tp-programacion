@@ -1,4 +1,4 @@
-package model.reports;
+package model.reports.player;
 
 import java.util.List;
 

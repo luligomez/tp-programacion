@@ -1,4 +1,4 @@
-package model.reports;
+package model.reports.referee;
 
 public class RefereeReportItem{
     private String name;

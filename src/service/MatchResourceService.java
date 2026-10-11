@@ -1,6 +1,6 @@
 package service;
 
-import model.Team;
+import model.team.Team;
 import model.person.Referee;
 import model.place.Stadium;
 

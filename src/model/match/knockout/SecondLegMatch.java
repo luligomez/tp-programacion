@@ -1,8 +1,7 @@
 package model.match.knockout;
 
-import model.match.Formation;
 import model.place.Stadium;
-import model.Team;
+import model.team.Team;
 import model.person.Referee;
 
 public class SecondLegMatch extends KnockoutMatch {

@@ -1,5 +1,5 @@
 package service;
-import model.Team;
+import model.team.Team;
 import model.tournament.Tournament;
 import model.person.*;
 import model.person.player.*;

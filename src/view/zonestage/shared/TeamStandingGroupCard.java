@@ -1,6 +1,6 @@
 package view.zonestage.shared;
 
-import model.zone.TeamStanding;
+import model.tournament.zone.TeamStanding;
 
 import javax.swing.*;
 import java.awt.*;

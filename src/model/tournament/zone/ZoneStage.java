@@ -1,6 +1,6 @@
-package model.zone;
+package model.tournament.zone;
 
-import model.Team;
+import model.team.Team;
 import model.match.Match;
 import model.person.Referee;
 import model.place.Stadium;

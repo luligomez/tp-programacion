@@ -6,7 +6,7 @@ import model.match.incident.Goal;
 import model.match.incident.YellowCard;
 import model.person.player.Player;
 import model.place.Stadium;
-import model.Team;
+import model.team.Team;
 import model.person.Referee;
 import model.reports.match.MatchReport.*;
 

@@ -1,13 +1,13 @@
 package model.tournament;
 
-import model.Team;
+import model.team.Team;
 import model.match.Match;
 import model.tournament.knockout.KnockoutPhase;
 import model.tournament.knockout.KnockoutStage;
 import model.person.Referee;
 import model.place.Stadium;
-import model.zone.ZoneStage;
-import model.zone.Zone;
+import model.tournament.zone.ZoneStage;
+import model.tournament.zone.Zone;
 
 import java.io.Serial;
 import java.io.Serializable;

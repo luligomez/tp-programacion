@@ -2,7 +2,7 @@ package model.match.knockout;
 
 import model.tournament.knockout.KnockoutPhase;
 import service.FormationCreator;
-import model.Team;
+import model.team.Team;
 import model.match.Formation;
 import model.match.Match;
 import model.person.Referee;

@@ -1,7 +1,6 @@
 package view.zonestage;
 
-import model.Team;
-import model.zone.Zone;
+import model.tournament.zone.Zone;
 import view.zonestage.shared.TeamGroupCard;
 
 import javax.swing.*;

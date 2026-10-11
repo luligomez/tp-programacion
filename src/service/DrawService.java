@@ -1,7 +1,7 @@
 package service;
 
-import model.Team;
-import model.zone.Zone;
+import model.team.Team;
+import model.tournament.zone.Zone;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -2,7 +2,7 @@ package service;
 
 import model.match.Match;
 import model.match.knockout.KnockoutTie;
-import model.zone.Zone;
+import model.tournament.zone.Zone;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

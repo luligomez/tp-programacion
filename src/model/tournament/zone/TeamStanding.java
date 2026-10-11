@@ -1,6 +1,6 @@
-package model.zone;
+package model.tournament.zone;
 
-import model.Team;
+import model.team.Team;
 
 import java.io.Serial;
 import java.io.Serializable;

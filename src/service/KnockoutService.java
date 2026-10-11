@@ -1,13 +1,13 @@
 package service;
 
-import model.Team;
+import model.team.Team;
 import model.match.knockout.*;
 import model.match.Formation;
 import model.tournament.knockout.KnockoutPhase;
 import model.match.knockout.KnockoutTie;
 import model.person.Referee;
 import model.place.Stadium;
-import model.zone.Zone;
+import model.tournament.zone.Zone;
 
 import java.util.ArrayList;
 import java.util.List;

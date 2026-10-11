@@ -7,7 +7,7 @@ import model.person.Position;
 import model.person.Referee;
 import model.person.player.Player;
 import model.person.player.TournamentStats;
-import model.Team;
+import model.team.Team;
 import model.reports.player.PlayerReportData;
 import model.reports.player.PlayerReportItem;
 import model.reports.referee.RefereeReportData;

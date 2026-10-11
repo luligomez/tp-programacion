@@ -2,7 +2,7 @@ package view.zonestage.shared;
 
 import javax.swing.*;
 import java.awt.*;
-import model.Team;
+import model.team.Team;
 
 public class TeamRowPanel extends JPanel {
     private static final Color RANK_BADGE_BG = new Color(235, 240, 250);

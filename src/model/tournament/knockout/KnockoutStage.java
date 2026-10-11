@@ -1,13 +1,13 @@
 package model.tournament.knockout;
 
-import model.Team;
+import model.team.Team;
 import model.match.Match;
 import model.match.knockout.FinalMatch;
 import model.match.knockout.KnockoutTie;
 import model.match.knockout.SecondLegMatch;
 import model.person.Referee;
 import model.place.Stadium;
-import model.zone.Zone;
+import model.tournament.zone.Zone;
 import service.FixtureScheduler;
 import service.FormationCreator;
 import service.KnockoutService;

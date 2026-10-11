@@ -12,63 +12,49 @@ public class KnockoutController {
     private final KnockoutView view;
     private final Tournament tournament;
     private final Consumer<Match> onOpenMatch;
+    private final KnockoutStage knockout;
+
 
     public KnockoutController(KnockoutView view, Tournament tournament, Consumer<Match> onOpenMatch) {
         this.view = view;
         this.tournament = tournament;
         this.onOpenMatch = onOpenMatch;
-
+        this.knockout = tournament.getKnockoutStage();
         view.setOnSimulateListener(this::simulateNextRound);
-        view.setOnMatchSelectedListener(onOpenMatch); // nuevo
+        view.setOnMatchSelectedListener(onOpenMatch);
         updateView();
     }
 
-    // Le pregunta al modelo qué falta jugar
-    private KnockoutStep currentStep() {
-        if (!tournament.isFirstLegPlayed(KnockoutPhase.QUARTER_FINAL)) return KnockoutStep.QUARTERS_FIRST_LEG;
-        if (!tournament.isSecondLegPlayed(KnockoutPhase.QUARTER_FINAL)) return KnockoutStep.QUARTERS_SECOND_LEG;
-        if (tournament.hasUnresolvedTies(KnockoutPhase.QUARTER_FINAL)) return KnockoutStep.QUARTERS_PENALTIES;
-        if (!tournament.isFirstLegPlayed(KnockoutPhase.SEMI_FINAL)) return KnockoutStep.SEMIS_FIRST_LEG;
-        if (!tournament.isSecondLegPlayed(KnockoutPhase.SEMI_FINAL)) return KnockoutStep.SEMIS_SECOND_LEG;
-        if (tournament.hasUnresolvedTies(KnockoutPhase.SEMI_FINAL)) return KnockoutStep.SEMIS_PENALTIES;
-        if (!tournament.isFinalPlayed()) return KnockoutStep.FINAL;
-        if (tournament.hasUnresolvedFinal()) return KnockoutStep.FINAL_PENALTIES;
-        return KnockoutStep.DONE;
-    }
-
     private void updateView() {
-        List<KnockoutTie> quarters = tournament.getKnockoutTies(KnockoutPhase.QUARTER_FINAL);
-        List<KnockoutTie> semis = tournament.getKnockoutTies(KnockoutPhase.SEMI_FINAL);
-        FinalMatch finalMatch = tournament.hasFinal() ? tournament.getFinalMatch() : null;
-
-        view.showBracket(quarters, semis, finalMatch);
-        view.setStep(currentStep());
+        view.showBracket(knockout.getTies(KnockoutPhase.QUARTER_FINAL),
+                knockout.getTies(KnockoutPhase.SEMI_FINAL),
+                knockout.getFinalMatch());
+        view.setStep(knockout.currentStep());
     }
 
     private void simulateNextRound() {
-        switch (currentStep()) {
-            case QUARTERS_FIRST_LEG -> tournament.simulateKnockoutFirstLeg(KnockoutPhase.QUARTER_FINAL);
+        KnockoutPhase qf = KnockoutPhase.QUARTER_FINAL, sf = KnockoutPhase.SEMI_FINAL;
+        switch (knockout.currentStep()) {
+            case QUARTERS_FIRST_LEG -> knockout.simulateFirstLegs(qf);
             case QUARTERS_SECOND_LEG -> {
-                tournament.simulateKnockoutSecondLeg(KnockoutPhase.QUARTER_FINAL);
-                if(!tournament.hasUnresolvedTies(KnockoutPhase.QUARTER_FINAL))
-                    tournament.generateNextKnockoutPhase(KnockoutPhase.QUARTER_FINAL);
+                knockout.simulateSecondLegs(qf);
+                tournament.advanceKnockoutIfDecided(qf);
             }
             case QUARTERS_PENALTIES -> {
-                tournament.resolveTies(KnockoutPhase.QUARTER_FINAL);
-                tournament.generateNextKnockoutPhase(KnockoutPhase.QUARTER_FINAL);
+                knockout.resolveTies(qf);
+                tournament.advanceKnockoutIfDecided(qf);
             }
-            case SEMIS_FIRST_LEG -> tournament.simulateKnockoutFirstLeg(KnockoutPhase.SEMI_FINAL);
+            case SEMIS_FIRST_LEG -> knockout.simulateFirstLegs(sf);
             case SEMIS_SECOND_LEG -> {
-                tournament.simulateKnockoutSecondLeg(KnockoutPhase.SEMI_FINAL);
-                if(!tournament.hasUnresolvedTies(KnockoutPhase.SEMI_FINAL))
-                    tournament.generateNextKnockoutPhase(KnockoutPhase.SEMI_FINAL);
+                knockout.simulateSecondLegs(sf);
+                tournament.advanceKnockoutIfDecided(sf);
             }
             case SEMIS_PENALTIES -> {
-                tournament.resolveTies(KnockoutPhase.SEMI_FINAL);
-                tournament.generateNextKnockoutPhase(KnockoutPhase.SEMI_FINAL);
+                knockout.resolveTies(sf);
+                tournament.advanceKnockoutIfDecided(sf);
             }
-            case FINAL -> tournament.simulateFinal();
-            case FINAL_PENALTIES -> tournament.resolveFinal();
+            case FINAL -> knockout.simulateFinal();
+            case FINAL_PENALTIES -> knockout.resolveFinal();
             case DONE -> { }
         }
         updateView();

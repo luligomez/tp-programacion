@@ -47,7 +47,8 @@ public class Main {
         });
     }
     
-    private static void testTorneo(){
+    private static void testTorneo() {
+       /*
         System.out.println("==================================================");
         System.out.println("   INICIANDO PRUEBA DEL TORNEO - HASTA CUARTOS   ");
         System.out.println("==================================================\n");
@@ -231,7 +232,11 @@ public class Main {
         for (Incident incident : incidents) {
             System.out.println("   " + incident);
         }
+
+        */
     }
+
+
 
     private static void loadStadiums(Tournament tournament) throws SQLException {
         CityDAO cityDAO = new CityDAO();
@@ -245,4 +250,8 @@ public class Main {
 
         tournament.setStadiums(stadiumDAO.getAllStadiums());
     }
+
+
 }
+
+

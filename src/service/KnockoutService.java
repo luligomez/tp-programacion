@@ -65,7 +65,6 @@ public class KnockoutService {
         Formation f1 = FormationCreator.createAutomaticFormation(team1);
         Formation f2 = FormationCreator.createAutomaticFormation(team2);
 
-        // NOTA: TODO Temporalmente llamamos a Tournament. Próximamente esto irá al ResourceService (Punto 3).
         Referee ref = MatchResourceService.pickValidReferee(team1, team2, referees);
         Stadium stadium = MatchResourceService.pickRandomUnusedStadium(stadiums);
 

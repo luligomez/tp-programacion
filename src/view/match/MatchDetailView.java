@@ -27,6 +27,15 @@ public class MatchDetailView extends JPanel {
     private final JPanel shootoutPanel = new JPanel();
     private JScrollPane shootoutScroll;
 
+    private static final Color SEPARATOR = new Color(232, 235, 241);
+    private static final int CONTENT_MAX_WIDTH = 1000;
+    private static final int TIMELINE_ICON = 22;
+    private static final int MARK_ICON = 18;
+
+    private Icon icon(EventIcon.Kind kind, int size) {
+        return new EventIcon(kind, size);
+    }
+
     public MatchDetailView() {
         setLayout(new BorderLayout(0, 20));
         setBackground(BACKGROUND);
@@ -127,45 +136,26 @@ public class MatchDetailView extends JPanel {
 
     // Una fila: [evento equipo 1] | minuto | [evento equipo 2]
     private JPanel buildTimelineRow(TimelineEvent event) {
-        JPanel row = new JPanel(new GridBagLayout());
-        row.setOpaque(false);
-        row.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
-
-        JLabel left = new JLabel("", SwingConstants.RIGHT);
-        JLabel right = new JLabel("", SwingConstants.LEFT);
-        // ancho 0 para que el espacio sobrante se reparta 50/50 y el minuto quede siempre centrado
-        left.setPreferredSize(new Dimension(0, 24));
-        right.setPreferredSize(new Dimension(0, 24));
+        JLabel left = sideLabel(true);
+        JLabel right = sideLabel(false);
 
         boolean isTeam1 = event.side() == Side.TEAM1;
         JLabel target = isTeam1 ? left : right;
         target.setText(textFor(event));
         target.setIcon(iconFor(event.type()));
-        target.setIconTextGap(8);
         if (isTeam1) {
             target.setHorizontalTextPosition(SwingConstants.LEFT); // texto a la izquierda, ícono pegado al minuto
         }
-
-        JLabel minute = tag(event.minute() + "'", 12f, 10);
-        minute.setPreferredSize(new Dimension(52, 22)); // ancho fijo: todos los minutos alineados
-
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridy = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0; c.weightx = 1; c.insets = new Insets(0, 0, 0, 12); row.add(left, c);
-        c.gridx = 1; c.weightx = 0; c.insets = new Insets(0, 0, 0, 0);  row.add(minute, c);
-        c.gridx = 2; c.weightx = 1; c.insets = new Insets(0, 12, 0, 0); row.add(right, c);
-        return row;
+        return threeColumnRow(left, centerTag(event.minute() + "'"), right);
     }
 
     private Icon iconFor(EventType type) {
         return switch (type) {
-            case GOAL, PENALTY_GOAL -> new EventIcon(EventIcon.Kind.GOAL);
-            case OWN_GOAL -> new EventIcon(EventIcon.Kind.OWN_GOAL);
-            case YELLOW_CARD -> new EventIcon(EventIcon.Kind.YELLOW_CARD);
-            case RED_CARD, SECOND_YELLOW_RED -> new EventIcon(EventIcon.Kind.RED_CARD);
-            case SUBSTITUTION -> new EventIcon(EventIcon.Kind.SUBSTITUTION);
+            case GOAL, PENALTY_GOAL -> icon(EventIcon.Kind.GOAL, TIMELINE_ICON);
+            case OWN_GOAL -> icon(EventIcon.Kind.OWN_GOAL, TIMELINE_ICON);
+            case YELLOW_CARD -> icon(EventIcon.Kind.YELLOW_CARD, TIMELINE_ICON);
+            case RED_CARD, SECOND_YELLOW_RED -> icon(EventIcon.Kind.RED_CARD, TIMELINE_ICON);
+            case SUBSTITUTION -> icon(EventIcon.Kind.SUBSTITUTION, TIMELINE_ICON);
         };
     }
 
@@ -223,21 +213,41 @@ public class MatchDetailView extends JPanel {
     }
 
     private JPanel buildPlayerRow(LineupPlayer player, boolean dimmed) {
-        JPanel row = new JPanel(new BorderLayout(8, 0));
+        JPanel row = new JPanel(new BorderLayout(10, 0));
         row.setOpaque(false);
         row.setAlignmentX(Component.LEFT_ALIGNMENT);
-        row.setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        row.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, SEPARATOR),
+                BorderFactory.createEmptyBorder(4, 0, 4, 0)));
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
 
         JLabel name = new JLabel(player.name());
+        name.setFont(name.getFont().deriveFont(14f));
         if (dimmed) {
             name.setForeground(GRAY);
         }
 
+        // nombre y símbolos, uno detrás del otro y alineados a la izquierda
+        JPanel info = new JPanel();
+        info.setLayout(new BoxLayout(info, BoxLayout.X_AXIS));
+        info.setOpaque(false);
+        info.add(name);
+        for (PlayerMark mark : player.marks()) {
+            info.add(Box.createHorizontalStrut(14));
+            info.add(markLabel(mark));
+        }
+        info.add(Box.createHorizontalGlue());
+
         row.add(positionTag(player.position()), BorderLayout.WEST);
-        row.add(name, BorderLayout.CENTER);
-        row.add(marksPanel(player.marks()), BorderLayout.EAST);
+        row.add(info, BorderLayout.CENTER);
         return row;
+    }
+
+    private JLabel markLabel(PlayerMark mark) {
+        JLabel label = new JLabel(mark.minute() + "'", markIcon(mark.type()), SwingConstants.LEFT);
+        label.setIconTextGap(4);
+        label.setFont(label.getFont().deriveFont(Font.BOLD, 13f));
+        return label;
     }
 
     // Pastilla de posición, sin borde interno para que "GK" entre sin truncarse
@@ -260,26 +270,15 @@ public class MatchDetailView extends JPanel {
         };
     }
 
-    private JPanel marksPanel(List<PlayerMark> marks) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
-        panel.setOpaque(false);
-        for (PlayerMark mark : marks) {
-            JLabel label = new JLabel(mark.minute() + "'", markIcon(mark.type()), SwingConstants.LEFT);
-            label.setIconTextGap(3);
-            label.setFont(label.getFont().deriveFont(11f));
-            panel.add(label);
-        }
-        return panel;
-    }
 
     private Icon markIcon(MarkType type) {
         return switch (type) {
-            case GOAL -> new EventIcon(EventIcon.Kind.GOAL);
-            case OWN_GOAL -> new EventIcon(EventIcon.Kind.OWN_GOAL);
-            case YELLOW -> new EventIcon(EventIcon.Kind.YELLOW_CARD);
-            case RED -> new EventIcon(EventIcon.Kind.RED_CARD);
-            case SUB_OUT -> new EventIcon(EventIcon.Kind.SUB_OUT);
-            case SUB_IN -> new EventIcon(EventIcon.Kind.SUB_IN);
+            case GOAL -> icon(EventIcon.Kind.GOAL, MARK_ICON);
+            case OWN_GOAL -> icon(EventIcon.Kind.OWN_GOAL, MARK_ICON);
+            case YELLOW -> icon(EventIcon.Kind.YELLOW_CARD, MARK_ICON);
+            case RED -> icon(EventIcon.Kind.RED_CARD, MARK_ICON);
+            case SUB_OUT -> icon(EventIcon.Kind.SUB_OUT, MARK_ICON);
+            case SUB_IN -> icon(EventIcon.Kind.SUB_IN, MARK_ICON);
         };
     }
 
@@ -338,10 +337,10 @@ public class MatchDetailView extends JPanel {
 
         JLabel summary = new JLabel("Penalties " + shootout.team1Score() + " - " + shootout.team2Score()
                 + "   ·   Winner: " + shootout.winnerName());
-        summary.setFont(summary.getFont().deriveFont(Font.BOLD, 15f));
+        summary.setFont(summary.getFont().deriveFont(Font.BOLD, 18f));
         summary.setForeground(ACCENT);
         summary.setAlignmentX(Component.CENTER_ALIGNMENT);
-        summary.setBorder(BorderFactory.createEmptyBorder(6, 0, 12, 0));
+        summary.setBorder(BorderFactory.createEmptyBorder(10, 0, 18, 0));
         shootoutPanel.add(summary);
 
         for (PenaltyRound round : shootout.rounds()) {
@@ -352,38 +351,54 @@ public class MatchDetailView extends JPanel {
         tabs.addTab("Penalty shootout", shootoutScroll);
     }
 
-    // [patada equipo 1] | ronda | [patada equipo 2]
     private JPanel buildShootoutRow(PenaltyRound round) {
+        JLabel left = sideLabel(true);
+        JLabel right = sideLabel(false);
+        fillKick(left, round.team1Kick(), true);
+        fillKick(right, round.team2Kick(), false);
+        return threeColumnRow(left, centerTag(String.valueOf(round.number())), right);
+    }
+
+    private void fillKick(JLabel label, PenaltyKick kick, boolean rightAligned) {
+        if (kick == null) return;   // el equipo 2 no llegó a patear esta ronda
+        label.setText(kick.getKicker().getName());
+        label.setIcon(icon(kick.hasScored() ? EventIcon.Kind.PENALTY_SCORED : EventIcon.Kind.PENALTY_MISSED,
+                TIMELINE_ICON));
+        if (rightAligned) label.setHorizontalTextPosition(SwingConstants.LEFT);
+    }
+
+    // [izquierda] | centro | [derecha], con separador abajo y ancho máximo centrado
+    private JPanel threeColumnRow(JLabel left, JLabel center, JLabel right) {
         JPanel row = new JPanel(new GridBagLayout());
         row.setOpaque(false);
-        row.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
-        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
-
-        JLabel left = kickLabel(round.team1Kick(), true);
-        JLabel right = kickLabel(round.team2Kick(), false);
-
-        JLabel number = tag(String.valueOf(round.number()), 12f, 10);
-        number.setPreferredSize(new Dimension(52, 22));
+        row.setAlignmentX(Component.CENTER_ALIGNMENT);
+        row.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, SEPARATOR),
+                BorderFactory.createEmptyBorder(8, 0, 8, 0)));
+        row.setMaximumSize(new Dimension(CONTENT_MAX_WIDTH, 52));
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridy = 0;
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0; c.weightx = 1; c.insets = new Insets(0, 0, 0, 12); row.add(left, c);
-        c.gridx = 1; c.weightx = 0; c.insets = new Insets(0, 0, 0, 0);  row.add(number, c);
-        c.gridx = 2; c.weightx = 1; c.insets = new Insets(0, 12, 0, 0); row.add(right, c);
+        c.gridx = 0; c.weightx = 1; c.insets = new Insets(0, 0, 0, 14); row.add(left, c);
+        c.gridx = 1; c.weightx = 0; c.insets = new Insets(0, 0, 0, 0);  row.add(center, c);
+        c.gridx = 2; c.weightx = 1; c.insets = new Insets(0, 14, 0, 0); row.add(right, c);
         return row;
     }
 
-    private JLabel kickLabel(PenaltyKick kick, boolean rightAligned) {
+    // Etiqueta lateral: ancho 0 para que el reparto sea 50/50 y el centro quede siempre centrado
+    private JLabel sideLabel(boolean rightAligned) {
         JLabel label = new JLabel("", rightAligned ? SwingConstants.RIGHT : SwingConstants.LEFT);
-        label.setPreferredSize(new Dimension(0, 24)); // ancho 0: reparto 50/50, igual que en el timeline
-        if (kick == null) return label;               // el equipo 2 no llegó a patear esta ronda
-
-        label.setText(kick.getKicker().getName());
-        label.setIcon(new EventIcon(kick.hasScored() ? EventIcon.Kind.PENALTY_SCORED : EventIcon.Kind.PENALTY_MISSED));
-        label.setIconTextGap(8);
-        if (rightAligned) label.setHorizontalTextPosition(SwingConstants.LEFT);
+        label.setFont(label.getFont().deriveFont(15f));
+        label.setPreferredSize(new Dimension(0, 28));
+        label.setIconTextGap(10);
         return label;
+    }
+
+    private JLabel centerTag(String text) {
+        JLabel tag = tag(text, 14f, 10);
+        tag.setPreferredSize(new Dimension(64, 28));
+        return tag;
     }
 
 }

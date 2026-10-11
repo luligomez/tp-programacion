@@ -20,28 +20,28 @@ public class TeamStandingRowPanel extends JPanel {
         leftPanel.setOpaque(false);
 
         JLabel posLabel = new JLabel(position + "º", SwingConstants.CENTER);
-        posLabel.setFont(posLabel.getFont().deriveFont(Font.BOLD, 11f));
+        posLabel.setFont(posLabel.getFont().deriveFont(Font.BOLD, 12f));
         posLabel.setPreferredSize(new Dimension(24, 20));
 
         JLabel nameLabel = new JLabel(standing.getTeam().getName());
-        nameLabel.setFont(nameLabel.getFont().deriveFont(Font.PLAIN, 12f));
+        nameLabel.setFont(nameLabel.getFont().deriveFont(Font.PLAIN, 13f));
 
         leftPanel.add(posLabel);
         leftPanel.add(nameLabel);
         add(leftPanel, BorderLayout.CENTER);
 
         // 2. Estadísticas: Pts, PJ, PG, PE, PP, GF, GC, DG (Derecha)
-        JPanel statsPanel = new JPanel(new GridLayout(1, 8, 4, 0));
+        JPanel statsPanel = new JPanel(new GridLayout(1, 8, 11, 0));
         statsPanel.setOpaque(false);
 
         statsPanel.add(createStatLabel(String.valueOf(standing.getPoints()), true));       // Pts
-        statsPanel.add(createStatLabel(String.valueOf(standing.getMatchesPlayed()), false)); // PJ
-        statsPanel.add(createStatLabel(String.valueOf(standing.getMatchesWon()), false));    // PG
-        statsPanel.add(createStatLabel(String.valueOf(standing.getMatchesDrawn()), false));  // PE
-        statsPanel.add(createStatLabel(String.valueOf(standing.getMatchesLost()), false));   // PP
+        statsPanel.add(createStatLabel(String.valueOf(standing.getMatchesPlayed()), false)); // MP
+        statsPanel.add(createStatLabel(String.valueOf(standing.getMatchesWon()), false));    // W
+        statsPanel.add(createStatLabel(String.valueOf(standing.getMatchesDrawn()), false));  // D
+        statsPanel.add(createStatLabel(String.valueOf(standing.getMatchesLost()), false));   // L
         statsPanel.add(createStatLabel(String.valueOf(standing.getGoalsFor()), false));      // GF
-        statsPanel.add(createStatLabel(String.valueOf(standing.getGoalsAgainst()), false));  // GC
-        statsPanel.add(createStatLabel(String.valueOf(standing.getGoalDifference()), false)); // DG
+        statsPanel.add(createStatLabel(String.valueOf(standing.getGoalsAgainst()), false));  // GA
+        statsPanel.add(createStatLabel(String.valueOf(standing.getGoalDifference()), false)); // GD
 
         add(statsPanel, BorderLayout.EAST);
     }
@@ -53,7 +53,7 @@ public class TeamStandingRowPanel extends JPanel {
             lbl.setFont(lbl.getFont().deriveFont(Font.BOLD, 12f));
             lbl.setForeground(ACCENT);
         } else {
-            lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN, 11f));
+            lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN, 12f));
             lbl.setForeground(Color.DARK_GRAY);
         }
         return lbl;

@@ -44,18 +44,18 @@ public class TeamStandingGroupCard extends JPanel {
         header.setBorder(BorderFactory.createEmptyBorder(2, 10, 4, 10));
 
         JLabel teamHeader = new JLabel("Team");
-        teamHeader.setFont(teamHeader.getFont().deriveFont(Font.BOLD, 10f));
+        teamHeader.setFont(teamHeader.getFont().deriveFont(Font.BOLD, 12f));
         teamHeader.setForeground(Color.GRAY);
         header.add(teamHeader, BorderLayout.CENTER);
 
         JPanel cols = new JPanel(new GridLayout(1, 8, 4, 0));
         cols.setOpaque(false);
-        String[] titles = {"PTS", "PJ", "PG", "PE", "PP", "GF", "GC", "DG"};
+        String[] titles = {"PTS", "MP", "W", "D", "L", "GF", "GA", "GD"};
         for (String t : titles) {
             JLabel lbl = new JLabel(t, SwingConstants.CENTER);
-            lbl.setFont(lbl.getFont().deriveFont(Font.BOLD, 10f));
+            lbl.setFont(lbl.getFont().deriveFont(Font.BOLD, 12f));
             lbl.setForeground(Color.GRAY);
-            lbl.setPreferredSize(new Dimension(22, 16));
+            lbl.setPreferredSize(new Dimension(28, 16));
             cols.add(lbl);
         }
         header.add(cols, BorderLayout.EAST);

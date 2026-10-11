@@ -20,7 +20,7 @@ public class TeamRowPanel extends JPanel {
         nameLabel.setOpaque(false);
         nameLabel.setLineWrap(true);
         nameLabel.setWrapStyleWord(true);
-        nameLabel.setFont(nameLabel.getFont().deriveFont(13f));
+        nameLabel.setFont(nameLabel.getFont().deriveFont(15f));
         nameLabel.setBorder(null);
         nameLabel.setHighlighter(null);
 

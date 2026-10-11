@@ -1,4 +1,4 @@
-package model;
+package service;
 
 import model.match.Match;
 import model.match.knockout.KnockoutTie;

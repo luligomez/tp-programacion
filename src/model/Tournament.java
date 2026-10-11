@@ -2,14 +2,10 @@ package model;
 
 import model.match.*;
 import model.match.knockout.*;
-import model.person.Coach;
-import model.person.Position;
 import model.person.Referee;
-import model.person.player.Player;
-import model.person.player.TournamentStats;
 import model.place.Stadium;
-import model.reports.*;
 import model.zone.Zone;
+import service.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static model.MatchSimulator.*;
+import static service.MatchSimulator.*;
 import static model.TournamentState.GROUP_STAGE;
 
 public class Tournament implements Serializable {
@@ -61,20 +57,6 @@ public class Tournament implements Serializable {
         return zones;
     }
 
-    public void generateSemiFinals() {
-
-        ArrayList<Team> semifinalists = getKnockoutWinners(KnockoutPhase.QUARTER_FINAL);
-        Team winnerI = semifinalists.get(0);
-        Team winnerII= semifinalists.get(1);
-        Team winnerIII = semifinalists.get(2);
-        Team winnerIV = semifinalists.get(3);
-
-        knockoutTies.add(new KnockoutTie(KnockoutPhase.SEMI_FINAL, winnerI, winnerII, referees, stadiums)); //V
-        knockoutTies.add(new KnockoutTie(KnockoutPhase.SEMI_FINAL, winnerIII, winnerIV, referees, stadiums)); // VI
-        FixtureScheduler.scheduleSemiFinals(getKnockoutTies(KnockoutPhase.SEMI_FINAL),getLastMatchDate());
-
-    }
-
     public ArrayList<Referee> getReferees() {
         return referees;
     }
@@ -107,38 +89,12 @@ public class Tournament implements Serializable {
         this.stadiums.addAll(stadia);
     }
 
-    public List<List<Team>> getPots() {
-        List<Team> sortedTeams = new ArrayList<>(this.teams);
-        sortedTeams.sort(Comparator.comparingInt(Team::getRankingPosition));
-
-        List<List<Team>> pots = new ArrayList<>();
-        pots.add(new ArrayList<>(sortedTeams.subList(0, 4)));
-        pots.add(new ArrayList<>(sortedTeams.subList(4, 8)));
-        pots.add(new ArrayList<>(sortedTeams.subList(8, 12)));
-        pots.add(new ArrayList<>(sortedTeams.subList(12, 16)));
-        return pots;
-    }
-
     public void zoneDraw() {
-        this.zones.clear();
+        // 1. Delegamos el sorteo al servicio
+        this.zones = DrawService.zoneDraw(this.teams);
 
-        List<List<Team>> pots = getPots();
-
-        // mezclamos cada bombo
-        for (List<Team> pot : pots) {
-            Collections.shuffle(pot);
-        }
-
-        // 5. Repartimos un equipo de cada bombo a cada zona
-        for (int i = 0; i < 4; i++) {
-            this.zones.add(new Zone());
-            Zone currentZone = this.zones.get(i);
-            currentZone.addTeam(pots.get(0).get(i));
-            currentZone.addTeam(pots.get(1).get(i));
-            currentZone.addTeam(pots.get(2).get(i));
-            currentZone.addTeam(pots.get(3).get(i));
-        }
-        state = TournamentState.DRAWN_UNCONFIRMED;
+        // 2. Actualizamos el estado interno del torneo
+        this.state = TournamentState.DRAWN_UNCONFIRMED;
     }
 
     public void generateGroupStageMatches() {
@@ -175,13 +131,6 @@ public class Tournament implements Serializable {
                 });
     }
 
-    public boolean hasZonesDrawn() {
-        return state != TournamentState.NOT_DRAWN;
-    }
-
-    public boolean isDrawConfirmed() {
-        return state == TournamentState.GROUP_STAGE;
-    }
 
     public void confirmDraw() {
         state = GROUP_STAGE;
@@ -190,30 +139,6 @@ public class Tournament implements Serializable {
 
     public void resetDraw() {
         zoneDraw();
-    }
-
-    public void generateQuarterFinals() {
-        this.state = TournamentState.KNOCKOUT_STAGE;
-        this.knockoutTies.clear();
-
-        // 1° y 2° de cada Zona
-        Team firstA = zones.get(0).getQualifiedTeams().get(0);
-        Team secondA = zones.get(0).getQualifiedTeams().get(1);
-        Team firstB = zones.get(1).getQualifiedTeams().get(0);
-        Team secondB = zones.get(1).getQualifiedTeams().get(1);
-        Team firstC = zones.get(2).getQualifiedTeams().get(0);
-        Team secondC = zones.get(2).getQualifiedTeams().get(1);
-        Team firstD = zones.get(3).getQualifiedTeams().get(0);
-        Team secondD = zones.get(3).getQualifiedTeams().get(1);
-
-
-        // Cruces: 1A vs 2D, 1B vs 2C, 1C vs 2A, 1D vs 2B
-        knockoutTies.add(new KnockoutTie(KnockoutPhase.QUARTER_FINAL, firstA, secondD, referees, stadiums)); //I
-        knockoutTies.add(new KnockoutTie(KnockoutPhase.QUARTER_FINAL, firstB, secondC, referees, stadiums)); // II
-        knockoutTies.add(new KnockoutTie(KnockoutPhase.QUARTER_FINAL, firstC, secondA, referees, stadiums)); // III
-        knockoutTies.add(new KnockoutTie(KnockoutPhase.QUARTER_FINAL, firstD, secondB, referees, stadiums)); // IV
-
-        FixtureScheduler.scheduleQuarterFinals(getKnockoutTies(KnockoutPhase.QUARTER_FINAL),getLastMatchDate());
     }
 
     public ArrayList<Team> getKnockoutWinners(KnockoutPhase phase) {
@@ -225,17 +150,31 @@ public class Tournament implements Serializable {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public void generateFinal() {
+    public void generateQuarterFinals() {
+        this.state = TournamentState.KNOCKOUT_STAGE;
+        this.knockoutTies.clear();
+        // 1. Delegamos la lógica de los cruces al servicio
+        List<KnockoutTie> qfTies = KnockoutService.generateQuarterFinals(this.zones, this.referees, this.stadiums);
+        this.knockoutTies.addAll(qfTies);
+        // 2. Programamos las fechas (Tournament coordina los tiempos)
+        FixtureScheduler.scheduleQuarterFinals(this.getKnockoutTies(KnockoutPhase.QUARTER_FINAL), this.getLastMatchDate());
+    }
 
+    public void generateSemiFinals() {
+        ArrayList<Team> semifinalists = getKnockoutWinners(KnockoutPhase.QUARTER_FINAL);
+        // 1. Delegamos al servicio
+        List<KnockoutTie> semiTies = KnockoutService.generateSemiFinals(semifinalists, this.referees, this.stadiums);
+        this.knockoutTies.addAll(semiTies);
+        // 2. Programamos las fechas
+        FixtureScheduler.scheduleSemiFinals(this.getKnockoutTies(KnockoutPhase.SEMI_FINAL), this.getLastMatchDate());
+    }
+
+    public void generateFinal() {
         ArrayList<Team> finalists = getKnockoutWinners(KnockoutPhase.SEMI_FINAL);
-        Team team1 = finalists.getFirst();
-        Team team2 = finalists.getLast();
-        Formation f1 = FormationCreator.createAutomaticFormation(team1);
-        Formation f2 = FormationCreator.createAutomaticFormation(team2);
-        Referee ref1 = Tournament.pickValidReferee(team1, team2, referees);
-        Stadium st1 = Tournament.pickRandomUnusedStadium(stadiums);
-        finalMatch = new FinalMatch(team1, team2, ref1, f1, f2, st1);
-        FixtureScheduler.scheduleFinal(finalMatch,getLastMatchDate());
+        // 1. Delegamos al servicio
+        this.finalMatch = KnockoutService.generateFinal(finalists, this.referees, this.stadiums);
+        // 2. Programamos la fecha
+        FixtureScheduler.scheduleFinal(this.finalMatch, this.getLastMatchDate());
     }
 
     public void simulateFinal() {
@@ -249,41 +188,8 @@ public class Tournament implements Serializable {
         return currentMatchday;
     }
 
-    public static Stadium pickRandomUnusedStadium(ArrayList<Stadium> stadiums) {
-        List<Stadium> available = stadiums.stream()
-                .filter(s -> !s.isUsed())
-                .toList();
-        if (available.isEmpty()) {
-            throw new IllegalStateException("No unused stadiums available");
-        }
-        Stadium chosen = available.get(new Random().nextInt(available.size()));
-        chosen.setUsed(true);
-        return chosen;
-    }
-
-    public static Stadium pickRandomStadium(ArrayList<Stadium> stadiums) {
-        List<Stadium> available = stadiums.stream()
-                .toList();
-        if (available.isEmpty()) {
-            throw new IllegalStateException("No unused stadiums available");
-        }
-        return available.get(new Random().nextInt(available.size()));
-    }
-
     public ArrayList<KnockoutTie> getKnockoutTies() {
         return knockoutTies;
-    }
-
-    public static Referee pickValidReferee(Team team1, Team team2, ArrayList<Referee> referees) {
-        List<Referee> valid = referees.stream()
-                .filter(r -> team1.getCountry().equals(team2.getCountry())
-                        || (!r.getNationality().equals(team1.getCountry())
-                        && !r.getNationality().equals(team2.getCountry())))
-                .toList();
-        if (valid.isEmpty()) {
-            throw new IllegalStateException("No valido referee for this match");
-        }
-        return valid.get(new Random().nextInt(valid.size()));
     }
 
     public List<Match> getAllMatches() {
@@ -423,20 +329,6 @@ public class Tournament implements Serializable {
         return finalMatch != null && finalMatch.isPlayed();
     }
 
-    public RefereeReportData getRefereesReportData() {
-        List<RefereeReportItem> items = new ArrayList<>();
-        int matchesOfficiated, totalYears=0, yrsExp;
-        for(Referee ref : referees){
-            yrsExp = ref.getYearsOfExperience();
-            totalYears+= yrsExp;
-            matchesOfficiated = (int) getAllMatches().stream().filter(match -> match != null && match.isPlayed() && match.getReferee() != null && match.getReferee().equals(ref)).count();
-            items.add(new RefereeReportItem(ref.getName(), ref.getNationality().getName(), matchesOfficiated, yrsExp));
-        }
-        items.sort((r1, r2) -> Integer.compare(r2.getMatchesOfficiated(), r1.getMatchesOfficiated()));
-        double avgYears = referees.isEmpty() ? 0.0 : (double) totalYears /referees.size();
-        return new RefereeReportData(items,avgYears);
-    }
-
     public boolean hasUnresolvedTies(KnockoutPhase phase){
         return knockoutTies.stream()
                 .anyMatch(tie -> phase == tie.getPhase() && tie.getWinner() == null);
@@ -446,134 +338,9 @@ public class Tournament implements Serializable {
     public boolean hasUnresolvedFinal(){
         return finalMatch.getWinner()==null;
     }
-    
-    public TeamReportData getTeamsReportData() {
-        List<TeamReportItem> items = new ArrayList<>();
 
-        for (Team team : this.getTeams()) {
 
-            // 1. Edad promedio de sus jugadores
-            double avgPlayerAge = 0.0;
-            if (team.getPlayers() != null && !team.getPlayers().isEmpty()) {
-                double totalAge = 0;
-                for (Player player : team.getPlayers()) {
-                    if (player.getBirthDate() != null) {
-                        totalAge += java.time.Period.between(player.getBirthDate(), java.time.LocalDate.now()).getYears();
-                    }
-                }
-                avgPlayerAge = totalAge / team.getPlayers().size();
-            }
-
-            // 2. Edad y Nacionalidad del DT
-            int coachAge = 0;
-            String coachNationality = "N/A";
-            if (team.getCoach() != null) {
-                Coach coach = team.getCoach();
-                if (coach.getBirthDate() != null) {
-                    coachAge = java.time.Period.between(coach.getBirthDate(), java.time.LocalDate.now()).getYears();
-                }
-                if (coach.getNationality() != null) {
-                    coachNationality = coach.getNationality().getName();
-                }
-            }
-
-            // 3. Goles a favor, en contra, partidos jugados y puntos obtenidos
-            int gf = 0;
-            int gc = 0;
-            int matchesPlayed = 0;
-            int pointsObtained = 0;
-
-            for (Match match : this.getAllMatches()) {
-                if (match != null && match.isPlayed()) {
-                    if (match.getTeam1().equals(team)) {
-                        matchesPlayed++;
-                        gf += match.getTeam1Goals();
-                        gc += match.getTeam2Goals();
-                        if (match.getWinner() != null && match.getWinner().equals(team)) pointsObtained += 3;
-                    else if (match.getWinner() == null) pointsObtained += 1;
-                    } else if (match.getTeam2().equals(team)) {
-                        matchesPlayed++;
-                        gf += match.getTeam2Goals();
-                        gc += match.getTeam1Goals();
-                        if (match.getWinner() != null && match.getWinner().equals(team)) pointsObtained += 3;
-                    else if (match.getWinner() == null) pointsObtained += 1;
-                    }
-                }
-            }
-
-            // 4. Efectividad (% de puntos obtenidos sobre puntos posibles)
-            double effectiveness = 0.0;
-            if (matchesPlayed > 0) {
-                int maxPossiblePoints = matchesPlayed * 3;
-                effectiveness = (pointsObtained * 100.0) / maxPossiblePoints;
-            }
-
-            items.add(new TeamReportItem(
-                    team.getName(),
-                    avgPlayerAge,
-                    coachAge,
-                    coachNationality,
-                    gf,
-                    gc,
-                    effectiveness
-            ));
-        }
-
-        // 5. Ordenar alfabéticamente por nombre del equipo
-        items.sort((t1, t2) -> t1.getTeamName().compareToIgnoreCase(t2.getTeamName()));
-
-        return new TeamReportData(items);
-    }
-    
-    public PlayerReportData getPlayersReportData() {
-        List<PlayerReportItem> items = new ArrayList<>();
-
-        for (Team team : this.getTeams()) {
-            if (team.getPlayers() == null) continue;
-
-            for (Player player : team.getPlayers()) {
-                int age = 0;
-                if (player.getBirthDate() != null) {
-                    age = java.time.Period.between(player.getBirthDate(), java.time.LocalDate.now()).getYears();
-                }
-                TournamentStats playerStats = player.getTournamentStats();
-
-                int matchesPlayed = playerStats.getMatchesPlayed();
-                int minutesPlayed = playerStats.getMinutesPlayed();
-                int goalsScored = playerStats.getGoals();
-
-                int goalsConceded = 0;
-                double goalsConcededPerMatch = 0.0;
-
-                // Si es Arquero, se pueden calcular los goles recibidos desde sus participaciones en partidos
-                if (player.getPosition() == Position.GOALKEEPER) {
-                    goalsConceded = playerStats.getGoalsConceded();
-                    if (matchesPlayed > 0) {
-                        goalsConcededPerMatch = (double) goalsConceded / matchesPlayed;
-                    }
-                }
-
-                items.add(new PlayerReportItem(
-                        player.getName(),
-                        team.getName(),
-                        player.getPosition(),
-                        age,
-                        matchesPlayed,
-                        minutesPlayed,
-                        goalsScored,
-                        goalsConceded,
-                        goalsConcededPerMatch
-                ));
-            }
-        }
-
-        // Ordenar alfabéticamente por nombre del jugador
-        items.sort((p1, p2) -> p1.getPlayerName().compareToIgnoreCase(p2.getPlayerName()));
-
-        return new PlayerReportData(items);
-    }
-
-    public LocalDate getLastMatchDate() {
+        public LocalDate getLastMatchDate() {
         List<Match> matches = getAllMatches();
         if (matches == null) {
             return LocalDate.now(); // O una fecha por defecto si la lista no existe

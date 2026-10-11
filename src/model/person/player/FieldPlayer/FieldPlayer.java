@@ -1,10 +1,8 @@
 package model.person.player.FieldPlayer;
 
 import model.person.Position;
-import model.person.player.Attributes;
-import model.person.player.CareerStats;
 import model.person.player.Player;
-import model.person.player.RatingCalculator;
+import service.RatingCalculator;
 
 import java.io.Serial;
 import java.time.LocalDate;

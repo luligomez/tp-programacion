@@ -1,13 +1,12 @@
 package view.match;
 
 import model.person.Position;
-import model.reports.MatchReport;
-import model.reports.MatchReport.*;
+import model.reports.match.MatchReport;
+import model.reports.match.MatchReport.*;
 import model.match.knockout.PenaltyShootout.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 public class MatchDetailView extends JPanel {
     private static final Color BACKGROUND = new Color(245, 245, 247);

@@ -1,7 +1,7 @@
 package view;
 
 import model.person.Position;
-import model.reports.PlayerReportItem;
+import model.reports.player.PlayerReportItem;
 import view.components.StyledTable;
 
 import javax.swing.*;

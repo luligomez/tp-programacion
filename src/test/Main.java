@@ -7,6 +7,7 @@ import model.*;
 import model.match.knockout.*;
 import model.match.incident.*;
 import model.match.*;
+import service.FileReader;
 import view.mainwindow.MainWindowView;
 import javax.swing.*;
 import java.sql.SQLException;

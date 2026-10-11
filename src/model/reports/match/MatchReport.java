@@ -1,4 +1,4 @@
-package model.reports;
+package model.reports.match;
 
 import model.match.knockout.PenaltyShootout;
 import model.person.Position;

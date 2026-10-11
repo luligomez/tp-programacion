@@ -1,7 +1,7 @@
 package controller;
 
 import DAO.StadiumDAO;
-import model.FileReader;
+import service.FileReader;
 import model.Tournament;
 import model.TournamentState;
 import model.match.Match;

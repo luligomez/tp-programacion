@@ -1,7 +1,8 @@
 package controller;
 
 import model.Tournament;
-import model.reports.TeamReportData;
+import model.reports.TournamentReportsService;
+import model.reports.team.TeamReportData;
 import view.TeamsView;
 
 public class TeamsController {
@@ -17,7 +18,7 @@ public class TeamsController {
     }
 
     public void loadReportData() {
-        TeamReportData data = tournament.getTeamsReportData();
+        TeamReportData data = TournamentReportsService.generateTeamsReportData(tournament);
         view.setTeamsData(data.getItems());
     }
 }

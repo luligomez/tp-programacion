@@ -1,6 +1,8 @@
-package model.person.player;
+package service;
 
 import model.person.Position;
+import model.person.player.Attributes;
+import model.person.player.CareerStats;
 
 public class RatingCalculator {
 

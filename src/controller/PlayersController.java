@@ -2,7 +2,8 @@ package controller;
 
 import model.Team;
 import model.Tournament;
-import model.reports.PlayerReportData;
+import model.reports.player.PlayerReportData;
+import model.reports.TournamentReportsService;
 import view.PlayersView;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class PlayersController {
     }
 
     public void loadReportData() {
-        PlayerReportData data = tournament.getPlayersReportData();
+        PlayerReportData data = TournamentReportsService.generatePlayersReport(tournament);
 
         List<String> teamNames = tournament.getTeams().stream()
                 .map(Team::getName)

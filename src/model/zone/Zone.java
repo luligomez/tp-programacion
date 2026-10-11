@@ -1,11 +1,11 @@
 package model.zone;
 
 import model.Team;
-import model.Tournament;
 import model.match.GroupStageMatch;
 import model.match.Match;
 import model.person.Referee;
 import model.place.Stadium;
+import service.MatchResourceService;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -228,8 +228,8 @@ public class Zone implements Serializable {
             for (int j = 0; j < matchesPerDay; j++) {
                 Team team1 = teamsInZone.get(j);
                 Team team2 = teamsInZone.get(numTeams - 1 - j);
-                Referee referee = Tournament.pickValidReferee(team1, team2, referees);
-                Stadium stadium = Tournament.pickRandomStadium(stadiums);
+                Referee referee = MatchResourceService.pickValidReferee(team1, team2, referees);
+                Stadium stadium = MatchResourceService.pickRandomStadium(stadiums);
 
                 // Creamos el partido sin fecha (se le asigna después)
                 GroupStageMatch match = new GroupStageMatch(

@@ -1,4 +1,4 @@
-package model.reports;
+package model.reports.team;
 
 import java.util.List;
 

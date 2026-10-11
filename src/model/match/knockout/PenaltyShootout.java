@@ -60,7 +60,7 @@ public class PenaltyShootout implements Serializable {
 
         public Team getTeam() { return team; }
         public Player getKicker() { return kicker; }
-        public boolean isScored() { return scored; }
+        public boolean hasScored() { return scored; }
     }
 
     public int getGoals(Team team) {

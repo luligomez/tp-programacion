@@ -3,6 +3,7 @@ package view.match;
 import model.person.Position;
 import model.reports.MatchReport;
 import model.reports.MatchReport.*;
+import model.match.knockout.PenaltyShootout.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +23,10 @@ public class MatchDetailView extends JPanel {
     private final JPanel timelinePanel = new JPanel();
     private final JPanel lineupsPanel = new JPanel(new BorderLayout());
 
+    private final JTabbedPane tabs = new JTabbedPane();
+    private final JPanel shootoutPanel = new JPanel();
+    private JScrollPane shootoutScroll;
+
     public MatchDetailView() {
         setLayout(new BorderLayout(0, 20));
         setBackground(BACKGROUND);
@@ -34,7 +39,11 @@ public class MatchDetailView extends JPanel {
         timelinePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         lineupsPanel.setBackground(Color.WHITE);
 
-        JTabbedPane tabs = new JTabbedPane();
+        shootoutPanel.setLayout(new BoxLayout(shootoutPanel, BoxLayout.Y_AXIS));
+        shootoutPanel.setBackground(Color.WHITE);
+        shootoutPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        shootoutScroll = scroll(shootoutPanel);
+
         tabs.addTab("Timeline", scroll(timelinePanel));
         tabs.addTab("Lineups", scroll(lineupsPanel));
         add(tabs, BorderLayout.CENTER);
@@ -50,7 +59,9 @@ public class MatchDetailView extends JPanel {
         showHeader(report);
         showTimeline(report);
         showLineups(report);
+        showShootout(report);
     }
+
 
     // ---------- Header ----------
 
@@ -316,4 +327,63 @@ public class MatchDetailView extends JPanel {
         label.setBorder(BorderFactory.createEmptyBorder(3, horizontalPadding, 3, horizontalPadding));
         return label;
     }
+
+    private void showShootout(MatchReport report) {
+        int index = tabs.indexOfComponent(shootoutScroll);
+        if (index >= 0) tabs.removeTabAt(index);
+        if (!report.hasShootout()) return;
+
+        PenaltyShootoutReport shootout = report.shootout();
+        shootoutPanel.removeAll();
+
+        JLabel summary = new JLabel("Penalties " + shootout.team1Score() + " - " + shootout.team2Score()
+                + "   ·   Winner: " + shootout.winnerName());
+        summary.setFont(summary.getFont().deriveFont(Font.BOLD, 15f));
+        summary.setForeground(ACCENT);
+        summary.setAlignmentX(Component.CENTER_ALIGNMENT);
+        summary.setBorder(BorderFactory.createEmptyBorder(6, 0, 12, 0));
+        shootoutPanel.add(summary);
+
+        for (PenaltyRound round : shootout.rounds()) {
+            shootoutPanel.add(buildShootoutRow(round));
+        }
+        shootoutPanel.revalidate();
+        shootoutPanel.repaint();
+        tabs.addTab("Penalty shootout", shootoutScroll);
+    }
+
+    // [patada equipo 1] | ronda | [patada equipo 2]
+    private JPanel buildShootoutRow(PenaltyRound round) {
+        JPanel row = new JPanel(new GridBagLayout());
+        row.setOpaque(false);
+        row.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+
+        JLabel left = kickLabel(round.team1Kick(), true);
+        JLabel right = kickLabel(round.team2Kick(), false);
+
+        JLabel number = tag(String.valueOf(round.number()), 12f, 10);
+        number.setPreferredSize(new Dimension(52, 22));
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridy = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0; c.weightx = 1; c.insets = new Insets(0, 0, 0, 12); row.add(left, c);
+        c.gridx = 1; c.weightx = 0; c.insets = new Insets(0, 0, 0, 0);  row.add(number, c);
+        c.gridx = 2; c.weightx = 1; c.insets = new Insets(0, 12, 0, 0); row.add(right, c);
+        return row;
+    }
+
+    private JLabel kickLabel(PenaltyKick kick, boolean rightAligned) {
+        JLabel label = new JLabel("", rightAligned ? SwingConstants.RIGHT : SwingConstants.LEFT);
+        label.setPreferredSize(new Dimension(0, 24)); // ancho 0: reparto 50/50, igual que en el timeline
+        if (kick == null) return label;               // el equipo 2 no llegó a patear esta ronda
+
+        label.setText(kick.getKicker().getName());
+        label.setIcon(new EventIcon(kick.hasScored() ? EventIcon.Kind.PENALTY_SCORED : EventIcon.Kind.PENALTY_MISSED));
+        label.setIconTextGap(8);
+        if (rightAligned) label.setHorizontalTextPosition(SwingConstants.LEFT);
+        return label;
+    }
+
 }

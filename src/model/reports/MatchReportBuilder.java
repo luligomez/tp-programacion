@@ -21,12 +21,14 @@ public class MatchReportBuilder {
         return new MatchReport(
                 match.getTeam1().getName(), match.getTeam2().getName(),
                 match.isPlayed(), match.getTeam1Goals(), match.getTeam2Goals(),
-                match.getDateTime().format(DateTimeFormatter.ofPattern("dd/MM · HH:mm")),
+                match.getDateTime() != null ? match.getDateTime().format(DateTimeFormatter.ofPattern("dd/MM · HH:mm")) : "TBD",
                 match.getStadium() != null ? match.getStadium().getName() : "TBD",
                 match.getReferee() != null ? match.getReferee().getName() : "TBD",
                 match.isPlayed() ? buildTimeline(match) : List.of(),
                 confirmed ? buildLineup(match, match.getTeam1(), formation1) : null,
-                confirmed ? buildLineup(match, match.getTeam2(), formation2) : null);
+                confirmed ? buildLineup(match, match.getTeam2(), formation2) : null,
+                match.toShootoutReport().orElse(null)
+        );
     }
 
     private static List<TimelineEvent> buildTimeline(Match match) {

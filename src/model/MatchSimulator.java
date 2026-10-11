@@ -20,29 +20,58 @@ public class MatchSimulator {
 
         List<Player> shootersTeam1 = selectPenaltyOrder(team1, knockoutMatch);
         List<Player> shootersTeam2 = selectPenaltyOrder(team2, knockoutMatch);
+        int eligible = Math.min(shootersTeam1.size(), shootersTeam2.size());
+        shootersTeam1 = shootersTeam1.subList(0, eligible);
+        shootersTeam2 = shootersTeam2.subList(0, eligible);
 
         Random random = new Random();
         int scoredTeam1 = 0, scoredTeam2 = 0;
         int round = 0;
+        boolean winnerDecided = false;
 
-        // primeros 5 penales obligatorios por equipo
-        while (round < 5) {
+        // Tanda inicial de hasta 5 penales por equipo
+        while (round < 5 && !winnerDecided) {
+            // 1. Patea el Equipo 1
             boolean scored1 = simulatePenaltyKick(team1, shootersTeam1.get(round), knockoutMatch, random);
-            if (scored1) scoredTeam1++;
+            if (scored1) {
+                scoredTeam1++;
+            }
 
-            boolean scored2 = simulatePenaltyKick(team2, shootersTeam2.get(round), knockoutMatch, random);
-            if (scored2) scoredTeam2++;
+            int remainingTeam1 = 4 - round; // Tiros restantes para Equipo 1
+            int remainingTeam2 = 5 - round; // Tiros restantes para Equipo 2
+
+            // Verificamos si la diferencia es matemática e inalcanzable tras el tiro del Equipo 1
+            if (scoredTeam1 > scoredTeam2 + remainingTeam2 || scoredTeam2 > scoredTeam1 + remainingTeam1) {
+                winnerDecided = true;
+            } else {
+                // 2. Patea el Equipo 2 sólo si la tanda no se definió en el tiro anterior
+                boolean scored2 = simulatePenaltyKick(team2, shootersTeam2.get(round), knockoutMatch, random);
+                if (scored2) {
+                    scoredTeam2++;
+                }
+
+                remainingTeam2 = 4 - round; // A Equipo 2 ahora también le quedan (4 - round) tiros
+
+                // Verificamos si la diferencia es inalcanzable tras el tiro del Equipo 2
+                if (scoredTeam1 > scoredTeam2 + remainingTeam2 || scoredTeam2 > scoredTeam1 + remainingTeam1) {
+                    winnerDecided = true;
+                }
+            }
 
             round++;
         }
 
-        // muerte súbita si sigue empatado, reutilizando jugadores en orden
+        // Muerte súbita sólo si la tanda de 5 terminó en empate
         while (scoredTeam1 == scoredTeam2) {
             Player shooter1 = shootersTeam1.get(round % shootersTeam1.size());
             Player shooter2 = shootersTeam2.get(round % shootersTeam2.size());
 
-            if (simulatePenaltyKick(team1, shooter1, knockoutMatch, random)) scoredTeam1++;
-            if (simulatePenaltyKick(team2, shooter2, knockoutMatch, random)) scoredTeam2++;
+            if (simulatePenaltyKick(team1, shooter1, knockoutMatch, random)) {
+                scoredTeam1++;
+            }
+            if (simulatePenaltyKick(team2, shooter2, knockoutMatch, random)) {
+                scoredTeam2++;
+            }
 
             round++;
         }
@@ -55,10 +84,10 @@ public class MatchSimulator {
         return scored;
     }
 
-    private static List<Player> selectPenaltyOrder(Team team, KnockoutMatch knockoutMatch) {
-        // acá elegís qué 5 (o más) jugadores patean, priorizando por finishing/mentalidad
-        // por simplicidad, podés tomar los titulares de campo con mejor finishing + el arquero al final
-        return knockoutMatch.getTeam1Formation().getStarters(); //TODO ELEGIR orden de PATEADORES (USAR LOS JUGADORES EN CANCHA)
+    private static List<Player> selectPenaltyOrder(Team team, KnockoutMatch match) {
+        return match.getPlayersOnPitchAtEnd(team).stream()
+                .sorted(Comparator.comparing(Player::getPenaltyConversionChance).reversed())
+                .toList();
     }
 
 

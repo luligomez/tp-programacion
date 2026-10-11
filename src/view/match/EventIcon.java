@@ -6,7 +6,7 @@ import java.awt.geom.RoundRectangle2D;
 
 public class EventIcon implements Icon {
 
-    public enum Kind { YELLOW_CARD, RED_CARD, GOAL, OWN_GOAL, SUBSTITUTION, SUB_IN, SUB_OUT }
+    public enum Kind { YELLOW_CARD, RED_CARD, GOAL, OWN_GOAL, SUBSTITUTION, SUB_IN, SUB_OUT, PENALTY_SCORED, PENALTY_MISSED }
 
     private static final int SIZE = 16;
     private static final Color YELLOW = new Color(249, 190, 0);
@@ -40,6 +40,8 @@ public class EventIcon implements Icon {
                 g2.setColor(RED);
                 g2.fillPolygon(new int[]{x + 12, x + 9, x + 15}, new int[]{y + 14, y + 8, y + 8}, 3);
             }
+            case PENALTY_SCORED -> circleMark(g2, x, y, GREEN, true);
+            case PENALTY_MISSED -> circleMark(g2, x, y, RED, false);
         }
         g2.dispose();
     }
@@ -66,5 +68,18 @@ public class EventIcon implements Icon {
         int[] xs = {x + 8, x + 2, x + 14};
         int[] ys = up ? new int[]{y + 3, y + 13, y + 13} : new int[]{y + 13, y + 3, y + 3};
         g2.fillPolygon(xs, ys, 3);
+    }
+
+    private void circleMark(Graphics2D g2, int x, int y, Color color, boolean check) {
+        g2.setColor(color);
+        g2.fillOval(x + 1, y + 1, 14, 14);
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(2f));
+        if (check) {
+            g2.drawPolyline(new int[]{x + 4, x + 7, x + 12}, new int[]{y + 8, y + 11, y + 5}, 3);
+        } else {
+            g2.drawLine(x + 5, y + 5, x + 11, y + 11);
+            g2.drawLine(x + 11, y + 5, x + 5, y + 11);
+        }
     }
 }

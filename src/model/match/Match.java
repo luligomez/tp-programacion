@@ -8,11 +8,15 @@ import model.person.player.Player;
 import model.place.Stadium;
 import model.Team;
 import model.person.Referee;
+import model.reports.MatchReport.*;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public abstract class Match implements Serializable {
 
@@ -213,5 +217,27 @@ public abstract class Match implements Serializable {
 
     public boolean isTeam1Player(Player player) {
         return team1.getPlayers().contains(player);
+    }
+
+    public List<Player> getPlayersOnPitchAtEnd(Team team) {
+        Formation formation = (team == team1) ? team1Formation : team2Formation;
+        return Stream.concat(formation.getStarters().stream(), formation.getSubstitutes().stream())
+                .filter(p -> isOnPitchAtEnd(p, formation.getStarters().contains(p)))
+                .toList();
+    }
+
+    private boolean isOnPitchAtEnd(Player player, boolean starter) {
+        List<MarkType> marks = incidents.stream()
+                .map(incident -> incident.markFor(player))
+                .flatMap(Optional::stream)
+                .map(PlayerMark::type)
+                .toList();
+        boolean cameOn = marks.contains(MarkType.SUB_IN);
+        boolean left = marks.contains(MarkType.SUB_OUT) || marks.contains(MarkType.RED);
+        return (starter || cameOn) && !left;
+    }
+
+    public Optional<PenaltyShootoutReport> toShootoutReport() {
+        return Optional.empty();
     }
 }

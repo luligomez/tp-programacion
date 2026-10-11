@@ -1,8 +1,9 @@
-package model;
+package model.tournament;
 
+import model.Team;
 import model.match.Match;
-import model.match.knockout.KnockoutPhase;
-import model.match.knockout.KnockoutStage;
+import model.tournament.knockout.KnockoutPhase;
+import model.tournament.knockout.KnockoutStage;
 import model.person.Referee;
 import model.place.Stadium;
 import model.zone.ZoneStage;

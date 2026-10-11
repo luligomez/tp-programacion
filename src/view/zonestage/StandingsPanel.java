@@ -1,6 +1,6 @@
 package view.zonestage;
 
-import model.match.GroupStageMatch;
+import model.tournament.zone.GroupStageMatch;
 import model.match.Match;
 import model.zone.Zone;
 import view.zonestage.shared.TeamStandingGroupCard;

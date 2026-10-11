@@ -1,7 +1,7 @@
 package controller;
 
 import model.Team;
-import model.Tournament;
+import model.tournament.Tournament;
 import model.reports.player.PlayerReportData;
 import model.reports.TournamentReportsService;
 import view.PlayersView;

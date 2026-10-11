@@ -37,7 +37,7 @@ public class ZoneStage implements Serializable {
         for (Zone zone : zones) {
             zone.generateMatches(referees, stadiums);
         }
-        assignFormationsForMatchday(1);   // antes este código estaba duplicado en Tournament
+        assignFormationsForMatchday(1);
         FixtureScheduler.scheduleZoneStage(zones, start);
     }
 

@@ -1,6 +1,6 @@
 package controller;
 
-import model.Tournament;
+import model.tournament.Tournament;
 import model.reports.TournamentReportsService;
 import view.RefereesView;
 

@@ -2,8 +2,8 @@ package controller;
 
 import DAO.StadiumDAO;
 import service.FileReader;
-import model.Tournament;
-import model.TournamentState;
+import model.tournament.Tournament;
+import model.tournament.TournamentState;
 import model.match.Match;
 import view.PlayersView;
 import view.RefereesView;
@@ -16,7 +16,7 @@ import view.zonestage.ZoneStageView;
 
 import javax.swing.*;
 
-import static model.TournamentState.*;
+import static model.tournament.TournamentState.*;
 
 public class MainWindowController {
 

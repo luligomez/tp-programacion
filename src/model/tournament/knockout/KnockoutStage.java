@@ -1,7 +1,10 @@
-package model.match.knockout;
+package model.tournament.knockout;
 
 import model.Team;
 import model.match.Match;
+import model.match.knockout.FinalMatch;
+import model.match.knockout.KnockoutTie;
+import model.match.knockout.SecondLegMatch;
 import model.person.Referee;
 import model.place.Stadium;
 import model.zone.Zone;
@@ -67,11 +70,11 @@ public class KnockoutStage implements Serializable {
             matches.add(tie.getFirstLeg());
             matches.add(tie.getSecondLeg());
         }
-        if (finalMatch != null) matches.add(finalMatch);   // nunca se agrega un null
+        if (finalMatch != null) matches.add(finalMatch);
         return matches;
     }
 
-    // Qué falta jugar (antes vivía en KnockoutController)
+    // Qué falta jugar
     public KnockoutStep currentStep() {
         KnockoutPhase qf = KnockoutPhase.QUARTER_FINAL, sf = KnockoutPhase.SEMI_FINAL;
         if (!isFirstLegPlayed(qf)) return KnockoutStep.QUARTERS_FIRST_LEG;

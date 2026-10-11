@@ -1,6 +1,6 @@
 package model.reports;
 
-import model.Tournament;
+import model.tournament.Tournament;
 import model.match.Match;
 import model.person.Coach;
 import model.person.Position;

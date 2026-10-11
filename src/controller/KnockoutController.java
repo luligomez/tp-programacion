@@ -1,10 +1,11 @@
 package controller;
 
-import model.Tournament;
+import model.tournament.Tournament;
 import model.match.Match;
-import model.match.knockout.*;
+import model.tournament.knockout.KnockoutPhase;
+import model.tournament.knockout.KnockoutStage;
 import view.knockout.KnockoutView;
-import java.util.List;
+
 import java.util.function.Consumer;
 
 public class KnockoutController {

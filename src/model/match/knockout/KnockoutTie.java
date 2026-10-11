@@ -1,5 +1,6 @@
 package model.match.knockout;
 
+import model.tournament.knockout.KnockoutPhase;
 import service.FormationCreator;
 import model.Team;
 import model.match.Formation;

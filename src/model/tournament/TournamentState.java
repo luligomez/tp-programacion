@@ -1,4 +1,4 @@
-package model;
+package model.tournament;
 
 public enum TournamentState {
     NOT_DRAWN, // Aún no se sortearon los grupos -> Ir a GroupDrawView

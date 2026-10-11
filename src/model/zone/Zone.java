@@ -1,7 +1,7 @@
 package model.zone;
 
 import model.Team;
-import model.match.GroupStageMatch;
+import model.tournament.zone.GroupStageMatch;
 import model.match.Match;
 import model.person.Referee;
 import model.place.Stadium;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static model.Tournament.TEAMS_PER_GROUP;
+import static model.tournament.Tournament.TEAMS_PER_GROUP;
 
 public class Zone implements Serializable {
 

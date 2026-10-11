@@ -1,6 +1,7 @@
-package model.match;
+package model.tournament.zone;
 
 import model.*;
+import model.match.Match;
 import model.person.Referee;
 import model.place.Stadium;
 

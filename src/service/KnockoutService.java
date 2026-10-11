@@ -3,7 +3,7 @@ package service;
 import model.Team;
 import model.match.knockout.*;
 import model.match.Formation;
-import model.match.knockout.KnockoutPhase;
+import model.tournament.knockout.KnockoutPhase;
 import model.match.knockout.KnockoutTie;
 import model.person.Referee;
 import model.place.Stadium;

@@ -1,7 +1,7 @@
 package controller;
 
-import model.Tournament;
-import model.TournamentState;
+import model.tournament.Tournament;
+import model.tournament.TournamentState;
 import model.match.Match;
 import service.DrawService;
 import view.zonestage.ZoneStageView;

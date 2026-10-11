@@ -1,6 +1,6 @@
 package service;
 import model.Team;
-import model.Tournament;
+import model.tournament.Tournament;
 import model.person.*;
 import model.person.player.*;
 import model.person.player.FieldPlayer.FieldPlayer;

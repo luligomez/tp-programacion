@@ -19,10 +19,10 @@ import java.util.Comparator;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        testUI();
+        //testUI();
         testTorneo();
     }
-
+/*
     private static void testUI() {
 
         try {
@@ -48,6 +48,8 @@ public class Main {
             windowView.setVisible(true);
         });
     }
+
+ */
     
     private static void testTorneo() {
 

@@ -5,6 +5,7 @@ import service.FileReader;
 import model.tournament.Tournament;
 import model.tournament.TournamentState;
 import model.match.Match;
+import service.TournamentRepository;
 import view.PlayersView;
 import view.RefereesView;
 import view.TeamsView;
@@ -16,17 +17,20 @@ import view.zonestage.ZoneStageView;
 
 import javax.swing.*;
 
+import java.io.IOException;
+
 import static model.tournament.TournamentState.*;
 
 public class MainWindowController {
 
     private final MainWindowView view;
     private Tournament tournament;
+    private final TournamentRepository repository;
 
-    public MainWindowController(MainWindowView view, Tournament tournament) {
+    public MainWindowController(MainWindowView view, Tournament tournament, TournamentRepository repository) {
         this.view = view;
         this.tournament = tournament;
-
+        this.repository = repository;
         initController();
     }
 
@@ -58,7 +62,8 @@ public class MainWindowController {
 
         // PASO 2: Crear el controlador hijo (él solito se vincula con la vista y el torneo)
         new ZoneStageController(zoneStageView, tournament,
-                match -> showMatchDetail(match, this::navigateToGroups, SidebarItem.GROUPS));
+                match -> showMatchDetail(match, this::navigateToGroups, SidebarItem.GROUPS),
+                this::saveTournament);
         // PASO 3: Indicarle a la ventana principal que muestre el panel de la vista hija
         view.showScreen(zoneStageView, SidebarItem.GROUPS);
     }
@@ -76,6 +81,7 @@ public class MainWindowController {
             try {
                 // 1. Recargamos el modelo desde el JSON
                 this.tournament = FileReader.fileReader("torneo.json");
+                repository.delete();
                 this.tournament.setStadiums(new StadiumDAO().getAllStadiums());
                 // 2. Volvemos a cargar la pantalla de grupos limpia con el nuevo torneo
                 navigateToGroups();
@@ -110,7 +116,8 @@ public class MainWindowController {
         }
         KnockoutView knockoutView = new KnockoutView();
         new KnockoutController(knockoutView, tournament,
-                match -> showMatchDetail(match, this::navigateToKnockout, SidebarItem.KNOCKOUT));
+                match -> showMatchDetail(match, this::navigateToKnockout, SidebarItem.KNOCKOUT),
+                this::saveTournament);
         view.showScreen(knockoutView, SidebarItem.KNOCKOUT);
     }
 
@@ -136,5 +143,14 @@ public class MainWindowController {
         MatchDetailView detailView = new MatchDetailView();
         new MatchDetailController(detailView, match, onBack);
         view.showScreen(detailView, item);
+    }
+
+    private void saveTournament() {
+        try {
+            repository.save(tournament);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(view, "Could not save progress: " + e.getMessage(),
+                    "Save error", JOptionPane.WARNING_MESSAGE);
+        }
     }
 }

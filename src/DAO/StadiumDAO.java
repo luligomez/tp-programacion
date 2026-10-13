@@ -5,7 +5,6 @@ import model.place.Stadium;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class StadiumDAO {
     private CityDAO cityDAO = new CityDAO();
@@ -150,6 +149,18 @@ public class StadiumDAO {
         }
 
         return stadium;
+    }
+
+    public boolean isEmpty() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM stadium";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) == 0;
+            }
+        }
+        return true;
     }
 
 }

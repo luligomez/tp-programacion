@@ -12,12 +12,14 @@ public class ZoneStageController {
     private final ZoneStageView view;
     private final Tournament tournament;
     private final Consumer<Match> onOpenMatch;
+    private final Runnable onProgress;
 
 
-    public ZoneStageController(ZoneStageView view, Tournament tournament, Consumer<Match> onOpenMatch) {
+    public ZoneStageController(ZoneStageView view, Tournament tournament, Consumer<Match> onOpenMatch, Runnable onProgress) {
         this.view = view;
         this.tournament = tournament;
         this.onOpenMatch = onOpenMatch;
+        this.onProgress = onProgress;
         initController();
     }
 
@@ -57,6 +59,7 @@ public class ZoneStageController {
 
     private void onDrawConfirmed() {
         tournament.confirmDraw();
+        onProgress.run();
         updateView();
     }
 
@@ -70,6 +73,7 @@ public class ZoneStageController {
             return;
         }
         tournament.simulateCurrentMatchday();
+        onProgress.run();
         view.updateStandings(tournament.getZones());
         if (tournament.getState() == TournamentState.KNOCKOUT_STAGE) {
             view.disableSimulateButton();

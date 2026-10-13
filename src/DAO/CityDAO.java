@@ -132,4 +132,16 @@ public class CityDAO {
 
         return city;
     }
+
+    public boolean isEmpty() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM city";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) == 0;
+            }
+        }
+        return true;
+    }
 }

@@ -14,13 +14,15 @@ public class KnockoutController {
     private final Tournament tournament;
     private final Consumer<Match> onOpenMatch;
     private final KnockoutStage knockout;
+    private final Runnable onProgress;
 
 
-    public KnockoutController(KnockoutView view, Tournament tournament, Consumer<Match> onOpenMatch) {
+    public KnockoutController(KnockoutView view, Tournament tournament, Consumer<Match> onOpenMatch, Runnable onProgress) {
         this.view = view;
         this.tournament = tournament;
         this.onOpenMatch = onOpenMatch;
         this.knockout = tournament.getKnockoutStage();
+        this.onProgress = onProgress;
         view.setOnSimulateListener(this::simulateNextRound);
         view.setOnMatchSelectedListener(onOpenMatch);
         updateView();
@@ -58,6 +60,7 @@ public class KnockoutController {
             case FINAL_PENALTIES -> knockout.resolveFinal();
             case DONE -> { }
         }
+        onProgress.run();
         updateView();
     }
 }

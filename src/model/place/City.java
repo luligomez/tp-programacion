@@ -1,8 +1,12 @@
 package model.place;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class City {
+public class City implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private long id;
     private String name;
     private String country;

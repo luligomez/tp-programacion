@@ -163,7 +163,7 @@ public class MatchDetailView extends JPanel {
             case PENALTY_GOAL -> event.playerName() + " (pen.)";
             case OWN_GOAL -> event.playerName() + " (o.g.)";
             case SECOND_YELLOW_RED -> event.playerName() + " (second yellow)";
-            case SUBSTITUTION -> "In: " + event.otherPlayerName() + " · Out: " + event.playerName();
+            case SUBSTITUTION -> "In: " + event.otherPlayerName() +" ("+event.otherPlayerPosition()+")" +" · Out: " + event.playerName() +" ("+event.otherPlayerPosition()+")";
             default -> event.playerName();
         };
     }
@@ -251,7 +251,7 @@ public class MatchDetailView extends JPanel {
 
     // Pastilla de posición, sin borde interno para que "GK" entre sin truncarse
     private JLabel positionTag(Position position) {
-        JLabel label = new JLabel(positionLabel(position), SwingConstants.CENTER);
+        JLabel label = new JLabel(position.getShortName(), SwingConstants.CENTER);
         label.setFont(label.getFont().deriveFont(Font.BOLD, 10f));
         label.setOpaque(true);
         label.setBackground(positionColor(position));
@@ -278,15 +278,6 @@ public class MatchDetailView extends JPanel {
             case RED -> icon(EventIcon.Kind.RED_CARD, MARK_ICON);
             case SUB_OUT -> icon(EventIcon.Kind.SUB_OUT, MARK_ICON);
             case SUB_IN -> icon(EventIcon.Kind.SUB_IN, MARK_ICON);
-        };
-    }
-
-    private String positionLabel(Position position) {
-        return switch (position) {
-            case GOALKEEPER -> "GK";
-            case DEFENDER -> "DF";
-            case MIDFIELDER -> "MF";
-            case FORWARD -> "FW";
         };
     }
 
@@ -367,7 +358,7 @@ public class MatchDetailView extends JPanel {
     }
 
     // [izquierda] | centro | [derecha], con separador abajo y ancho máximo centrado
-    private JPanel threeColumnRow(JLabel left, JLabel center, JLabel right) {
+    private JPanel threeColumnRow(JComponent left, JComponent center, JComponent right) {
         JPanel row = new JPanel(new GridBagLayout());
         row.setOpaque(false);
         row.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -376,12 +367,23 @@ public class MatchDetailView extends JPanel {
                 BorderFactory.createEmptyBorder(8, 0, 8, 0)));
         row.setMaximumSize(new Dimension(CONTENT_MAX_WIDTH, 52));
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridy = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0; c.weightx = 1; c.insets = new Insets(0, 0, 0, 14); row.add(left, c);
-        c.gridx = 1; c.weightx = 0; c.insets = new Insets(0, 0, 0, 0);  row.add(center, c);
-        c.gridx = 2; c.weightx = 1; c.insets = new Insets(0, 14, 0, 0); row.add(right, c);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridy = 0;
+
+        // Columna Izquierda (45% del ancho)
+        gbc.gridx = 0;
+        gbc.weightx = 0.45;
+        row.add(left, gbc);
+        // Columna Central - Minuto (10% del ancho)
+        gbc.gridx = 1;
+        gbc.weightx = 0.0;
+        gbc.insets = new Insets(0, 8, 0, 8);
+        row.add(center, gbc);
+        // Columna Derecha (45% del ancho)
+        gbc.gridx = 2;
+        gbc.weightx = 0.45;
+        row.add(right, gbc);
         return row;
     }
 

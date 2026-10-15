@@ -35,7 +35,7 @@ public class YellowCard extends Incident {
     @Override
     public Optional<TimelineEvent> toTimelineEvent(Match match) {
         Side side = match.isTeam1Player(player) ? Side.TEAM1 : Side.TEAM2;
-        return Optional.of(new TimelineEvent(getMinute(), side, EventType.YELLOW_CARD, player.getName(), null));
+        return Optional.of(new TimelineEvent(getMinute(), side, EventType.YELLOW_CARD, player.getName()));
     }
 
     @Override

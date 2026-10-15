@@ -47,7 +47,7 @@ public class Substitution extends Incident {
     public Optional<TimelineEvent> toTimelineEvent(Match match) {
         Side side = match.isTeam1Player(playerOut) ? Side.TEAM1 : Side.TEAM2;
         return Optional.of(new TimelineEvent(getMinute(), side, EventType.SUBSTITUTION,
-                playerOut.getName(), playerIn.getName()));
+                playerOut.getName(),playerOut.getPosition().getShortName(), playerIn.getName(), playerIn.getPosition().getShortName()));
     }
 
     @Override

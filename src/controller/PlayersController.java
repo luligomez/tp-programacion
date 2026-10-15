@@ -3,7 +3,7 @@ package controller;
 import model.team.Team;
 import model.tournament.Tournament;
 import model.reports.player.PlayerReportData;
-import model.reports.TournamentReportsService;
+import service.TournamentReportsService;
 import view.PlayersView;
 
 import java.util.List;

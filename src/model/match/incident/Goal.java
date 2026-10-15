@@ -73,7 +73,7 @@ public class Goal extends Incident {
         Side side = (match.isTeam1Player(scorer) != ownGoal) ? Side.TEAM1 : Side.TEAM2;
         EventType type = ownGoal ? EventType.OWN_GOAL
                 : penalty ? EventType.PENALTY_GOAL : EventType.GOAL;
-        return Optional.of(new TimelineEvent(getMinute(), side, type, scorer.getName(), null));
+        return Optional.of(new TimelineEvent(getMinute(), side, type, scorer.getName()));
     }
 
     @Override

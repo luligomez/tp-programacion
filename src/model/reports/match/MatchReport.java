@@ -22,9 +22,13 @@ public record MatchReport(
 
     public enum MarkType { GOAL, OWN_GOAL, YELLOW, RED, SUB_OUT, SUB_IN }
 
-    // otherPlayerName solo se usa en SUBSTITUTION (el jugador que entra)
     public record TimelineEvent(int minute, Side side, EventType type,
-                                String playerName, String otherPlayerName) {}
+                                String playerName, String playerPosition, String otherPlayerName, String otherPlayerPosition) {
+        public TimelineEvent(int minute, Side side, EventType type,
+                             String playerName){
+            this(minute,side,type,playerName,null,null,null);
+        }
+    }
 
     public record PlayerMark(MarkType type, int minute) {}
 

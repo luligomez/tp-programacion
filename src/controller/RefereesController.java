@@ -1,7 +1,7 @@
 package controller;
 
 import model.tournament.Tournament;
-import model.reports.TournamentReportsService;
+import service.TournamentReportsService;
 import view.RefereesView;
 
 public class RefereesController {

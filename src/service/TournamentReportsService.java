@@ -1,4 +1,4 @@
-package model.reports;
+package service;
 
 import model.tournament.Tournament;
 import model.match.Match;

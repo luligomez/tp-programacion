@@ -39,7 +39,7 @@ public class Expulsion extends Incident {
     public Optional<TimelineEvent> toTimelineEvent(Match match) {
         Side side = match.isTeam1Player(player) ? Side.TEAM1 : Side.TEAM2;
         EventType type = doubleYellow ? EventType.SECOND_YELLOW_RED : EventType.RED_CARD;
-        return Optional.of(new TimelineEvent(getMinute(), side, type, player.getName(), null));
+        return Optional.of(new TimelineEvent(getMinute(), side, type, player.getName()));
     }
 
     @Override

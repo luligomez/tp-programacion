@@ -124,6 +124,10 @@ public class MatchSimulator {
         List<Player> benchTeam1 = new ArrayList<>(form1.getSubstitutes());
         List<Player> benchTeam2 = new ArrayList<>(form2.getSubstitutes());
 
+        //Suplentes en cancha
+        Set<Player> cameOnTeam1 = new HashSet<>();
+        Set<Player> cameOnTeam2 = new HashSet<>();
+
         Map<Player, Integer> yellowCardsMap = new HashMap<>();
         int subsTeam1 = 0, subsTeam2 = 0;
         int goalsTeam1 = 0, goalsTeam2 = 0;
@@ -140,13 +144,13 @@ public class MatchSimulator {
 
             // B. Sustituciones (Minutos 45 a 85)
             if (minute >= 45 && minute <= 85) {
-                if (subsTeam1 < 5 && random.nextDouble() < 0.03) {
-                    if (trySubstitution(match, activeTeam1, benchTeam1, goalsTeam1, goalsTeam2, minute, random)) {
+                if (subsTeam1 < 5 && random.nextDouble() < 0.08) {
+                    if (trySubstitution(match, activeTeam1, benchTeam1, cameOnTeam1, goalsTeam1, goalsTeam2, minute, random)) {
                         subsTeam1++;
                     }
                 }
-                if (subsTeam2 < 5 && random.nextDouble() < 0.03) {
-                    if (trySubstitution(match, activeTeam2, benchTeam2, goalsTeam2, goalsTeam1, minute, random)) {
+                if (subsTeam2 < 5 && random.nextDouble() < 0.08) {
+                    if (trySubstitution(match, activeTeam2, benchTeam2, cameOnTeam2, goalsTeam2, goalsTeam1, minute, random)) {
                         subsTeam2++;
                     }
                 }
@@ -175,65 +179,73 @@ public class MatchSimulator {
     }
 
     // MANEJO DE SUSTITUCIONES Y PARTICIPACIÓN
-    private static boolean trySubstitution(Match match , List<Player> activePlayers, List<Player> bench, int teamGoals, int opponentGoals, int minute, Random random) {
-        if (activePlayers.isEmpty() || bench.isEmpty()) return false;
+    private static boolean trySubstitution(Match match, List<Player> activePlayers, List<Player> bench,
+    Set<Player> cameOn, int teamGoals, int opponentGoals,
+    int minute, Random random) {
+
+        List<Player> fieldBench = bench.stream()
+                .filter(p -> p.getPosition() != Position.GOALKEEPER)
+            .toList();
+        List<Player> fieldActive = activePlayers.stream()
+                .filter(p -> p.getPosition() != Position.GOALKEEPER && !cameOn.contains(p))
+            .toList();
+
+        if (fieldBench.isEmpty() || fieldActive.isEmpty()) return false;
 
         Player playerOut = null;
         Player playerIn = null;
+
         int scoreDiff = teamGoals - opponentGoals;
 
-        // SI VA PERDIENDO:
+        //SI VA PERDIENDO -> Necesita atacar (Mete delantero/volante, saca defensor/volante)
         if (scoreDiff < 0) {
-            // Busca sacar un Defensor de la cancha
-            playerOut = findRandomByPosition(activePlayers, Position.DEFENDER, random);
-            // Y busca meter un Delantero del banco
-            playerIn = findRandomByPositions(bench, Position.FORWARD, Position.MIDFIELDER, random);
+            playerIn = findRandomByPositions(fieldBench, Position.FORWARD, Position.MIDFIELDER, random);
+            if (playerIn != null) {
+                playerOut = findRandomByPositions(fieldActive, Position.DEFENDER, Position.MIDFIELDER, random);
+            }
         }
-        // SI VA GANANDO:
-        else if (scoreDiff > 0) {
-            // Busca sacar un Delantero de la cancha
-            playerOut = findRandomByPosition(activePlayers, Position.FORWARD, random);
-            // Y busca meter un Defensor del banco
-            playerIn = findRandomByPositions(bench, Position.DEFENDER, Position.MIDFIELDER, random);
-        }
-
-        // C) SI VAN EMPATANDO
-        if (playerOut == null || playerIn == null) {
-            // Elegimos al jugador de cancha de menor rating
-            playerOut = getLowestRatingPlayer(activePlayers);
-
-            if (playerOut != null) {
-                // Buscamos en el banco alguien de su misma posición
-                playerIn = findRandomByPosition(bench, playerOut.getPosition(), random);
+        else if (scoreDiff > 0) { // SI VA GANANDO -> Cierra el partido (Mete defensor/volante, saca delantero)
+            playerIn = findRandomByPositions(fieldBench, Position.DEFENDER, Position.MIDFIELDER, random);
+            if (playerIn != null) {
+                playerOut = findRandomByPosition(fieldActive, Position.FORWARD, random);
             }
         }
 
-        // Si aún así no hay coincidencia exacta de posición en el banco, metemos al mejor suplente disponible
-        if (playerIn == null) {
-            playerIn = getHighestRatingPlayer(bench);
+        // CAMBIO DE RUTINA / PUESTO POR PUESTO (Si van empatados o no encontró combinación anterior)
+        if (playerOut == null || playerIn == null) {
+            playerOut = getLowestRatingPlayer(fieldActive);
+            if (playerOut != null) {
+                playerIn = findRandomByPosition(fieldBench, playerOut.getPosition(), random);
+            }
         }
 
+        // VALIDACIÓN TÁCTICA DE RANGOS:
+        if (playerOut != null && playerIn != null && !isValidTacticalFormation(fieldActive, playerOut, playerIn)) {
+            // Forzamos un cambio puesto por puesto para no romper la formación
+            playerIn = findRandomByPosition(fieldBench, playerOut.getPosition(), random);
+        }
+
+        // Si aún no hay coincidencia válida, cancelamos el cambio en este minuto
+        if (playerIn == null || playerOut == null || !isValidTacticalFormation(fieldActive, playerOut, playerIn)) {
+            return false;
+        }
+
+        // --- Ejecutar el cambio ---
         bench.remove(playerIn);
         activePlayers.remove(playerOut);
         activePlayers.add(playerIn);
+        cameOn.add(playerIn);
 
-        // 1. Actualizar al que sale
         PlayerParticipation outPart = match.getParticipationFor(playerOut);
-        if (outPart != null) {
-            outPart.setMinuteOut(minute);
-        }
+        if (outPart != null) outPart.setMinuteOut(minute);
 
-        // 2. Actualizar al suplente que entra (arrancó en -1, -1)
         PlayerParticipation inPart = match.getParticipationFor(playerIn);
         if (inPart != null) {
             inPart.setMinuteIn(minute);
             inPart.setMinuteOut(90);
         }
 
-        // 3. Registrar incidencia
-        Substitution substitution = new Substitution(minute, playerOut, playerIn);
-        match.addIncident(substitution);
-
+        match.addIncident(new Substitution(minute, playerOut, playerIn));
         return true;
     }
 
@@ -273,11 +285,21 @@ public class MatchSimulator {
                                                int minute, Map<Player, Integer> yellowCardsMap, boolean isGkAlreadyExpelled, Random random) {
         if (activePlayers.isEmpty()) return false;
 
-        // Chance de que ocurra una falta con tarjeta en este minuto (ej: 1.5%)
-        if (random.nextDouble() < 0.015) {
-            Player player = selectWeightedFouler(activePlayers, yellowCardsMap, isGkAlreadyExpelled, random);
+        // Contar cuántos expulsados ya tiene el equipo 
+        long expulsionsCount = yellowCardsMap.keySet().stream() .filter(p -> !activePlayers.contains(p) && yellowCardsMap.get(p) >= 2) .count();
 
-            boolean isDirectRed = random.nextDouble() < 0.05;
+        // Si el equipo ya sufrió 2 expulsiones, reducir fuertemente la chance de más rojas/tarjetas 
+        double cardChance = 0.015; // 1.5% chance base por minuto
+        if (expulsionsCount >= 2) { 
+            cardChance = 0.002; // Se reduce al 0.2% para evitar partidos irrealizables
+            }
+
+        // Chance de que ocurra una falta con tarjeta en este minuto (ej: 1.5%)
+        if (random.nextDouble() < cardChance) {
+            Player player = selectWeightedFouler(activePlayers, yellowCardsMap, isGkAlreadyExpelled, random);
+            if (player == null) return isGkAlreadyExpelled;
+
+            boolean isDirectRed = random.nextDouble() < 0.03;
             boolean isDoubleYellow = false;
 
             if (!isDirectRed) {
@@ -286,8 +308,7 @@ public class MatchSimulator {
                 yellowCardsMap.put(player, currentYellows);
 
                 // Registramos la tarjeta amarilla recibida en la jugada
-                YellowCard yellowCard = new YellowCard(minute, player);
-                match.addIncident(yellowCard);
+                match.addIncident(new YellowCard(minute, player));
 
                 if (currentYellows == 2) {
                     isDoubleYellow = true;
@@ -296,10 +317,9 @@ public class MatchSimulator {
 
             // Si es expulsion
             if (isDirectRed || isDoubleYellow) {
-                Expulsion expulsion = new Expulsion(minute, player, isDoubleYellow);
-                match.addIncident(expulsion);
+                match.addIncident(new Expulsion(minute, player, isDoubleYellow));
 
-                if (player!=null && player.getPosition() == Position.GOALKEEPER) {
+                if (player.getPosition() == Position.GOALKEEPER) {
                     isGkAlreadyExpelled = true;
                     handleGoalkeeperExpulsion(match, activePlayers, benchPlayers, minute);
                 }
@@ -364,23 +384,17 @@ public class MatchSimulator {
             double weight;
 
             switch (p.getPosition()) {
-                case DEFENDER -> weight = 50.0;
+                case DEFENDER -> weight = 40.0;
                 case MIDFIELDER -> weight = 35.0;
-                case FORWARD -> weight = 12.0;
-                case GOALKEEPER -> {
-                    // Si YA expulsaron al arquero, el suplente no hace faltas
-                    if (isGkAlreadyExpelled) {
-                        weight = 0.0;
-                    } else {
-                        weight = 3.0; // peso habitual
-                    }
-                }
+                case FORWARD -> weight = 20.0;
+                // Si YA expulsaron al arquero, el suplente no hace faltas
+                case GOALKEEPER -> weight = isGkAlreadyExpelled ? 0.0 : 2.0;
                 default -> weight = 10.0;
             }
 
-            // REDUCCIÓN POR PRUDENCIA: Si ya tiene 1 amarilla, juega con más cuidado (se reduce su peso un 35%)
+            // REDUCCIÓN POR PRUDENCIA: Si ya tiene 1 amarilla, juega con más cuidado (se reduce su peso un 75%)
             if (yellowCardsMap.getOrDefault(p, 0) == 1) {
-                weight *= 0.65;
+                weight *= 0.25;
             }
 
             weights.put(p, weight);
@@ -552,9 +566,42 @@ public class MatchSimulator {
                 match.addIncident(sub);
 
                 System.out.println("Min " + minute + "' | 🔄 CAMBIO OBLIGADO: Sale "
-                        + fieldPlayerToSacrifice.getName() + " ➔ Entra el arquero suplente " + benchGK.getName());
+                        + fieldPlayerToSacrifice.getName() + " ➔ Entra el arquero suplente " + benchGK.getName()); //TODO borrar? mostrar en la app?
             }
         }
+    }
+    
+    private static boolean isValidTacticalFormation(List<Player> activePlayers, Player playerOut, Player playerIn) {
+        // Si entran y salen de la misma posición, el esquema táctico no cambia
+        if (playerOut.getPosition() == playerIn.getPosition()) {
+            return true;
+        }
+
+        // 1. Contar cuántos jugadores hay de cada posición actualmente
+        long def = activePlayers.stream().filter(p -> p.getPosition() == Position.DEFENDER).count();
+        long mid = activePlayers.stream().filter(p -> p.getPosition() == Position.MIDFIELDER).count();
+        long fwd = activePlayers.stream().filter(p -> p.getPosition() == Position.FORWARD).count();
+
+        // 2. Restar al que sale
+        switch (playerOut.getPosition()) {
+            case DEFENDER -> def--;
+            case MIDFIELDER -> mid--;
+            case FORWARD -> fwd--;
+        }
+
+        // 3. Sumar al que entra
+        switch (playerIn.getPosition()) {
+            case DEFENDER -> def++;
+            case MIDFIELDER -> mid++;
+            case FORWARD -> fwd++;
+        }
+
+        // 4. Validar rangos tácticos permitidos (3 a 5 Def, 3 a 6 Vol, 1 a 4 Del)
+        boolean defValid = def >= 3 && def <= 5;
+        boolean midValid = mid >= 3 && mid <= 6;
+        boolean fwdValid = fwd >= 1 && fwd <= 4;
+
+        return defValid && midValid && fwdValid;
     }
 
 }

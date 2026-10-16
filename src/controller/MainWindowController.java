@@ -1,14 +1,13 @@
 package controller;
 
+import DAO.CityDAO;
 import DAO.StadiumDAO;
 import service.FileReader;
 import model.tournament.Tournament;
 import model.tournament.TournamentState;
 import model.match.Match;
 import service.TournamentRepository;
-import view.PlayersView;
-import view.RefereesView;
-import view.TeamsView;
+import view.*;
 import view.knockout.KnockoutView;
 import view.mainwindow.MainWindowView;
 import view.mainwindow.SidebarItem;
@@ -17,6 +16,7 @@ import view.zonestage.ZoneStageView;
 
 import javax.swing.*;
 
+import java.awt.*;
 import java.io.IOException;
 
 import static model.tournament.TournamentState.*;
@@ -50,7 +50,8 @@ public class MainWindowController {
             case TEAMS -> navigateToTeams();
             case PLAYERS -> navigateToPlayers();
             case REFEREES -> navigateToReferees();
-            case RANKINGS, CREDENTIALS, ADMIN -> {
+            case ADMIN -> navigateToAdmin();
+            case RANKINGS, CREDENTIALS -> {
                 JOptionPane.showMessageDialog(view, "Screen in development: " + item);
             }
         }
@@ -139,6 +140,32 @@ public class MainWindowController {
         view.showScreen(refereesView, SidebarItem.REFEREES);
     }
 
+    private void navigateToAdmin() {
+        CitiesView citiesView = new CitiesView();
+        new CitiesController(citiesView, new CityDAO());
+        StadiumsView stadiumsView = new StadiumsView();
+        StadiumsController stadiumsController =
+                new StadiumsController(stadiumsView, new StadiumDAO(), new CityDAO());
+        JTabbedPane tabs = new JTabbedPane();
+        tabs.addTab("Cities", citiesView);
+        tabs.addTab("Stadiums", stadiumsView);
+        styleTabs(tabs);
+        tabs.addChangeListener(e -> stadiumsController.loadCities());
+        JPanel adminPanel = new JPanel(new BorderLayout());
+        adminPanel.add(tabs, BorderLayout.CENTER);
+        view.showScreen(adminPanel, SidebarItem.ADMIN);
+    }
+
+    private void styleTabs(JTabbedPane tabs) {
+        tabs.setFont(new Font("SansSerif", Font.BOLD, 16));
+        for (int i = 0; i < tabs.getTabCount(); i++) {
+            JLabel label = new JLabel(tabs.getTitleAt(i));
+            label.setFont(new Font("SansSerif", Font.BOLD, 16));
+            label.setBorder(BorderFactory.createEmptyBorder(8, 30, 8, 30));
+            tabs.setTabComponentAt(i, label);
+        }
+    }
+
     private void showMatchDetail(Match match, Runnable onBack, SidebarItem item) {
         MatchDetailView detailView = new MatchDetailView();
         new MatchDetailController(detailView, match, onBack);
@@ -153,4 +180,6 @@ public class MainWindowController {
                     "Save error", JOptionPane.WARNING_MESSAGE);
         }
     }
+
+
 }

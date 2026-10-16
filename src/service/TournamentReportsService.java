@@ -14,6 +14,8 @@ import model.reports.referee.RefereeReportData;
 import model.reports.referee.RefereeReportItem;
 import model.reports.team.TeamReportData;
 import model.reports.team.TeamReportItem;
+import model.reports.scorer.ScorerReportItem;
+import model.reports.fairplay.FairPlayReportItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,4 +160,94 @@ public class TournamentReportsService {
         return new RefereeReportData(items,avgYears);
     }
 
+    // SCORER RANKING
+
+    public static List<ScorerReportItem> generateScorersRanking(Tournament tournament) {
+
+        List<ScorerReportItem> scorers = new ArrayList<>();
+
+        for (Team team : tournament.getTeams()) {
+
+            if (team.getPlayers() == null) {
+                continue;
+            }
+
+            for (Player player : team.getPlayers()) {
+
+                TournamentStats stats = player.getTournamentStats();
+
+                if (stats != null && stats.getGoals() > 0) {
+                    scorers.add(new ScorerReportItem(
+                            player.getName(),
+                            team.getName(),
+                            stats.getGoals(),
+                            stats.getPenaltyGoals()
+                    ));
+                }
+            }
+        }
+
+        scorers.sort((a, b) -> {
+            int result = Integer.compare(b.getGoals(), a.getGoals());
+
+            if (result != 0) {
+                return result;
+            }
+
+            return a.getPlayerName().compareToIgnoreCase(b.getPlayerName());
+        });
+
+        return scorers;
+    }
+    // FAIR PLAY RANKING
+
+    public static List<FairPlayReportItem> generateFairPlayRanking(Tournament tournament) {
+
+        List<FairPlayReportItem> ranking = new ArrayList<>();
+
+        for (Team team : tournament.getTeams()) {
+
+            int yellowCards = 0;
+            int doubleYellowExpulsions = 0;
+            int directRedCards = 0;
+
+            if (team.getPlayers() == null) {
+                continue;
+            }
+
+            for (Player player : team.getPlayers()) {
+
+                TournamentStats stats = player.getTournamentStats();
+
+                if (stats != null) {
+                    yellowCards += stats.getStandaloneYellowCards();
+                    doubleYellowExpulsions += stats.getDoubleYellowExpulsions();
+                    directRedCards += stats.getDirectRedCards();
+                }
+            }
+
+            ranking.add(new FairPlayReportItem(
+                    team.getName(),
+                    yellowCards,
+                    doubleYellowExpulsions,
+                    directRedCards
+            ));
+        }
+
+        // Sort teams by penalty points, lowest first
+        ranking.sort((a, b) -> {
+            int result = Integer.compare(
+                    a.getPenaltyPoints(),
+                    b.getPenaltyPoints()
+            );
+
+            if (result != 0) {
+                return result;
+            }
+
+            return a.getTeamName().compareToIgnoreCase(b.getTeamName());
+        });
+
+        return ranking;
+    }
 }

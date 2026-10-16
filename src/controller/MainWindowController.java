@@ -7,6 +7,7 @@ import model.tournament.Tournament;
 import model.tournament.TournamentState;
 import model.match.Match;
 import service.TournamentRepository;
+import service.TournamentReportsService;
 import view.*;
 import view.knockout.KnockoutView;
 import view.mainwindow.MainWindowView;
@@ -51,7 +52,8 @@ public class MainWindowController {
             case PLAYERS -> navigateToPlayers();
             case REFEREES -> navigateToReferees();
             case ADMIN -> navigateToAdmin();
-            case RANKINGS, CREDENTIALS -> {
+            case RANKINGS -> navigateToRankings();
+            case CREDENTIALS -> {
                 JOptionPane.showMessageDialog(view, "Screen in development: " + item);
             }
         }
@@ -138,6 +140,34 @@ public class MainWindowController {
         RefereesView refereesView = new RefereesView();
         new RefereesController(refereesView, tournament);
         view.showScreen(refereesView, SidebarItem.REFEREES);
+    }
+
+    private void navigateToRankings() {
+
+        // Create scorer ranking view
+        ScorerRankingView scorerRankingView = new ScorerRankingView(
+                TournamentReportsService.generateScorersRanking(tournament)
+        );
+
+        // Create Fair Play ranking view
+        FairPlayRankingView fairPlayRankingView = new FairPlayRankingView(
+                TournamentReportsService.generateFairPlayRanking(tournament)
+        );
+
+        // Create tabs for both rankings
+        JTabbedPane tabs = new JTabbedPane();
+
+        tabs.addTab("Top Scorers", scorerRankingView);
+        tabs.addTab("Fair Play", fairPlayRankingView);
+
+        // Apply the existing tab style
+        styleTabs(tabs);
+
+        // Display rankings in the main window
+        JPanel rankingsPanel = new JPanel(new BorderLayout());
+        rankingsPanel.add(tabs, BorderLayout.CENTER);
+
+        view.showScreen(rankingsPanel, SidebarItem.RANKINGS);
     }
 
     private void navigateToAdmin() {

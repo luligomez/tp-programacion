@@ -33,6 +33,7 @@ public abstract class Match implements Serializable {
     private int team2Goals;
     private ArrayList<PlayerParticipation> playerParticipations = new ArrayList<>();
     private Stadium stadium;
+    private boolean playerStatisticsRegistered = false;
 
     public Match(Team team1, Team team2, Referee referee,
                  Formation team1Formation, Formation team2Formation, Stadium stadium) {
@@ -102,10 +103,16 @@ public abstract class Match implements Serializable {
         // 1. GOLES
         switch (incident) {
             case Goal goal -> {
+                // Registrar el gol del jugador, excepto si es en contra
                 if (!goal.isOwnGoal() && goal.getScorer() != null) {
                     goal.getScorer()
                             .getTournamentStats()
                             .registerGoal(goal.isPenalty());
+                }
+
+                // Registrar el gol recibido por el arquero,
+                // incluso cuando se trata de un gol en contra
+                if (goal.getGoalkeeper() != null) {
                     goal.getGoalkeeper()
                             .getTournamentStats()
                             .registerGoalConceded();
@@ -162,6 +169,11 @@ public abstract class Match implements Serializable {
 
     public void registerPlayerStatistics() {
 
+        // Evitar registrar dos veces las estadísticas del mismo partido
+        if (playerStatisticsRegistered) {
+            return;
+        }
+
         for (PlayerParticipation participation : playerParticipations) {
 
             Player player = participation.getPlayer();
@@ -180,6 +192,9 @@ public abstract class Match implements Serializable {
                         .registerMatchPlayed(minutes);
             }
         }
+
+        // Marcar las estadísticas como registradas
+        playerStatisticsRegistered = true;
     }
 
     public ArrayList<PlayerParticipation> getPlayerParticipations() {

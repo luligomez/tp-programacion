@@ -1,6 +1,7 @@
-package view;
+package view.rankings;
 
 import model.reports.fairplay.FairPlayReportItem;
+import view.components.StyledTable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -8,8 +9,10 @@ import java.awt.*;
 import java.util.List;
 
 public class FairPlayRankingView extends JPanel {
+    private final DefaultTableModel tableModel;
+    private final JLabel emptyMessage;
 
-    public FairPlayRankingView(List<FairPlayReportItem> ranking) {
+    public FairPlayRankingView() {
 
         setLayout(new BorderLayout(15, 15));
         setBackground(new Color(240, 240, 240));
@@ -25,13 +28,13 @@ public class FairPlayRankingView extends JPanel {
         String[] columns = {
                 "Position",
                 "Team",
-                "Yellow Cards",
-                "Double Yellow",
-                "Red Cards",
+                "Single Yellow Cards",
+                "Double Yellow Expulsions",
+                "Direct Red Cards",
                 "Penalty Points"
         };
 
-        DefaultTableModel tableModel = new DefaultTableModel(columns, 0) {
+        this.tableModel = new DefaultTableModel(columns, 0) {
 
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -39,6 +42,29 @@ public class FairPlayRankingView extends JPanel {
             }
         };
 
+
+
+        StyledTable styledTable = new StyledTable(tableModel);
+        styledTable.centerAllRows();
+
+        styledTable.setFillsViewportHeight(true);
+        styledTable.setAutoCreateRowSorter(false);
+
+        JScrollPane scrollPane = new JScrollPane(styledTable);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 220), 1));
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        add(scrollPane, BorderLayout.CENTER);
+
+
+        emptyMessage = new JLabel(
+                    "No Fair Play statistics available.",
+                    SwingConstants.CENTER
+        );
+
+    }
+
+    public void showRanking(List<FairPlayReportItem> ranking){
+        tableModel.setRowCount(0);
         int position = 1;
 
         for (FairPlayReportItem item : ranking) {
@@ -52,28 +78,12 @@ public class FairPlayRankingView extends JPanel {
                     item.getPenaltyPoints()
             });
         }
-
-        JTable table = new JTable(tableModel);
-
-        table.setRowHeight(32);
-        table.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        table.getTableHeader().setFont(
-                new Font("SansSerif", Font.BOLD, 13)
-        );
-
-        table.setFillsViewportHeight(true);
-        table.setAutoCreateRowSorter(false);
-
-        JScrollPane scrollPane = new JScrollPane(table);
-
-        add(scrollPane, BorderLayout.CENTER);
-
         if (ranking.isEmpty()) {
-            JLabel message = new JLabel(
-                    "No Fair Play statistics available.",
-                    SwingConstants.CENTER
-            );
-            add(message, BorderLayout.SOUTH);
+            add(emptyMessage, BorderLayout.SOUTH);
+        } else {
+            remove(emptyMessage);
         }
+        revalidate();
+        repaint();
     }
 }

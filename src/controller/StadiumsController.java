@@ -3,7 +3,7 @@ package controller;
 import DAO.CityDAO;
 import DAO.StadiumDAO;
 import model.place.City;
-import view.StadiumsView;
+import view.citiesAndStadiums.StadiumsView;
 
 import java.sql.SQLException;
 
@@ -13,8 +13,8 @@ public class StadiumsController {
     private final StadiumDAO stadiumDAO;
     private final CityDAO cityDAO;
 
-    public StadiumsController(StadiumsView view, StadiumDAO stadiumDAO, CityDAO cityDAO) {
-        this.view = view;
+    public StadiumsController(StadiumDAO stadiumDAO, CityDAO cityDAO) {
+        this.view = new StadiumsView();
         this.stadiumDAO = stadiumDAO;
         this.cityDAO = cityDAO;
 
@@ -24,6 +24,10 @@ public class StadiumsController {
 
         loadCities();
         loadStadiums();
+    }
+
+    public StadiumsView getView() {
+        return view;
     }
 
     public void loadCities() {

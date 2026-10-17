@@ -7,13 +7,8 @@ import model.tournament.Tournament;
 import model.tournament.TournamentState;
 import model.match.Match;
 import service.TournamentRepository;
-import service.TournamentReportsService;
-import view.*;
-import view.knockout.KnockoutView;
 import view.mainwindow.MainWindowView;
 import view.mainwindow.SidebarItem;
-import view.match.MatchDetailView;
-import view.zonestage.ZoneStageView;
 
 import javax.swing.*;
 
@@ -60,15 +55,12 @@ public class MainWindowController {
     }
 
     private void navigateToGroups() {
-        // PASO 1: Crear la vista hija
-        ZoneStageView zoneStageView = new ZoneStageView();
-
-        // PASO 2: Crear el controlador hijo (él solito se vincula con la vista y el torneo)
-        new ZoneStageController(zoneStageView, tournament,
+        // PASO 1: Crear el controlador hijo (él solito se vincula con la vista y el torneo)
+        ZoneStageController zoneStageController = new ZoneStageController(tournament,
                 match -> showMatchDetail(match, this::navigateToGroups, SidebarItem.GROUPS),
                 this::saveTournament);
-        // PASO 3: Indicarle a la ventana principal que muestre el panel de la vista hija
-        view.showScreen(zoneStageView, SidebarItem.GROUPS);
+        // PASO 2: Indicarle a la ventana principal que muestre el panel de la vista hija
+        view.showScreen(zoneStageController.getView(), SidebarItem.GROUPS);
     }
 
     private void onResetTournament() {
@@ -117,48 +109,36 @@ public class MainWindowController {
             );
             return;
         }
-        KnockoutView knockoutView = new KnockoutView();
-        new KnockoutController(knockoutView, tournament,
+        KnockoutController knockoutController = new KnockoutController(tournament,
                 match -> showMatchDetail(match, this::navigateToKnockout, SidebarItem.KNOCKOUT),
                 this::saveTournament);
-        view.showScreen(knockoutView, SidebarItem.KNOCKOUT);
+        view.showScreen(knockoutController.getView(), SidebarItem.KNOCKOUT);
     }
 
     private void navigateToTeams() {
-        TeamsView teamsView = new TeamsView();
-        new TeamsController(teamsView, tournament);
-        view.showScreen(teamsView, SidebarItem.TEAMS);
+        TeamsController teamsController = new TeamsController(tournament);
+        view.showScreen(teamsController.getView(), SidebarItem.TEAMS);
     }
 
     private void navigateToPlayers() {
-        PlayersView playersView = new PlayersView();
-        new PlayersController(playersView, tournament);
-        view.showScreen(playersView, SidebarItem.PLAYERS);
+        PlayersController playersController = new PlayersController(tournament);
+        view.showScreen(playersController.getView(), SidebarItem.PLAYERS);
     }
 
     private void navigateToReferees() {
-        RefereesView refereesView = new RefereesView();
-        new RefereesController(refereesView, tournament);
-        view.showScreen(refereesView, SidebarItem.REFEREES);
+        RefereesController refereesController = new RefereesController(tournament);
+        view.showScreen(refereesController.getView(), SidebarItem.REFEREES);
     }
 
     private void navigateToRankings() {
-
-        // Create scorer ranking view
-        ScorerRankingView scorerRankingView = new ScorerRankingView(
-                TournamentReportsService.generateScorersRanking(tournament)
-        );
-
-        // Create Fair Play ranking view
-        FairPlayRankingView fairPlayRankingView = new FairPlayRankingView(
-                TournamentReportsService.generateFairPlayRanking(tournament)
-        );
+        ScorerRankingController scorerRankingController = new ScorerRankingController(tournament);
+        FairPlayRankingController fairPlayRankingController = new FairPlayRankingController(tournament);
 
         // Create tabs for both rankings
         JTabbedPane tabs = new JTabbedPane();
 
-        tabs.addTab("Top Scorers", scorerRankingView);
-        tabs.addTab("Fair Play", fairPlayRankingView);
+        tabs.addTab("Top Scorers", scorerRankingController.getView());
+        tabs.addTab("Fair Play", fairPlayRankingController.getView());
 
         // Apply the existing tab style
         styleTabs(tabs);
@@ -171,14 +151,11 @@ public class MainWindowController {
     }
 
     private void navigateToAdmin() {
-        CitiesView citiesView = new CitiesView();
-        new CitiesController(citiesView, new CityDAO());
-        StadiumsView stadiumsView = new StadiumsView();
-        StadiumsController stadiumsController =
-                new StadiumsController(stadiumsView, new StadiumDAO(), new CityDAO());
+        CitiesController citiesController = new CitiesController(new CityDAO());
+        StadiumsController stadiumsController = new StadiumsController(new StadiumDAO(), new CityDAO());
         JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab("Cities", citiesView);
-        tabs.addTab("Stadiums", stadiumsView);
+        tabs.addTab("Cities", citiesController.getView());
+        tabs.addTab("Stadiums", stadiumsController.getView());
         styleTabs(tabs);
         tabs.addChangeListener(e -> stadiumsController.loadCities());
         JPanel adminPanel = new JPanel(new BorderLayout());
@@ -197,9 +174,8 @@ public class MainWindowController {
     }
 
     private void showMatchDetail(Match match, Runnable onBack, SidebarItem item) {
-        MatchDetailView detailView = new MatchDetailView();
-        new MatchDetailController(detailView, match, onBack);
-        view.showScreen(detailView, item);
+        MatchDetailController matchDetailController = new MatchDetailController(match, onBack);
+        view.showScreen(matchDetailController.getView(), item);
     }
 
     private void saveTournament() {

@@ -1,8 +1,7 @@
 package controller;
 
 import DAO.CityDAO;
-import model.place.City;
-import view.CitiesView;
+import view.citiesAndStadiums.CitiesView;
 
 import java.sql.SQLException;
 
@@ -11,8 +10,8 @@ public class CitiesController {
     private final CitiesView view;
     private final CityDAO cityDAO;
 
-    public CitiesController(CitiesView view, CityDAO cityDAO) {
-        this.view = view;
+    public CitiesController(CityDAO cityDAO) {
+        this.view = new CitiesView();
         this.cityDAO = cityDAO;
 
         view.addAddListener(e -> addCity());
@@ -20,6 +19,10 @@ public class CitiesController {
         view.addDeleteListener(e -> deleteCity());
 
         loadCities();
+    }
+
+    public CitiesView getView() {
+        return view;
     }
 
     public void loadCities() {

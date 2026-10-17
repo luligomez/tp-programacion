@@ -564,9 +564,6 @@ public class MatchSimulator {
                 // C. Registramos la incidencia de sustitución
                 Substitution sub = new Substitution(minute, fieldPlayerToSacrifice, benchGK);
                 match.addIncident(sub);
-
-                System.out.println("Min " + minute + "' | 🔄 CAMBIO OBLIGADO: Sale "
-                        + fieldPlayerToSacrifice.getName() + " ➔ Entra el arquero suplente " + benchGK.getName()); //TODO borrar? mostrar en la app?
             }
         }
     }

@@ -1,4 +1,4 @@
-package view;
+package view.rankings;
 
 import model.reports.scorer.ScorerReportItem;
 import view.components.StyledTable;
@@ -9,8 +9,10 @@ import java.awt.*;
 import java.util.List;
 
 public class ScorerRankingView extends JPanel {
+    private final DefaultTableModel tableModel;
+    private final JLabel emptyMessage;
 
-    public ScorerRankingView(List<ScorerReportItem> scorers) {
+    public ScorerRankingView() {
         setLayout(new BorderLayout(15, 15));
         setBackground(new Color(240, 240, 240));
         setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
@@ -30,7 +32,7 @@ public class ScorerRankingView extends JPanel {
                 "Penalty Goals"
         };
 
-        DefaultTableModel tableModel =
+        tableModel =
                 new DefaultTableModel(columns, 0) {
                     @Override
                     public boolean isCellEditable(int row, int column) {
@@ -38,8 +40,27 @@ public class ScorerRankingView extends JPanel {
                     }
                 };
 
-        int position = 1;
 
+        StyledTable table = new StyledTable(tableModel);
+        table.centerAllRows();
+        table.setColumnWidths(new int[]{80, 200, 200, 80, 120});
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 220), 1));
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        add(scrollPane, BorderLayout.CENTER);
+
+        emptyMessage = new JLabel(
+                    "No goals have been scored yet.",
+                    SwingConstants.CENTER
+        );
+        emptyMessage.setFont(new Font("SansSerif", Font.PLAIN, 16));
+    }
+
+    public void showScorers(List<ScorerReportItem> scorers) {
+        tableModel.setRowCount(0);
+
+        int position = 1;
         for (ScorerReportItem scorer : scorers) {
             tableModel.addRow(new Object[]{
                     position++,
@@ -50,22 +71,12 @@ public class ScorerRankingView extends JPanel {
             });
         }
 
-        StyledTable table = new StyledTable(tableModel);
-        table.centerAllRows();
-        table.setColumnWidths(new int[]{80, 200, 200, 80, 120});
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
-
-        add(scrollPane, BorderLayout.CENTER);
-
         if (scorers.isEmpty()) {
-            JLabel message = new JLabel(
-                    "No goals have been scored yet.",
-                    SwingConstants.CENTER
-            );
-            message.setFont(new Font("SansSerif", Font.PLAIN, 16));
-            add(message, BorderLayout.SOUTH);
+            add(emptyMessage, BorderLayout.SOUTH);
+        } else {
+            remove(emptyMessage);
         }
+        revalidate();
+        repaint();
     }
 }

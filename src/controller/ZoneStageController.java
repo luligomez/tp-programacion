@@ -15,8 +15,8 @@ public class ZoneStageController {
     private final Runnable onProgress;
 
 
-    public ZoneStageController(ZoneStageView view, Tournament tournament, Consumer<Match> onOpenMatch, Runnable onProgress) {
-        this.view = view;
+    public ZoneStageController(Tournament tournament, Consumer<Match> onOpenMatch, Runnable onProgress) {
+        this.view = new ZoneStageView();
         this.tournament = tournament;
         this.onOpenMatch = onOpenMatch;
         this.onProgress = onProgress;
@@ -30,6 +30,9 @@ public class ZoneStageController {
         view.setOnSimulateMatchdayListener(this::simulateNextMatchday);
         view.setOnMatchSelectedListener(onOpenMatch); // nuevo
         updateView();
+    }
+    public ZoneStageView getView() {
+        return view;
     }
 
     public void updateView() {

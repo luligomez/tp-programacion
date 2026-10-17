@@ -9,8 +9,8 @@ public class RefereesController {
     private final RefereesView view;
     private final Tournament tournament;
 
-    public RefereesController(RefereesView refereesView, Tournament tournament) {
-        this.view = refereesView;
+    public RefereesController(Tournament tournament) {
+        this.view = new RefereesView();
         this.tournament = tournament;
         initController();
     }
@@ -22,6 +22,10 @@ public class RefereesController {
 
     public void loadReportData() {
         view.setRefereesData(TournamentReportsService.generateRefereesReportData(tournament));
+    }
+
+    public RefereesView getView() {
+        return view;
     }
 }
 

@@ -13,8 +13,8 @@ public class PlayersController {
     private final PlayersView view;
     private final Tournament tournament;
 
-    public PlayersController(PlayersView view, Tournament tournament) {
-        this.view = view;
+    public PlayersController(Tournament tournament) {
+        this.view = new PlayersView();
         this.tournament = tournament;
 
         // 1. El Controlador escucha los eventos de los filtros en la Vista
@@ -33,5 +33,9 @@ public class PlayersController {
                 .toList();
 
         view.setPlayersData(data.getItems(), teamNames);
+    }
+
+    public PlayersView getView() {
+        return view;
     }
 }

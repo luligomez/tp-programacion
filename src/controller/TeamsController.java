@@ -10,11 +10,15 @@ public class TeamsController {
     private final TeamsView view;
     private final Tournament tournament;
 
-    public TeamsController(TeamsView view, Tournament tournament) {
-        this.view = view;
+    public TeamsController(Tournament tournament) {
+        this.view = new TeamsView();
         this.tournament = tournament;
 
         loadReportData();
+    }
+
+    public TeamsView getView() {
+        return view;
     }
 
     public void loadReportData() {

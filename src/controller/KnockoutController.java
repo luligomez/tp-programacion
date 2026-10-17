@@ -17,8 +17,8 @@ public class KnockoutController {
     private final Runnable onProgress;
 
 
-    public KnockoutController(KnockoutView view, Tournament tournament, Consumer<Match> onOpenMatch, Runnable onProgress) {
-        this.view = view;
+    public KnockoutController(Tournament tournament, Consumer<Match> onOpenMatch, Runnable onProgress) {
+        this.view = new KnockoutView();
         this.tournament = tournament;
         this.onOpenMatch = onOpenMatch;
         this.knockout = tournament.getKnockoutStage();
@@ -26,6 +26,10 @@ public class KnockoutController {
         view.setOnSimulateListener(this::simulateNextRound);
         view.setOnMatchSelectedListener(onOpenMatch);
         updateView();
+    }
+
+    public KnockoutView getView() {
+        return view;
     }
 
     private void updateView() {

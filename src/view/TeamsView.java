@@ -36,11 +36,23 @@ public class TeamsView extends JPanel {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                // Le indica a Swing el tipo real (Integer, Double, String) de la celda
+                if (getRowCount() > 0 && getValueAt(0, columnIndex) != null) {
+                    return getValueAt(0, columnIndex).getClass();
+                }
+                return Object.class;
+            }
         };
 
         table = new StyledTable(tableModel);
         table.centerAllRows();
         table.setAutoCreateRowSorter(true);
+        table.setNumericFormatWithFallback(1, "%.1f", " yrs"); // Avg. Player Age
+        table.setNumericFormatWithFallback(4, null); // GF
+        table.setNumericFormatWithFallback(5, null); // GA
+        table.setNumericFormatWithFallback(6, "%.1f", "%"); // Effectiveness
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 220), 1));
@@ -78,12 +90,12 @@ public class TeamsView extends JPanel {
         for (TeamReportItem item : items) {
             tableModel.addRow(new Object[]{
                     item.getTeamName(),
-                    String.format("%.1f yrs", item.getAveragePlayerAge()),
+                    item.getAveragePlayerAge(),
                     item.getCoachAge() > 0 ? item.getCoachAge() + " yrs" : "N/A",
                     item.getCoachNationality(),
                     item.getGoalsFor(),
                     item.getGoalsAgainst(),
-                    String.format("%.1f%%", item.getEffectiveness())
+                    item.getEffectiveness()
             });
         }
     }

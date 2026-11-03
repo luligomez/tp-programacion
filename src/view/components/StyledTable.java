@@ -77,16 +77,21 @@ public class StyledTable extends JTable {
     }
 
     public void setNumericFormatWithFallback(int columnIndex, String formatPattern) {
+        setNumericFormatWithFallback(columnIndex, formatPattern, null);
+    }
+
+    public void setNumericFormatWithFallback(int columnIndex, String formatPattern, String suffix) {
         getColumnModel().getColumn(columnIndex).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             protected void setValue(Object value) {
                 if (value instanceof Number num) {
                     if (num.doubleValue() < 0) {
-                        setText("-");
-                    } else if (formatPattern != null) {
-                        setText(String.format(formatPattern, num.doubleValue()));
+                        setText("-");                       // se mantiene tu fallback
                     } else {
-                        setText(String.valueOf(num.intValue()));
+                        String text = (formatPattern != null)
+                                ? String.format(formatPattern, num.doubleValue())
+                                : String.valueOf(num.intValue());
+                        setText(suffix != null ? text + suffix : text);
                     }
                 } else {
                     super.setValue(value);

@@ -17,5 +17,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="json-simple-1.1.1" level="project" />
+    <orderEntry type="library" name="openpdf-3.0.5" level="project" />
   </component>
 </module>

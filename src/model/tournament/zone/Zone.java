@@ -171,6 +171,8 @@ public class Zone implements Serializable {
         }
 
         for (GroupStageMatch match : groupStageMatches) {
+            if (!match.isPlayed()) continue;
+
             Team team1 = match.getTeam1();
             Team team2 = match.getTeam2();
 

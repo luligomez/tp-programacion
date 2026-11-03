@@ -49,6 +49,7 @@ public class MatchDetailsPanel extends JPanel {
         String t1Leg1 = firstPlayed ? String.valueOf(tie.getFirstLegGoals(t1)) : "-";
         String t2Leg1 = firstPlayed ? String.valueOf(tie.getFirstLegGoals(t2)) : "-";
         String t1Leg2 = "-", t2Leg2 = "-", t1Total = "-", t2Total = "-";
+        String t1Points = "-", t2Points = "-";
         if (secondPlayed) {
             int p1 = tie.getSecondLeg().getPenaltiesScored(t1);
             int p2 = tie.getSecondLeg().getPenaltiesScored(t2);
@@ -56,12 +57,13 @@ public class MatchDetailsPanel extends JPanel {
             t2Leg2 = String.valueOf(tie.getSecondLegGoals(t2));
             t1Total = cell(tie.getTotalGoals(t1), p1, pens);
             t2Total = cell(tie.getTotalGoals(t2), p2, pens);
+            t1Points = String.valueOf(tie.getTeam1Points());
+            t2Points = String.valueOf(tie.getTeam2Points());
         }
 
-        add(left(tableRow("Team", HEADER_FONT, GRAY, "1st Leg", "2nd Leg", "Total")));
-        add(left(tableRow(t1.getName(), ROW_FONT, Color.BLACK, t1Leg1, t1Leg2, t1Total)));
-        add(left(tableRow(t2.getName(), ROW_FONT, Color.BLACK, t2Leg1, t2Leg2, t2Total)));
-
+        add(left(tableRow("Team", HEADER_FONT, GRAY, "1st", "2nd", "Goals", "Pts")));
+        add(left(tableRow(t1.getName(), ROW_FONT, Color.BLACK, t1Leg1, t1Leg2, t1Total, t1Points)));
+        add(left(tableRow(t2.getName(), ROW_FONT, Color.BLACK, t2Leg1, t2Leg2, t2Total, t2Points)));
         if (tie.isResolved()) {
             add(left(criterionLabel(tie.getWinningCriteria())));
         }
@@ -83,11 +85,11 @@ public class MatchDetailsPanel extends JPanel {
         String g1 = played ? cell(match.getTeam1Goals(), match.getPenaltiesScored(t1), pens) : "-";
         String g2 = played ? cell(match.getTeam2Goals(), match.getPenaltiesScored(t2), pens) : "-";
 
-        add(left(tableRow("Team", HEADER_FONT, GRAY, "Goals")));
-        add(left(tableRow(t1.getName(), ROW_FONT, Color.BLACK, g1)));
-        add(left(tableRow(t2.getName(), ROW_FONT, Color.BLACK, g2)));
-
-        // getWinner() va primero porque es el que guarda el criterio
+        if (pens) {
+            add(left(tableRow("Team", HEADER_FONT, GRAY, "Goals")));
+            add(left(tableRow(t1.getName(), ROW_FONT, Color.BLACK, g1)));
+            add(left(tableRow(t2.getName(), ROW_FONT, Color.BLACK, g2)));
+        }
         if (played && match.getWinner() != null) {
             add(left(criterionLabel(match.getWinningCriteria())));
         }

@@ -85,11 +85,11 @@ public class MatchDetailsPanel extends JPanel {
         String g1 = played ? cell(match.getTeam1Goals(), match.getPenaltiesScored(t1), pens) : "-";
         String g2 = played ? cell(match.getTeam2Goals(), match.getPenaltiesScored(t2), pens) : "-";
 
-        add(left(tableRow("Team", HEADER_FONT, GRAY, "Goals")));
-        add(left(tableRow(t1.getName(), ROW_FONT, Color.BLACK, g1)));
-        add(left(tableRow(t2.getName(), ROW_FONT, Color.BLACK, g2)));
-
-        // getWinner() va primero porque es el que guarda el criterio
+        if (pens) {
+            add(left(tableRow("Team", HEADER_FONT, GRAY, "Goals")));
+            add(left(tableRow(t1.getName(), ROW_FONT, Color.BLACK, g1)));
+            add(left(tableRow(t2.getName(), ROW_FONT, Color.BLACK, g2)));
+        }
         if (played && match.getWinner() != null) {
             add(left(criterionLabel(match.getWinningCriteria())));
         }

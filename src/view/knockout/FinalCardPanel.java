@@ -33,7 +33,6 @@ public class FinalCardPanel extends JPanel {
         add(body, BorderLayout.CENTER);
 
         if (played) {
-            // getWinner() va primero: es el que guarda el criterio
             Team winner = match.getWinner();
             if (winner != null) {
                 String text = "Winner: " + winner.getName() + " (" + match.getWinningCriteria() + ")";

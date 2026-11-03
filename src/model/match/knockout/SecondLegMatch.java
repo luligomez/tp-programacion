@@ -12,15 +12,9 @@ public class SecondLegMatch extends KnockoutMatch {
 
     @Override
     public Team getWinner() {
-        if (getTeam1Goals() > getTeam2Goals()) {
-            super.setWinningCriteria("Higher number of goals in 90 minutes");
-            return getTeam1();
-        }
-        if (getTeam2Goals() > getTeam1Goals()) {
-            super.setWinningCriteria("Higher number of goals in 90 minutes");
-            return getTeam2();
-        }
-        PenaltyShootout penaltyShootout = super.getPenalties();
+        if (getTeam1Goals() > getTeam2Goals()) return getTeam1();
+        if (getTeam2Goals() > getTeam1Goals()) return getTeam2();
+        PenaltyShootout penaltyShootout = getPenalties();
         return penaltyShootout == null ? null : penaltyShootout.getWinner();
     }
 

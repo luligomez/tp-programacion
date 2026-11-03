@@ -3,9 +3,12 @@ package controller;
 import DAO.CityDAO;
 import DAO.StadiumDAO;
 import model.place.City;
+import model.place.Stadium;
 import view.citiesAndStadiums.StadiumsView;
 
+import javax.swing.*;
 import java.sql.SQLException;
+import java.util.List;
 
 public class StadiumsController {
 
@@ -31,19 +34,39 @@ public class StadiumsController {
     }
 
     public void loadCities() {
-        try {
-            view.setCities(cityDAO.getAllCities());
-        } catch (SQLException ex) {
-            view.showMessage("Error loading cities: " + ex.getMessage());
-        }
+        new SwingWorker<List<City>, Void>() {
+            @Override
+            protected List<City> doInBackground() throws SQLException {
+                return cityDAO.getAllCities();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    view.setCities(get());
+                } catch (Exception ex) {
+                    view.showMessage("Error loading cities: " + ex.getMessage());
+                }
+            }
+        }.execute();
     }
 
     public void loadStadiums() {
-        try {
-            view.setStadiumsData(stadiumDAO.getAllStadiums());
-        } catch (SQLException ex) {
-            view.showMessage("Error loading stadiums: " + ex.getMessage());
-        }
+        new SwingWorker<List<Stadium>, Void>() {
+            @Override
+            protected List<Stadium> doInBackground() throws SQLException, InterruptedException {
+                return stadiumDAO.getAllStadiums();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    view.setStadiumsData(get());
+                } catch (Exception ex) {
+                    view.showMessage("Error loading stadiums: " + ex.getMessage());
+                }
+            }
+        }.execute();
     }
 
     private void addStadium() {

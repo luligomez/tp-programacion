@@ -59,25 +59,20 @@ public class KnockoutTie implements Serializable {
             return null;
         }
 
-        // 1. Goles globales acumulados
-        // team1 es local en la ida (firstLeg) y visitante en la vuelta (secondLeg)
-        // team2 es visitante en la ida (firstLeg) y local en la vuelta (secondLeg)
-        int goalsTeam1 = getTeam1AggregateGoals();
-        int goalsTeam2 = getTeam2AggregateGoals();
-
-        if (goalsTeam1 != goalsTeam2) {
-            return goalsTeam1 > goalsTeam2 ? team1 : team2;
+        // 1. Points over both legs (win = 3, draw = 1, loss = 0)
+        int points1 = getTeam1Points();
+        int points2 = getTeam2Points();
+        if (points1 != points2) {
+            return points1 > points2 ? team1 : team2;
         }
 
-        // 2. Gol de visitante
-        int awayGoalsTeam1 = getTeam1AwayGoals(); // team1 fue visitante en la vuelta
-        int awayGoalsTeam2 = getTeam2AwayGoals();  // team2 fue visitante en la ida
-
-        if (awayGoalsTeam1 != awayGoalsTeam2) {
-            return awayGoalsTeam1 > awayGoalsTeam2 ? team1 : team2;
+        // 2. Goal difference, away goals count double
+        int goalDifference = getTeam1WeightedGoalDifference();
+        if (goalDifference != 0) {
+            return goalDifference > 0 ? team1 : team2;
         }
 
-        // 3. Si hay empate global absoluto, consultar el ganador de los penales
+        // 3. Penalties
         if (secondLeg.getPenalties() != null) {
             return secondLeg.getPenalties().getWinner();
         }
@@ -85,21 +80,38 @@ public class KnockoutTie implements Serializable {
         return null;
     }
 
-
     public String getWinningCriteria() {
         if (!isResolved()) return "";
 
-        int goalsTeam1 = getTeam1AggregateGoals();
-        int goalsTeam2 = getTeam2AggregateGoals();
-        if (goalsTeam1 != goalsTeam2) return "Aggregate goals";
-
-        if (getTeam1AwayGoals() != getTeam2AwayGoals()) return "Away goals";
-
-        if (secondLeg.getPenalties() != null) {
-            return "Penalties";
-        }
+        if (getTeam1Points() != getTeam2Points()) return "Points";
+        if (getTeam1WeightedGoalDifference() != 0) return "Goal difference (away goals count double)";
+        if (secondLeg.getPenalties() != null) return "Penalties";
 
         return "";
+    }
+
+    public int getTeam1Points() {
+        return pointsOf(getTeam1FirstLegGoals(), getTeam2FirstLegGoals())
+                + pointsOf(getTeam1SecondLegGoals(), getTeam2SecondLegGoals());
+    }
+
+    public int getTeam2Points() {
+        return pointsOf(getTeam2FirstLegGoals(), getTeam1FirstLegGoals())
+                + pointsOf(getTeam2SecondLegGoals(), getTeam1SecondLegGoals());
+    }
+
+    // team1 is away in the second leg, so its goals there count double.
+// team2 is away in the first leg, so its goals there count double.
+    public int getTeam1WeightedGoalDifference() {
+        int goalsFor = getTeam1FirstLegGoals() + 2 * getTeam1SecondLegGoals();
+        int goalsAgainst = 2 * getTeam2FirstLegGoals() + getTeam2SecondLegGoals();
+        return goalsFor - goalsAgainst;
+    }
+
+    private int pointsOf(int goalsFor, int goalsAgainst) {
+        if (goalsFor > goalsAgainst) return 3;
+        if (goalsFor == goalsAgainst) return 1;
+        return 0;
     }
 
     public int getTeam1AggregateGoals() {

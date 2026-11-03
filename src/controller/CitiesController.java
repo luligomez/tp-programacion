@@ -1,9 +1,12 @@
 package controller;
 
 import DAO.CityDAO;
+import model.place.City;
 import view.citiesAndStadiums.CitiesView;
 
+import javax.swing.*;
 import java.sql.SQLException;
+import java.util.List;
 
 public class CitiesController {
 
@@ -26,11 +29,21 @@ public class CitiesController {
     }
 
     public void loadCities() {
-        try {
-            view.setCitiesData(cityDAO.getAllCities());
-        } catch (SQLException ex) {
-            view.showMessage("Error loading cities: " + ex.getMessage());
-        }
+        new SwingWorker<List<City>, Void>() {
+            @Override
+            protected List<City> doInBackground() throws SQLException {
+                return cityDAO.getAllCities();
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    view.setCitiesData(get());
+                } catch (Exception ex) {
+                    view.showMessage("Error loading cities: " + ex.getMessage());
+                }
+            }
+        }.execute();
     }
 
     private void addCity() {

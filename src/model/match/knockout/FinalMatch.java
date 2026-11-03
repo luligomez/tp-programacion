@@ -23,7 +23,7 @@ public class FinalMatch extends KnockoutMatch {
             return getTeam2();
         }
         //se define por penales
-        super.setWinningCriteria("Won on penalties");
+        super.setWinningCriteria("Penalties");
         PenaltyShootout penaltyShootout = super.getPenalties();
         return penaltyShootout == null ? null : penaltyShootout.getWinner();
     }

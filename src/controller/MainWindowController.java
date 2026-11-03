@@ -9,11 +9,11 @@ import model.match.Match;
 import service.TournamentRepository;
 import view.mainwindow.MainWindowView;
 import view.mainwindow.SidebarItem;
-
 import javax.swing.*;
-
 import java.awt.*;
 import java.io.IOException;
+import service.CredentialPdfService;
+import java.io.File;
 
 import static model.tournament.TournamentState.*;
 
@@ -48,9 +48,7 @@ public class MainWindowController {
             case REFEREES -> navigateToReferees();
             case ADMIN -> navigateToAdmin();
             case RANKINGS -> navigateToRankings();
-            case CREDENTIALS -> {
-                JOptionPane.showMessageDialog(view, "Screen in development: " + item);
-            }
+            case CREDENTIALS -> generateCredentials();
         }
     }
 
@@ -176,6 +174,22 @@ public class MainWindowController {
     private void showMatchDetail(Match match, Runnable onBack, SidebarItem item) {
         MatchDetailController matchDetailController = new MatchDetailController(match, onBack);
         view.showScreen(matchDetailController.getView(), item);
+    }
+
+    private void generateCredentials() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Save credentials PDF");
+        chooser.setSelectedFile(new File("credentials.pdf"));
+        if (chooser.showSaveDialog(view) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        try {
+            new CredentialPdfService().generate(tournament, chooser.getSelectedFile().toPath());
+            JOptionPane.showMessageDialog(view, "Credentials PDF created.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(view, "Could not create credentials: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void saveTournament() {

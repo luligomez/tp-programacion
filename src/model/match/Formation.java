@@ -41,8 +41,19 @@ public class Formation implements Serializable {
         return substitutes;
     }
 
+
     public void addSubstitutes(Player player) {
-            substitutes.add(player);
+        if (player == null) {
+            throw new IllegalArgumentException("Player cannot be null.");
+        }
+
+        if (starters.contains(player) || substitutes.contains(player)) {
+            throw new InvalidFormationException(
+                    "The player " + player.getName() + " is already in this formation."
+            );
+        }
+
+        substitutes.add(player);
     }
 
     public Player getGoalkeeper() {

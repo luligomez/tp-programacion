@@ -60,9 +60,14 @@ public class Tournament implements Serializable {
 
         teams.add(team);
     }
-    public void addReferee(Referee referee) { referees.add(referee); }
+    public void addReferee(Referee referee) {
+        if (referee == null) {
+            throw new IllegalArgumentException("Referee cannot be null.");
+        }
+        referees.add(referee);
+    }
 
-    // ---------- sorteo ----------
+    // ---------- draw ----------
 
     public void zoneDraw() {
         zoneStage.draw(teams);
@@ -76,7 +81,7 @@ public class Tournament implements Serializable {
         if (availableStadiums < KNOCKOUT_MATCHES) {
             throw new InvalidTournamentException(
                     "At least " + KNOCKOUT_MATCHES + " stadiums are required to start the tournament, but only "
-                            + availableStadiums + " are available. Add more in the Cities & Stadiums.");
+                            + availableStadiums + " are available. Add more in Cities & Stadiums.");
         }
         state = TournamentState.GROUP_STAGE;
         zoneStage.generateMatches(referees, stadiums, LocalDate.now());
@@ -101,7 +106,6 @@ public class Tournament implements Serializable {
         }
     }
 
-    // ---------- consultas sobre todo el torneo ----------
 
     public List<Match> getAllMatches() {
         List<Match> all = new ArrayList<>(zoneStage.getMatches());

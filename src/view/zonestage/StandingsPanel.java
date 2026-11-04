@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Consumer;
+import model.tournament.zone.TeamStanding;
+import model.tournament.zone.MatchStandingComparison;
 
 public class StandingsPanel extends JPanel {
 
@@ -150,7 +152,115 @@ public class StandingsPanel extends JPanel {
 
         updateGroups(zones);
     }
+    public void showComparison(List<List<TeamStanding>> standingsBefore) {
+        StringBuilder message = new StringBuilder();
 
+        message.append("POSICIONES ANTES DE LA FECHA\n\n");
+
+        for (int i = 0; i < standingsBefore.size(); i++) {
+            message.append("ZONA ")
+                    .append((char) ('A' + i))
+                    .append("\n");
+
+            int position = 1;
+
+            for (TeamStanding standing : standingsBefore.get(i)) {
+                message.append(position++)
+                        .append(". ")
+                        .append(standing.getTeam().getName())
+                        .append(" - ")
+                        .append(standing.getPoints())
+                        .append(" puntos\n");
+            }
+
+            message.append("\n");
+        }
+
+        JTextArea textArea = new JTextArea(message.toString());
+        textArea.setEditable(false);
+        textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
+
+        JOptionPane.showMessageDialog(
+                this,
+                new JScrollPane(textArea),
+                "Tabla anterior a la simulación",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+    public void showMatchComparisons(List<MatchStandingComparison> comparisons) {
+
+        if (comparisons == null || comparisons.isEmpty()) {
+            return;
+        }
+
+        StringBuilder message = new StringBuilder();
+
+        for (MatchStandingComparison comparison : comparisons) {
+            var match = comparison.getMatch();
+
+            message.append("PARTIDO: ")
+                    .append(match.getTeam1().getName())
+                    .append(" ")
+                    .append(match.getTeam1Goals())
+                    .append(" - ")
+                    .append(match.getTeam2Goals())
+                    .append(" ")
+                    .append(match.getTeam2().getName())
+                    .append("\n\n");
+
+            message.append("TABLA ANTES DEL PARTIDO\n");
+            appendStandingsTable(message, comparison.getStandingsBefore());
+
+            message.append("\nTABLA DESPUES DEL PARTIDO\n");
+            appendStandingsTable(message, comparison.getStandingsAfter());
+
+            message.append("\n")
+                    .append("------------------------------------------------")
+                    .append("\n\n");
+        }
+
+        JTextArea textArea = new JTextArea(message.toString());
+        textArea.setEditable(false);
+        textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        textArea.setCaretPosition(0);
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setPreferredSize(new Dimension(950, 500));
+
+        JOptionPane.showMessageDialog(
+                this,
+                scrollPane,
+                "Tablas antes y despues de cada partido",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    }
+
+    private void appendStandingsTable(
+            StringBuilder message,
+            List<TeamStanding> standings) {
+
+        message.append(String.format(
+                "%-30s %4s %3s %3s %3s %3s %3s %3s %4s%n",
+                "EQUIPO", "PTS", "PJ", "PG", "PE", "PP", "GF", "GC", "DG"
+        ));
+
+        int position = 1;
+
+        for (TeamStanding standing : standings) {
+            message.append(String.format(
+                    "%-30s %4d %3d %3d %3d %3d %3d %3d %4d%n",
+                    position++ + ". " + standing.getTeam().getName(),
+                    standing.getPoints(),
+                    standing.getMatchesPlayed(),
+                    standing.getMatchesWon(),
+                    standing.getMatchesDrawn(),
+                    standing.getMatchesLost(),
+                    standing.getGoalsFor(),
+                    standing.getGoalsAgainst(),
+                    standing.getGoalDifference()
+            ));
+        }
+    }
     /**
      * Refresca tanto las tablas como la lista filtrada de partidos.
      */

@@ -17,6 +17,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileReader {
 
@@ -35,6 +37,7 @@ public class FileReader {
 
     public static Tournament fileReader(String file) throws Exception{
         Tournament tournament = new Tournament();
+        Map<String, Country> countries = new HashMap<>();
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(new java.io.FileReader(file));
         JSONObject tournamentJ = (JSONObject) jsonObject.get("torneo");
@@ -45,7 +48,9 @@ public class FileReader {
             JSONObject e = (JSONObject) team;
             String nameT = (String) e.get("nombre");
             String countryName = (String) e.get("pais");
-            Country country = new Country(countryName);
+            Country country = countries.computeIfAbsent(
+                    countryName, Country::new
+            );
             int rankingPosition = ((Long) e.get("ranking")).intValue();
 
             JSONObject teamP = (JSONObject) e.get("plantel");
@@ -109,10 +114,19 @@ public class FileReader {
             JSONObject dtObj = (JSONObject) teamP.get("dt");
             PersonData coachPerson = readPerson(dtObj);
             String dtCountryName = (String) dtObj.get("pais");
-            Country dtCountry = new Country(dtCountryName);
+            Country dtCountry = countries.computeIfAbsent(
+                    dtCountryName, Country::new
+            );
             int titles = ((Long) dtObj.get("titulosObtenidos")).intValue();
             Coach coach = new Coach(coachPerson.name(), coachPerson.birthDate(), coachPerson.documentType(),
                     coachPerson.documentNumber(), dtCountry, titles);
+            if (playerList.size() != 18) {
+                throw new IllegalArgumentException(
+                        "El equipo " + nameT + " tiene " + playerList.size() +
+                                " jugadores. Debe tener exactamente 18."
+                );
+            }
+
             Team cTeam = new Team(nameT, country, rankingPosition, playerList, coach);
             tournament.addTeam(cTeam);
         }
@@ -125,7 +139,9 @@ public class FileReader {
             JSONObject refObj = (JSONObject) r;
             PersonData refPerson = readPerson(refObj);
             String refCountryName = (String) refObj.get("pais");
-            Country refCountry = new Country(refCountryName);
+            Country refCountry = countries.computeIfAbsent(
+                    refCountryName, Country::new
+            );
             int yearsAsReferee = ((Long) refObj.get("aniosReferato")).intValue();
             Referee referee = new Referee(refPerson.name(), refPerson.birthDate(), refPerson.documentType(),
                     refPerson.documentNumber(), refCountry, yearsAsReferee);

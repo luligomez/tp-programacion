@@ -51,11 +51,18 @@ public class TournamentReportsService {
                         team.getName(),
                         player.getPosition(),
                         age,
+                        player.getBirthDate(),
+                        player.getDocumentType(),
+                        player.getDocumentNumber(),
+                        player.getRating(),
                         matchesPlayed,
                         minutesPlayed,
                         goalsScored,
                         goalsConceded,
-                        goalsConcededPerMatch
+                        goalsConcededPerMatch,
+                        playerStats.getStandaloneYellowCards(),
+                        playerStats.getDoubleYellowExpulsions(),
+                        playerStats.getDirectRedCards()
                 ));
             }
         }
@@ -115,10 +122,16 @@ public class TournamentReportsService {
                         }
 
                         // Unified points calculation (done only once)
-                        if (match.getWinner() != null && match.getWinner().equals(team)) {
-                            pointsObtained += 3;
-                        } else if (match.getWinner() == null) {
-                            pointsObtained += 1; // Draw
+                        if (isTeam1) {
+                            pointsObtained += pointsOf(
+                                    match.getTeam1Goals(),
+                                    match.getTeam2Goals()
+                            );
+                        } else {
+                            pointsObtained += pointsOf(
+                                    match.getTeam2Goals(),
+                                    match.getTeam1Goals()
+                            );
                         }
                     }
                 }
@@ -252,5 +265,15 @@ public class TournamentReportsService {
         });
 
         return ranking;
+    }
+
+    private static int pointsOf(int goalsFor, int goalsAgainst) {
+        if (goalsFor > goalsAgainst) {
+            return 3;
+        }
+        if (goalsFor == goalsAgainst) {
+            return 1;
+        }
+        return 0;
     }
 }

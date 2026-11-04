@@ -8,6 +8,7 @@ import model.match.knockout.KnockoutTie;
 import model.person.Referee;
 import model.place.Stadium;
 import model.tournament.zone.Zone;
+import model.exception.InvalidTournamentException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +56,10 @@ public class KnockoutService {
 
     // 3. Generar la Final
     public static FinalMatch generateFinal(List<Team> semiWinners, ArrayList<Referee> referees, ArrayList<Stadium> stadiums) {
-        if (semiWinners.size() != 2) {
-            throw new IllegalStateException("2 semifinal winners are needed to generate the final");
+        if (semiWinners == null || semiWinners.size() != 2) {
+            throw new InvalidTournamentException(
+                    "Two semifinal winners are required to generate the final."
+            );
         }
 
         Team team1 = semiWinners.get(0);

@@ -20,6 +20,14 @@ public class ZoneStage implements Serializable {
     private static final long serialVersionUID = 2L;
     public static final int MATCHDAYS = 3;
 
+    private transient List<MatchStandingComparison> lastMatchdayComparisons = new ArrayList<>();
+
+    public List<MatchStandingComparison> getLastMatchdayComparisons() {
+        return lastMatchdayComparisons == null
+                ? List.of()
+                : List.copyOf(lastMatchdayComparisons);
+    }
+
     private ArrayList<Zone> zones = new ArrayList<>();
     private int currentMatchday = 1;
 
@@ -44,13 +52,26 @@ public class ZoneStage implements Serializable {
     public void simulateCurrentMatchday() {
         if (isFinished()) return;
 
+        lastMatchdayComparisons = new ArrayList<>();
+
         for (Zone zone : zones) {
-            zone.getGroupStageMatches().stream()
-                    .filter(m -> m.getMatchday() == currentMatchday && !m.isPlayed())
-                    .forEach(m -> {
-                        MatchSimulator.simulateMatch(m);
-                        zone.registerMatchResult(m);
-                    });
+            for (var match : zone.getGroupStageMatches()) {
+
+                if (match.getMatchday() != currentMatchday || match.isPlayed()) {
+                    continue;
+                }
+
+                List<TeamStanding> before = zone.getStandingsSnapshot();
+
+                MatchSimulator.simulateMatch(match);
+                zone.registerMatchResult(match);
+
+                List<TeamStanding> after = zone.getStandingsSnapshot();
+
+                lastMatchdayComparisons.add(
+                        new MatchStandingComparison(match, before, after)
+                );
+            }
         }
 
         currentMatchday++;

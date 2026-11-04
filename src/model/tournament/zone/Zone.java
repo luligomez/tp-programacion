@@ -92,6 +92,16 @@ public class Zone implements Serializable {
         return standings;
     }
 
+    public ArrayList<TeamStanding> getStandingsSnapshot() {
+        ArrayList<TeamStanding> snapshot = new ArrayList<>();
+
+        for (TeamStanding standing : getSortedStandings()) {
+            snapshot.add(standing.copy());
+        }
+
+        return snapshot;
+    }
+
     public ArrayList<TeamStanding> getSortedStandings() {
 
         ArrayList<TeamStanding> sortedStandings = new ArrayList<>(standings);

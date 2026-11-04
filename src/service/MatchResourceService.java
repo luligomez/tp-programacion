@@ -7,6 +7,7 @@ import model.place.Stadium;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import model.exception.InvalidMatchResourceException;
 
 public class MatchResourceService {
     public static Stadium pickRandomUnusedStadium(ArrayList<Stadium> stadiums) {
@@ -14,7 +15,9 @@ public class MatchResourceService {
                 .filter(s -> !s.isUsed())
                 .toList();
         if (available.isEmpty()) {
-            throw new IllegalStateException("No unused stadiums available");
+            throw new InvalidMatchResourceException(
+                    "No unused stadiums available."
+            );
         }
         Stadium chosen = available.get(new Random().nextInt(available.size()));
         chosen.setUsed(true);
@@ -25,7 +28,9 @@ public class MatchResourceService {
         List<Stadium> available = stadiums.stream()
                 .toList();
         if (available.isEmpty()) {
-            throw new IllegalStateException("No unused stadiums available");
+            throw new InvalidMatchResourceException(
+                    "No stadiums available."
+            );
         }
         return available.get(new Random().nextInt(available.size()));
     }
@@ -37,7 +42,9 @@ public class MatchResourceService {
                         && !r.getNationality().equals(team2.getCountry())))
                 .toList();
         if (valid.isEmpty()) {
-            throw new IllegalStateException("No valido referee for this match");
+            throw new InvalidMatchResourceException(
+                    "No valid referee available for this match."
+            );
         }
         return valid.get(new Random().nextInt(valid.size()));
     }

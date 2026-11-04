@@ -91,4 +91,17 @@ public class TeamStanding implements Serializable {
         this.goalsAgainst += goalsAgainst;
         this.points += POINTS_LOSE; // 0
     }
+    public TeamStanding copy() {
+        TeamStanding copy = new TeamStanding(this.team);
+
+        copy.points = this.points;
+        copy.matchesPlayed = this.matchesPlayed;
+        copy.matchesWon = this.matchesWon;
+        copy.matchesDrawn = this.matchesDrawn;
+        copy.matchesLost = this.matchesLost;
+        copy.goalsFor = this.goalsFor;
+        copy.goalsAgainst = this.goalsAgainst;
+
+        return copy;
+    }
 }

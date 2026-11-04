@@ -10,7 +10,7 @@ public abstract class Player extends Person {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Position position;
+    private final Position position;
     private final int RATING;
     private TournamentStats tournamentStats;
     protected Attributes attributes;
@@ -34,9 +34,6 @@ public abstract class Player extends Person {
         return position;
     }
 
-    public void setPosition(Position position) {
-        this.position = position;
-    }
 
     public int getRating() {
         return RATING;

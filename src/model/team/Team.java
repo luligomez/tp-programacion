@@ -7,6 +7,7 @@ import model.place.Country;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import model.person.Position;
 
 public class Team implements Serializable {
     @Serial
@@ -20,6 +21,36 @@ public class Team implements Serializable {
 
     public Team(String name, Country country, int rankingPosition,
                 List<Player> players, Coach coach) {
+
+        if (players == null || players.size() != 18) {
+            throw new IllegalArgumentException(
+                    "A team must have exactly 18 players."
+            );
+        }
+
+        long goalkeepers = players.stream()
+                .filter(p -> p.getPosition() == Position.GOALKEEPER)
+                .count();
+
+        long defenders = players.stream()
+                .filter(p -> p.getPosition() == Position.DEFENDER)
+                .count();
+
+        long midfielders = players.stream()
+                .filter(p -> p.getPosition() == Position.MIDFIELDER)
+                .count();
+
+        long forwards = players.stream()
+                .filter(p -> p.getPosition() == Position.FORWARD)
+                .count();
+
+        if (goalkeepers != 2 || defenders != 6 ||
+                midfielders != 5 || forwards != 5) {
+            throw new IllegalArgumentException(
+                    "Invalid team composition. Required: 2 goalkeepers, " +
+                            "6 defenders, 5 midfielders and 5 forwards."
+            );
+        }
 
         this.country = country;
         this.name = name;

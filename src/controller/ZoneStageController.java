@@ -5,6 +5,11 @@ import model.tournament.TournamentState;
 import model.match.Match;
 import service.DrawService;
 import view.zonestage.ZoneStageView;
+import model.tournament.zone.TeamStanding;
+import model.tournament.zone.Zone;
+import java.util.ArrayList;
+import java.util.List;
+import model.tournament.zone.ZoneStage;
 
 import java.util.function.Consumer;
 
@@ -50,7 +55,7 @@ public class ZoneStageController {
 
         view.showStandingsState(tournament.getZones());
         view.setMatchdayLabel(tournament.getCurrentMatchday());
-        if (tournament.getCurrentMatchday() > 3) {
+        if (tournament.getCurrentMatchday() > ZoneStage.MATCHDAYS) {
             view.disableSimulateButton();
         }
     }
@@ -61,6 +66,20 @@ public class ZoneStageController {
     }
 
     private void onDrawConfirmed() {
+
+        if (tournament.getStadiums() == null ||
+                tournament.getStadiums().size() < 13) {
+
+            javax.swing.JOptionPane.showMessageDialog(
+                    view,
+                    "Se necesitan al menos 13 estadios para iniciar el torneo.",
+                    "Estadios insuficientes",
+                    javax.swing.JOptionPane.WARNING_MESSAGE
+            );
+
+            return;
+        }
+
         tournament.confirmDraw();
         onProgress.run();
         updateView();
@@ -72,12 +91,23 @@ public class ZoneStageController {
     }
 
     private void simulateNextMatchday() {
-        if (tournament.getCurrentMatchday() > 3) {
+        if (tournament.getCurrentMatchday() > ZoneStage.MATCHDAYS) {
             return;
+        }
+        List<List<TeamStanding>> standingsBefore = new ArrayList<>();
+
+        for (Zone zone : tournament.getZones()) {
+            standingsBefore.add(zone.getStandingsSnapshot());
         }
         tournament.simulateCurrentMatchday();
         onProgress.run();
-        view.updateStandings(tournament.getZones());
+        view.showStandingsComparison(
+                tournament.getZones(),
+                standingsBefore
+        );
+        view.getStandingsPanel().showMatchComparisons(
+                tournament.getZoneStage().getLastMatchdayComparisons()
+        );
         if (tournament.getState() == TournamentState.KNOCKOUT_STAGE) {
             view.disableSimulateButton();
         } else {

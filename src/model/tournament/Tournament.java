@@ -8,6 +8,7 @@ import model.person.Referee;
 import model.place.Stadium;
 import model.tournament.zone.ZoneStage;
 import model.tournament.zone.Zone;
+import model.exception.InvalidTournamentException;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -46,7 +47,17 @@ public class Tournament implements Serializable {
     public int getCurrentMatchday() { return zoneStage.getCurrentMatchday(); }
 
     public void addTeam(Team team) {
-        if (teams.size() < TEAMS) teams.add(team);
+        if (team == null) {
+            throw new IllegalArgumentException("Team cannot be null.");
+        }
+
+        if (teams.size() >= TEAMS) {
+            throw new InvalidTournamentException(
+                    "A tournament cannot have more than " + TEAMS + " teams."
+            );
+        }
+
+        teams.add(team);
     }
     public void addReferee(Referee referee) { referees.add(referee); }
 

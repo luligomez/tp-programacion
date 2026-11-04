@@ -24,9 +24,17 @@ public class Formation implements Serializable {
     }
 
     public void addStarter(Player player) {
-        if (starters.size() < STARTERS_PER_TEAM) {
-            starters.add(player);
+        if (player == null) {
+            throw new IllegalArgumentException("Player cannot be null.");
         }
+
+        if (starters.size() >= STARTERS_PER_TEAM) {
+            throw new InvalidFormationException(
+                    "A formation cannot have more than 11 starters."
+            );
+        }
+
+        starters.add(player);
     }
 
     public ArrayList<Player> getSubstitutes() {

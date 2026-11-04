@@ -49,7 +49,10 @@ public class PlayersView extends JPanel {
         // 2. TABLE
         String[] columns = {
                 "Player", "Team", "Position", "Age",
-                "Matches Played", "Minutes", "Goals", "Goals Conceded (GK)", "Avg. Goals/Match (GK)"
+                "Birth Date", "Document Type", "Document Number",
+                "Rating", "Matches Played", "Minutes", "Goals",
+                "Goals Conceded (GK)", "Avg. Goals/Match (GK)",
+                "Yellow Cards", "Double Yellow Expulsions", "Direct Red Cards"
         };
 
         tableModel = new DefaultTableModel(columns, 0) {
@@ -70,12 +73,20 @@ public class PlayersView extends JPanel {
 
         table = new StyledTable(tableModel);
         table.centerAllRows();
-        table.setColumnWidths(new int[]{180, 150, 110, 40, 100, 50, 50, 120, 120});
+        table.setColumnWidths(new int[]{
+                180, 150, 110, 50,
+                110, 100, 130, 65,
+                110, 75, 65, 145, 170,
+                90, 130, 100
+        });
+
         table.setAutoCreateRowSorter(true);
-        table.setColumnSuffix(3," yrs");
-        table.setColumnSuffix(5,"'");
-        table.setNumericFormatWithFallback(7, null); // Goles recibidos
-        table.setNumericFormatWithFallback(8, "%.2f"); //Promedio
+
+        table.setColumnSuffix(3, " yrs");
+        table.setColumnSuffix(9, "'");
+
+        table.setNumericFormatWithFallback(11, null);
+        table.setNumericFormatWithFallback(12, "%.2f");
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(Theme.BORDER, 1));
@@ -166,11 +177,21 @@ public class PlayersView extends JPanel {
                         item.getTeamName(),
                         posString,
                         item.getAge(),
+                        item.getBirthDate() != null
+                                ? item.getBirthDate().format(
+                                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                : "N/A",
+                        item.getDocumentType(),
+                        item.getDocumentNumber(),
+                        item.getRating(),
                         item.getMatchesPlayed(),
                         item.getMinutesPlayed(),
                         item.getGoalsScored(),
                         isGoalkeeper ? item.getGoalsConceded() : -1,
-                        isGoalkeeper ? item.getGoalsConcededPerMatch() : -1.0
+                        isGoalkeeper ? item.getGoalsConcededPerMatch() : -1.0,
+                        item.getYellowCards(),
+                        item.getDoubleYellowExpulsions(),
+                        item.getDirectRedCards()
                 });
             }
         }

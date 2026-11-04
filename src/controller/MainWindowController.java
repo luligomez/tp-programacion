@@ -13,6 +13,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import service.CredentialPdfService;
+import view.theme.Theme;
+
 import java.io.File;
 
 import static model.tournament.TournamentState.*;
@@ -162,10 +164,10 @@ public class MainWindowController {
     }
 
     private void styleTabs(JTabbedPane tabs) {
-        tabs.setFont(new Font("SansSerif", Font.BOLD, 16));
+        tabs.setFont(Theme.BIG_BOLD16);
         for (int i = 0; i < tabs.getTabCount(); i++) {
             JLabel label = new JLabel(tabs.getTitleAt(i));
-            label.setFont(new Font("SansSerif", Font.BOLD, 16));
+            label.setFont(Theme.BIG_BOLD16);
             label.setBorder(BorderFactory.createEmptyBorder(8, 30, 8, 30));
             tabs.setTabComponentAt(i, label);
         }

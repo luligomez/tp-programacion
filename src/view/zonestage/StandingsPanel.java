@@ -3,6 +3,7 @@ package view.zonestage;
 import model.match.zone.GroupStageMatch;
 import model.match.Match;
 import model.tournament.zone.Zone;
+import view.theme.Theme;
 import view.zonestage.shared.TeamStandingGroupCard;
 
 import javax.swing.*;
@@ -17,11 +18,11 @@ import java.util.function.Consumer;
 
 public class StandingsPanel extends JPanel {
 
-    private static final Color PRIMARY = new Color(35, 95, 190);
-    private static final Color CARD_BG = Color.WHITE;
-    private static final Color CARD_BG_ALT = new Color(246, 248, 252);
-    private static final Color SELECTED_BG = new Color(222, 234, 252);
-    private static final Color MUTED = new Color(120, 125, 135);
+    private static final Color PRIMARY = Theme.PRIMARY;
+    private static final Color CARD_BG = Theme.SURFACE;
+    private static final Color CARD_BG_ALT = Theme.SURFACE_ALT;
+    private static final Color SELECTED_BG = Theme.SELECTION;
+    private static final Color MUTED = Theme.TEXT_MUTED;
 
     private List<Zone> zones;
 
@@ -63,7 +64,7 @@ public class StandingsPanel extends JPanel {
 // ------------------------------------------------------------------
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         btnSimulateMatchday = new JButton("Simulate Next Matchday 1 ⚽");
-        btnSimulateMatchday.setFont(new Font("SansSerif", Font.BOLD, 14));
+        btnSimulateMatchday.setFont(Theme.BODY_BOLD);
         btnSimulateMatchday.setBackground(PRIMARY);
         btnSimulateMatchday.setForeground(Color.BLACK);
         btnSimulateMatchday.setFocusPainted(false);
@@ -187,7 +188,7 @@ public class StandingsPanel extends JPanel {
                 String zoneName = "Zone " + (char) ('A' + i);
 
                 for (GroupStageMatch match : zone.getGroupStageMatches()) {
-                    boolean matchesMatchday = (selectedMatchday == 0 || match.getMATCHDAY() == selectedMatchday);
+                    boolean matchesMatchday = (selectedMatchday == 0 || match.getMatchday() == selectedMatchday);
 
                     if (matchesMatchday) {
                         matchesListModel.addElement(new MatchRow(zoneName, match));
@@ -213,11 +214,11 @@ public class StandingsPanel extends JPanel {
 
         MatchCellRenderer() {
             setLayout(new BorderLayout(10, 0));
-            Border line = BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(232, 235, 241));
+            Border line = BorderFactory.createMatteBorder(0, 0, 1, 0, Theme.SEPARATOR);
             setBorder(BorderFactory.createCompoundBorder(line,
                     BorderFactory.createEmptyBorder(6, 10, 6, 10)));
 
-            lblBadge.setFont(new Font("SansSerif", Font.BOLD, 11));
+            lblBadge.setFont(Theme.SMALL_BOLD);
             lblBadge.setForeground(Color.WHITE);
             lblBadge.setOpaque(true);
             lblBadge.setBackground(PRIMARY);
@@ -228,19 +229,19 @@ public class StandingsPanel extends JPanel {
             badgeWrap.setOpaque(false);
             badgeWrap.add(lblBadge);
             // 1. Configuración y alineación de las etiquetas
-            lblTeam1.setFont(new Font("SansSerif", Font.BOLD, 13));
+            lblTeam1.setFont(Theme.SMALL_BOLD13);
             lblTeam1.setHorizontalAlignment(SwingConstants.RIGHT); // Pegado al marcador
             lblTeam1.setPreferredSize(new Dimension(0, 24));       // TRUCO: Ancho 0 para forzar reparto 50/50
 
-            lblTeam2.setFont(new Font("SansSerif", Font.BOLD, 13));
+            lblTeam2.setFont(Theme.SMALL_BOLD13);
             lblTeam2.setHorizontalAlignment(SwingConstants.LEFT);  // Pegado al marcador
             lblTeam2.setPreferredSize(new Dimension(0, 24));       // TRUCO: Ancho 0 para forzar reparto 50/50
 
-            lblScore.setFont(new Font("SansSerif", Font.BOLD, 14));
+            lblScore.setFont(Theme.BODY_BOLD);
             lblScore.setHorizontalAlignment(SwingConstants.CENTER);// Texto en el centro
             lblScore.setPreferredSize(new Dimension(60, 24));
 
-            lblStatus.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            lblStatus.setFont(Theme.SMALL12);
             lblStatus.setPreferredSize(new Dimension(110, 20));
 
             // 2. Armado del panel central (tu código GridBagLayout se mantiene igual)
@@ -274,7 +275,7 @@ public class StandingsPanel extends JPanel {
                                                       int index, boolean isSelected, boolean cellHasFocus) {
             GroupStageMatch m = row.getMatch();
 
-            lblBadge.setText(row.getZoneName() + " · Matchday " + m.getMATCHDAY());
+            lblBadge.setText(row.getZoneName() + " · Matchday " + m.getMatchday());
             lblTeam1.setText(m.getTeam1().getName());
             lblTeam2.setText(m.getTeam2().getName());
 

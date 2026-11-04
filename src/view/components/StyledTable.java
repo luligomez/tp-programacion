@@ -1,5 +1,7 @@
 package view.components;
 
+import view.theme.Theme;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
@@ -7,21 +9,18 @@ import java.awt.*;
 
 public class StyledTable extends JTable {
 
-    private static final Color PRIMARY_BLUE = new Color(35, 95, 190);
-    private static final Color TEXT_DARK = new Color(30, 40, 50);
-
     public StyledTable(TableModel model) {
         super(model);
         setupStandardStyle();
     }
 
     private void setupStandardStyle() {
-        setFont(new Font("SansSerif", Font.PLAIN, 14));
+        setFont(Theme.BODY);
         setRowHeight(32);
-        setGridColor(new Color(230, 233, 240));
+        setGridColor(Theme.BACKGROUND);
         setShowVerticalLines(false);
-        setSelectionBackground(new Color(220, 235, 252));
-        setSelectionForeground(TEXT_DARK);
+        setSelectionBackground(Theme.SELECTION);
+        setSelectionForeground(Theme.TEXT);
 
         // 🔒 Bloquear reordenamiento de columnas globalmente
         getTableHeader().setReorderingAllowed(false);
@@ -34,9 +33,9 @@ public class StyledTable extends JTable {
 
     public void applyHeaderStyle() {
         DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer();
-        headerRenderer.setBackground(PRIMARY_BLUE);
+        headerRenderer.setBackground(Theme.PRIMARY);
         headerRenderer.setForeground(Color.WHITE);
-        headerRenderer.setFont(new Font("SansSerif", Font.BOLD, 14));
+        headerRenderer.setFont(Theme.BODY_BOLD);
         headerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
         for (int i = 0; i < getColumnCount(); i++) {
@@ -77,16 +76,21 @@ public class StyledTable extends JTable {
     }
 
     public void setNumericFormatWithFallback(int columnIndex, String formatPattern) {
+        setNumericFormatWithFallback(columnIndex, formatPattern, null);
+    }
+
+    public void setNumericFormatWithFallback(int columnIndex, String formatPattern, String suffix) {
         getColumnModel().getColumn(columnIndex).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             protected void setValue(Object value) {
                 if (value instanceof Number num) {
                     if (num.doubleValue() < 0) {
-                        setText("-");
-                    } else if (formatPattern != null) {
-                        setText(String.format(formatPattern, num.doubleValue()));
+                        setText("-");                       // se mantiene tu fallback
                     } else {
-                        setText(String.valueOf(num.intValue()));
+                        String text = (formatPattern != null)
+                                ? String.format(formatPattern, num.doubleValue())
+                                : String.valueOf(num.intValue());
+                        setText(suffix != null ? text + suffix : text);
                     }
                 } else {
                     super.setValue(value);

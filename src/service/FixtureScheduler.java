@@ -19,24 +19,21 @@ public class FixtureScheduler {
             LocalTime.of(21, 30)  // 4to partido: 21:30 hs
     };
 
-    public static void scheduleZoneStage(List<Zone> Zones, LocalDate tournamentStartDate) {
+    public static void scheduleZoneStage(List<Zone> Zones, LocalDate tournamentStartDate, int totalMatchdays) {
         LocalDate currentDay = tournamentStartDate;
-
-        // Suponiendo 3 Fechas/Jornadas en fase de grupos (3 partidos por equipo)
-        int totalMatchdays = 3;
 
         for (int matchday = 1; matchday <= totalMatchdays; matchday++) {
             LocalDate matchdayStartDay = currentDay;
 
             // Procesamos los grupos de a pares (Día 1: Grupos A y B, Día 2: Grupos C y D...)
             for (int i = 0; i < Zones.size(); i += 2) {
-                Zone Zone1 = Zones.get(i);
-                Zone Zone2 = (i + 1 < Zones.size()) ? Zones.get(i + 1) : null;
+                Zone zone1 = Zones.get(i);
+                Zone zone2 = (i + 1 < Zones.size()) ? Zones.get(i + 1) : null;
 
                 // Obtenemos los partidos correspondientes a esta Fecha/Jornada para ambos grupos
-                List<Match> matchesToday = Zone1.getMatchesForMatchday(matchday);
-                if (Zone2 != null) {
-                    matchesToday.addAll(Zone2.getMatchesForMatchday(matchday));
+                List<Match> matchesToday = zone1.getMatchesForMatchday(matchday);
+                if (zone2 != null) {
+                    matchesToday.addAll(zone2.getMatchesForMatchday(matchday));
                 }
 
                 // Asignamos los 4 slots de hora del día actual
@@ -60,7 +57,7 @@ public class FixtureScheduler {
     };
     
     public static void scheduleQuarterFinals(List<KnockoutTie> quarterTies, LocalDate startDate) {
-        LocalDate currentDay = startDate;
+        LocalDate currentDay = startDate.plusDays(3);
 
         // --- PARTIDOS DE IDA ---
         // Serie 0 y 1 van el Día 1 (17:00 y 20:00 hs)

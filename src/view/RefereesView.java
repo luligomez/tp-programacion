@@ -3,6 +3,7 @@ package view;
 import model.reports.referee.RefereeReportData;
 import model.reports.referee.RefereeReportItem;
 import view.components.StyledTable;
+import view.theme.Theme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -16,15 +17,9 @@ public class RefereesView extends JPanel {
     private final JLabel lblAverageYears;
     private final JLabel lblTotalReferees;
 
-    // Paleta de colores consistente con la interfaz
-    private static final Color PRIMARY_BLUE = new Color(35, 95, 190);
-    private static final Color BACKGROUND_GRAY = new Color(245, 247, 250);
-    private static final Color SUMMARY_ROW_BG = new Color(230, 240, 255);
-    private static final Color TEXT_DARK = new Color(30, 40, 50);
-
     public RefereesView() {
         setLayout(new BorderLayout(15, 15));
-        setBackground(BACKGROUND_GRAY);
+        setBackground(Theme.BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         // --- 1. ENCABEZADO DE LA PANTALLA ---
@@ -46,7 +41,7 @@ public class RefereesView extends JPanel {
         table.centerAllRows();
 
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 220), 1));
+        scrollPane.setBorder(BorderFactory.createLineBorder(Theme.BORDER, 1));
         scrollPane.getViewport().setBackground(Color.WHITE);
 
         add(scrollPane, BorderLayout.CENTER);
@@ -64,11 +59,11 @@ public class RefereesView extends JPanel {
         panel.setOpaque(false);
 
         JLabel lblTitle = new JLabel("Report VII: Referee Ranking & Experience");
-        lblTitle.setFont(new Font("SansSerif", Font.BOLD, 22));
-        lblTitle.setForeground(TEXT_DARK);
+        lblTitle.setFont(Theme.TITLE);
+        lblTitle.setForeground(Theme.TEXT);
 
         JLabel lblSubtitle = new JLabel("Ranked by total matches officiated in the tournament");
-        lblSubtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        lblSubtitle.setFont(Theme.SUBTITLE);
         lblSubtitle.setForeground(Color.GRAY);
 
         JPanel textPanel = new JPanel(new GridLayout(2, 1, 0, 4));
@@ -86,15 +81,15 @@ public class RefereesView extends JPanel {
 
         // Card con el total y promedio resaltado
         JPanel summaryCard = new JPanel(new GridLayout(1, 2, 20, 0));
-        summaryCard.setBackground(Color.WHITE);
+        summaryCard.setBackground(Theme.PRIMARY_LIGHT);
         summaryCard.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(210, 215, 220), 1),
+                BorderFactory.createLineBorder(Theme.BORDER, 1),
                 BorderFactory.createEmptyBorder(8, 15, 8, 15)
         ));
 
         JLabel lblText = new JLabel("Global Average Experience:");
-        lblText.setFont(new Font("SansSerif", Font.BOLD, 13));
-        lblText.setForeground(TEXT_DARK);
+        lblText.setFont(Theme.SMALL_BOLD13);
+        lblText.setForeground(Theme.TEXT);
 
         summaryCard.add(lblText);
         summaryCard.add(lblAverageYears);
@@ -132,8 +127,8 @@ public class RefereesView extends JPanel {
 
         // Actualizar etiqueta del pie de página
         lblAverageYears.setText(String.format("%.2f yrs", averageYears));
-        lblAverageYears.setFont(new Font("SansSerif", Font.BOLD, 14));
-        lblAverageYears.setForeground(PRIMARY_BLUE);
+        lblAverageYears.setFont(Theme.BODY_BOLD);
+        lblAverageYears.setForeground(Theme.PRIMARY);
     }
 
 }

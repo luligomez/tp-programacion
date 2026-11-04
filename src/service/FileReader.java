@@ -107,14 +107,14 @@ public class FileReader {
             }
 
             JSONObject dtObj = (JSONObject) teamP.get("dt");
-            PersonData dtPerson = readPerson(dtObj);
+            PersonData coachPerson = readPerson(dtObj);
             String dtCountryName = (String) dtObj.get("pais");
             Country dtCountry = new Country(dtCountryName);
             int titles = ((Long) dtObj.get("titulosObtenidos")).intValue();
-            Coach coach = new Coach(dtPerson.name(), dtPerson.birthDate(), dtPerson.documentType(),
-                    dtPerson.documentNumber(), dtCountry, titles);
-            Team JTeam = new Team(nameT, country, rankingPosition, playerList, coach);
-            tournament.addTeam(JTeam);
+            Coach coach = new Coach(coachPerson.name(), coachPerson.birthDate(), coachPerson.documentType(),
+                    coachPerson.documentNumber(), dtCountry, titles);
+            Team cTeam = new Team(nameT, country, rankingPosition, playerList, coach);
+            tournament.addTeam(cTeam);
         }
 
 

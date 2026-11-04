@@ -2,6 +2,7 @@ package view;
 
 import model.reports.team.TeamReportItem;
 import view.components.StyledTable;
+import view.theme.Theme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,13 +14,9 @@ public class TeamsView extends JPanel {
     private final StyledTable table;
     private final DefaultTableModel tableModel;
 
-    private static final Color PRIMARY_BLUE = new Color(35, 95, 190);
-    private static final Color BACKGROUND_GRAY = new Color(245, 247, 250);
-    private static final Color TEXT_DARK = new Color(30, 40, 50);
-
     public TeamsView() {
         setLayout(new BorderLayout(15, 15));
-        setBackground(BACKGROUND_GRAY);
+        setBackground(Theme.BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         // Header
@@ -36,14 +33,26 @@ public class TeamsView extends JPanel {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                // Le indica a Swing el tipo real (Integer, Double, String) de la celda
+                if (getRowCount() > 0 && getValueAt(0, columnIndex) != null) {
+                    return getValueAt(0, columnIndex).getClass();
+                }
+                return Object.class;
+            }
         };
 
         table = new StyledTable(tableModel);
         table.centerAllRows();
         table.setAutoCreateRowSorter(true);
+        table.setNumericFormatWithFallback(1, "%.1f", " yrs"); // Avg. Player Age
+        table.setNumericFormatWithFallback(4, null); // GF
+        table.setNumericFormatWithFallback(5, null); // GA
+        table.setNumericFormatWithFallback(6, "%.1f", "%"); // Effectiveness
 
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 220), 1));
+        scrollPane.setBorder(BorderFactory.createLineBorder(Theme.BORDER, 1));
         scrollPane.getViewport().setBackground(Color.WHITE);
 
         add(scrollPane, BorderLayout.CENTER);
@@ -54,12 +63,12 @@ public class TeamsView extends JPanel {
         panel.setOpaque(false);
 
         JLabel lblTitle = new JLabel("Team Overview");
-        lblTitle.setFont(new Font("SansSerif", Font.BOLD, 22));
-        lblTitle.setForeground(TEXT_DARK);
+        lblTitle.setFont(Theme.TITLE);
+        lblTitle.setForeground(Theme.TEXT);
 
         JLabel lblSubtitle = new JLabel("Team statistics, coaching staff info, and overall effectiveness");
-        lblSubtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        lblSubtitle.setForeground(Color.GRAY);
+        lblSubtitle.setFont(Theme.SUBTITLE);
+        lblSubtitle.setForeground(Theme.GRAY);
 
         JPanel textPanel = new JPanel(new GridLayout(2, 1, 0, 4));
         textPanel.setOpaque(false);
@@ -78,12 +87,12 @@ public class TeamsView extends JPanel {
         for (TeamReportItem item : items) {
             tableModel.addRow(new Object[]{
                     item.getTeamName(),
-                    String.format("%.1f yrs", item.getAveragePlayerAge()),
+                    item.getAveragePlayerAge(),
                     item.getCoachAge() > 0 ? item.getCoachAge() + " yrs" : "N/A",
                     item.getCoachNationality(),
                     item.getGoalsFor(),
                     item.getGoalsAgainst(),
-                    String.format("%.1f%%", item.getEffectiveness())
+                    item.getEffectiveness()
             });
         }
     }

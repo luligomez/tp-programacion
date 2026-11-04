@@ -267,7 +267,7 @@ public class Zone implements Serializable {
     public List<Match> getMatchesForMatchday(int matchday) {
         return new ArrayList<>(
                 groupStageMatches.stream()
-                        .filter(m -> m.getMATCHDAY() == matchday)
+                        .filter(m -> m.getMatchday() == matchday)
                 .toList()
         );
     }

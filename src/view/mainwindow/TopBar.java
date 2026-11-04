@@ -1,5 +1,7 @@
 package view.mainwindow;
 
+import view.theme.Theme;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,7 +9,7 @@ public class TopBar extends JPanel {
     public TopBar(Runnable onResetClicked) {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(0, 50));
-        setBackground(new Color(30, 30, 30));
+        setBackground(Theme.TOPBAR_BG);
 
         JLabel title = new JLabel("  International Clubs Cup");
         title.setForeground(Color.WHITE);

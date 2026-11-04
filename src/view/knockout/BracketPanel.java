@@ -3,6 +3,8 @@ package view.knockout;
 import model.match.Match;
 import model.match.knockout.FinalMatch;
 import model.match.knockout.KnockoutTie;
+import view.theme.Theme;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -22,8 +24,6 @@ public class BracketPanel extends JPanel {
     private static final int MARGIN = 30;
     private static final int EXPAND_X = 60; // cuánto se ensancha al expandirse
 
-    private static final Color BLUE = new Color(35, 95, 190);
-    private static final Color LINE = new Color(170, 170, 170);
     private static final String[] TITLES = {"Quarter Finals", "Semi Finals", "Final"};
 
     private final MatchCardPanel[] quarterCards = new MatchCardPanel[4];
@@ -110,8 +110,8 @@ public class BracketPanel extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         // Titulos
-        g2.setFont(new Font("SansSerif", Font.BOLD, 18));
-        g2.setColor(BLUE);
+        g2.setFont(Theme.BIG_BOLD18);
+        g2.setColor(Theme.PRIMARY);
         FontMetrics fm = g2.getFontMetrics();
         for (int col = 0; col < TITLES.length; col++) {
             int x = columnX(col) + (CARD_W - fm.stringWidth(TITLES[col])) / 2;
@@ -119,7 +119,7 @@ public class BracketPanel extends JPanel {
         }
 
         // Llaves que unen las columnas
-        g2.setColor(LINE);
+        g2.setColor(Theme.LINE);
         g2.setStroke(new BasicStroke(2f));
         connect(g2, 0, quarterCenter(0), quarterCenter(1), semiCenter(0));
         connect(g2, 0, quarterCenter(2), quarterCenter(3), semiCenter(1));

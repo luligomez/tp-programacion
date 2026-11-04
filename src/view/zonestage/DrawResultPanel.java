@@ -1,6 +1,7 @@
 package view.zonestage;
 
 import model.tournament.zone.Zone;
+import view.theme.Theme;
 import view.zonestage.shared.TeamGroupCard;
 
 import javax.swing.*;
@@ -8,12 +9,10 @@ import java.awt.*;
 import java.util.List;
 
 public class DrawResultPanel extends JPanel {
-    private static final Color BACKGROUND = new Color(245, 245, 247);
-    private static final Color ACCENT = new Color(35, 95, 190);
 
     public DrawResultPanel(List<Zone> zones, Runnable onConfirmed, Runnable onRedraw) {
         setLayout(new BorderLayout(0, 20));
-        setBackground(BACKGROUND);
+        setBackground(Theme.BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
         add(buildHeader(), BorderLayout.NORTH);
@@ -32,7 +31,7 @@ public class DrawResultPanel extends JPanel {
 
         JLabel subtitle = new JLabel("16 teams — 4 balanced zones");
         subtitle.setFont(subtitle.getFont().deriveFont(13f));
-        subtitle.setForeground(new Color(120, 120, 120));
+        subtitle.setForeground(Theme.GRAY);
         subtitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         subtitle.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
 
@@ -82,8 +81,8 @@ public class DrawResultPanel extends JPanel {
         JButton confirmButton = new JButton("Confirm Draw");
         confirmButton.setFont(confirmButton.getFont().deriveFont(Font.BOLD, 14f));
         confirmButton.setFocusPainted(false);
-        confirmButton.setBackground(ACCENT);
-        confirmButton.setForeground(Color.WHITE);
+        confirmButton.setBackground(Theme.PRIMARY);
+        confirmButton.setForeground(Theme.PRIMARY_LIGHT);
         confirmButton.setOpaque(true);
         confirmButton.setBorderPainted(false);
         confirmButton.setCursor(new Cursor(Cursor.HAND_CURSOR));

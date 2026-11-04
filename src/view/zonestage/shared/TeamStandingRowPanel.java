@@ -1,14 +1,15 @@
 package view.zonestage.shared;
 
 import model.tournament.zone.TeamStanding;
+import view.theme.Theme;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class TeamStandingRowPanel extends JPanel {
 
-    private static final Color RANK_BADGE_BG = new Color(235, 240, 250);
-    private static final Color ACCENT = new Color(35, 95, 190);
+    private static final Color RANK_BADGE_BG = Theme.PRIMARY_LIGHT;
+    private static final Color ACCENT = Theme.PRIMARY;
 
     public TeamStandingRowPanel(int position, TeamStanding standing) {
         setLayout(new BorderLayout(8, 0));

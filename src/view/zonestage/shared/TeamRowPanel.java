@@ -3,10 +3,11 @@ package view.zonestage.shared;
 import javax.swing.*;
 import java.awt.*;
 import model.team.Team;
+import view.theme.Theme;
 
 public class TeamRowPanel extends JPanel {
-    private static final Color RANK_BADGE_BG = new Color(235, 240, 250);
-    private static final Color ACCENT = new Color(35, 95, 190);
+    private static final Color RANK_BADGE_BG = Theme.PRIMARY_LIGHT;
+    private static final Color ACCENT = Theme.PRIMARY;
 
     public TeamRowPanel(Team team) {
         setLayout(new GridBagLayout());

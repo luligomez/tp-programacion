@@ -29,10 +29,7 @@ public class TournamentReportsService {
             if (team.getPlayers() == null) continue;
 
             for (Player player : team.getPlayers()) {
-                int age = 0;
-                if (player.getBirthDate() != null) {
-                    age = java.time.Period.between(player.getBirthDate(), java.time.LocalDate.now()).getYears();
-                }
+                int age = player.getAge();
                 TournamentStats playerStats = player.getTournamentStats();
 
                 int matchesPlayed = playerStats.getMatchesPlayed();
@@ -77,9 +74,7 @@ public class TournamentReportsService {
             if (team.getPlayers() != null && !team.getPlayers().isEmpty()) {
                 double totalAge = 0;
                 for (Player player : team.getPlayers()) {
-                    if (player.getBirthDate() != null) {
-                        totalAge += java.time.Period.between(player.getBirthDate(), java.time.LocalDate.now()).getYears();
-                    }
+                    totalAge += player.getAge();
                 }
                 avgPlayerAge = totalAge / team.getPlayers().size();
             }
@@ -89,9 +84,7 @@ public class TournamentReportsService {
             String coachNationality = "N/A";
             if (team.getCoach() != null) {
                 Coach coach = team.getCoach();
-                if (coach.getBirthDate() != null) {
-                    coachAge = java.time.Period.between(coach.getBirthDate(), java.time.LocalDate.now()).getYears();
-                }
+                coachAge = coach.getAge();
                 if (coach.getNationality() != null) {
                     coachNationality = coach.getNationality().getName();
                 }
@@ -105,18 +98,28 @@ public class TournamentReportsService {
 
             for (Match match : tournament.getAllMatches()) {
                 if (match != null && match.isPlayed()) {
-                    if (match.getTeam1().equals(team)) {
+                    boolean isTeam1 = match.getTeam1().equals(team);
+                    boolean isTeam2 = match.getTeam2().equals(team);
+
+                    // If the team played this match (either as team1 or team2)
+                    if (isTeam1 || isTeam2) {
                         matchesPlayed++;
-                        gf += match.getTeam1Goals();
-                        gc += match.getTeam2Goals();
-                        if (match.getWinner() != null && match.getWinner().equals(team)) pointsObtained += 3;
-                        else if (match.getWinner() == null) pointsObtained += 1;
-                    } else if (match.getTeam2().equals(team)) {
-                        matchesPlayed++;
-                        gf += match.getTeam2Goals();
-                        gc += match.getTeam1Goals();
-                        if (match.getWinner() != null && match.getWinner().equals(team)) pointsObtained += 3;
-                        else if (match.getWinner() == null) pointsObtained += 1;
+
+                        // Add goals depending on which side they played
+                        if (isTeam1) {
+                            gf += match.getTeam1Goals();
+                            gc += match.getTeam2Goals();
+                        } else {
+                            gf += match.getTeam2Goals();
+                            gc += match.getTeam1Goals();
+                        }
+
+                        // Unified points calculation (done only once)
+                        if (match.getWinner() != null && match.getWinner().equals(team)) {
+                            pointsObtained += 3;
+                        } else if (match.getWinner() == null) {
+                            pointsObtained += 1; // Draw
+                        }
                     }
                 }
             }

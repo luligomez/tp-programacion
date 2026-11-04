@@ -32,10 +32,6 @@ public class PenaltyTaken extends Incident {
         return scored;
     }
 
-    public void setScored(boolean scored) {
-        this.scored = scored;
-    }
-
     @Override
     public String toString() {
         String shooter = (player != null) ? player.getName() : "Unknown";

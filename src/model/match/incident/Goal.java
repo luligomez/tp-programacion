@@ -31,24 +31,12 @@ public class Goal extends Incident {
         return scorer;
     }
 
-    public void setScorer(Player scorer) {
-        this.scorer = scorer;
-    }
-
     public boolean isPenalty() {
         return penalty;
     }
 
-    public void setPenalty(boolean penalty) {
-        this.penalty = penalty;
-    }
-
     public boolean isOwnGoal() {
         return ownGoal;
-    }
-
-    public void setOwnGoal(boolean ownGoal) {
-        this.ownGoal = ownGoal;
     }
 
     public Player getGoalkeeper() {
@@ -80,5 +68,17 @@ public class Goal extends Incident {
     public Optional<PlayerMark> markFor(Player player) {
         if (player != scorer) return Optional.empty();
         return Optional.of(new PlayerMark(ownGoal ? MarkType.OWN_GOAL : MarkType.GOAL, getMinute()));
+    }
+
+    @Override
+    public void registerStats() {
+        // un gol en contra no le suma al autor
+        if (!ownGoal && scorer != null) {
+            scorer.getTournamentStats().registerGoal(penalty);
+        }
+        // el arquero recibe el gol incluso si fue en contra
+        if (goalkeeper != null) {
+            goalkeeper.getTournamentStats().registerGoalConceded();
+        }
     }
 }

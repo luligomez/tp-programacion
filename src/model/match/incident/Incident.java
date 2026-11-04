@@ -37,4 +37,6 @@ public abstract class Incident implements Serializable {
     public Optional<PlayerMark> markFor(Player player) {
         return Optional.empty();
     }
+
+    public void registerStats() {}
 }

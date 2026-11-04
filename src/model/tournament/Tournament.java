@@ -24,6 +24,7 @@ public class Tournament implements Serializable {
 
     private static final int TEAMS = 16;
     public static final int TEAMS_PER_GROUP = 4;
+    private static final int KNOCKOUT_MATCHES = 13; // 4 quarter ties x 2 legs + 2 semi ties x 2 legs + the final, one stadium each
 
     private final ArrayList<Team> teams = new ArrayList<>();
     private final ArrayList<Referee> referees = new ArrayList<>();
@@ -71,6 +72,12 @@ public class Tournament implements Serializable {
     public void resetDraw() { zoneDraw(); }
 
     public void confirmDraw() {
+        long availableStadiums = stadiums == null ? 0 : stadiums.stream().filter(s -> !s.isUsed()).count();
+        if (availableStadiums < KNOCKOUT_MATCHES) {
+            throw new InvalidTournamentException(
+                    "At least " + KNOCKOUT_MATCHES + " stadiums are required to start the tournament, but only "
+                            + availableStadiums + " are available. Add more in the Cities & Stadiums.");
+        }
         state = TournamentState.GROUP_STAGE;
         zoneStage.generateMatches(referees, stadiums, LocalDate.now());
     }

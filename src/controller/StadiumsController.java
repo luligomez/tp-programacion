@@ -5,7 +5,7 @@ import DAO.StadiumDAO;
 import model.place.City;
 import model.place.Stadium;
 import view.citiesAndStadiums.StadiumsView;
-
+import java.util.function.Consumer;
 import javax.swing.*;
 import java.sql.SQLException;
 import java.util.List;
@@ -15,11 +15,13 @@ public class StadiumsController {
     private final StadiumsView view;
     private final StadiumDAO stadiumDAO;
     private final CityDAO cityDAO;
+    private final Consumer<List<Stadium>> onStadiumsLoaded;
 
-    public StadiumsController(StadiumDAO stadiumDAO, CityDAO cityDAO) {
+    public StadiumsController(StadiumDAO stadiumDAO, CityDAO cityDAO, Consumer<List<Stadium>> onStadiumsLoaded) {
         this.view = new StadiumsView();
         this.stadiumDAO = stadiumDAO;
         this.cityDAO = cityDAO;
+        this.onStadiumsLoaded = onStadiumsLoaded;
 
         view.addAddListener(e -> addStadium());
         view.addEditListener(e -> editStadium());
@@ -61,7 +63,9 @@ public class StadiumsController {
             @Override
             protected void done() {
                 try {
-                    view.setStadiumsData(get());
+                    List<Stadium> stadiums = get();
+                    view.setStadiumsData(stadiums);
+                    onStadiumsLoaded.accept(stadiums);
                 } catch (Exception ex) {
                     view.showMessage("Error loading stadiums: " + ex.getMessage());
                 }

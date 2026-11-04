@@ -23,6 +23,10 @@ public class ZoneStageView extends JPanel {
         setLayout(new BorderLayout());
     }
 
+    public void showWarning(String title, String message) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.WARNING_MESSAGE);
+    }
+
     public void setOnDrawRequestedListener(Runnable listener) {
         this.onDrawRequestedListener = listener;
     }
@@ -83,10 +87,8 @@ public class ZoneStageView extends JPanel {
             standingsPanel.updateGroups(zones);
         }
     }
-    public void showStandingsComparison(
-            List<Zone> zones,
-            List<List<TeamStanding>> standingsBefore) {
 
+    public void showStandingsComparison(List<Zone> zones, List<List<TeamStanding>> standingsBefore) {
         if (standingsPanel != null) {
             standingsPanel.updateGroups(zones);
             standingsPanel.showComparison(standingsBefore);

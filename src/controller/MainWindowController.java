@@ -2,6 +2,7 @@ package controller;
 
 import DAO.CityDAO;
 import DAO.StadiumDAO;
+import model.place.Stadium;
 import service.FileReader;
 import model.tournament.Tournament;
 import model.tournament.TournamentState;
@@ -14,8 +15,9 @@ import java.awt.*;
 import java.io.IOException;
 import service.CredentialPdfService;
 import view.theme.Theme;
-
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static model.tournament.TournamentState.*;
 
@@ -152,7 +154,7 @@ public class MainWindowController {
 
     private void navigateToAdmin() {
         CitiesController citiesController = new CitiesController(new CityDAO());
-        StadiumsController stadiumsController = new StadiumsController(new StadiumDAO(), new CityDAO());
+        StadiumsController stadiumsController = new StadiumsController(new StadiumDAO(), new CityDAO(), this::refreshTournamentStadiums);
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("Cities", citiesController.getView());
         tabs.addTab("Stadiums", stadiumsController.getView());
@@ -161,6 +163,12 @@ public class MainWindowController {
         JPanel adminPanel = new JPanel(new BorderLayout());
         adminPanel.add(tabs, BorderLayout.CENTER);
         view.showScreen(adminPanel, SidebarItem.ADMIN);
+    }
+
+    // The stadium CRUD changes the database;
+    private void refreshTournamentStadiums(List<Stadium> stadiums) {
+        tournament.setStadiums(new ArrayList<>(stadiums));
+        tournament.syncUsedStadiums();
     }
 
     private void styleTabs(JTabbedPane tabs) {

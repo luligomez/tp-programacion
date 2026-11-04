@@ -188,7 +188,7 @@ public class StandingsPanel extends JPanel {
                 String zoneName = "Zone " + (char) ('A' + i);
 
                 for (GroupStageMatch match : zone.getGroupStageMatches()) {
-                    boolean matchesMatchday = (selectedMatchday == 0 || match.getMATCHDAY() == selectedMatchday);
+                    boolean matchesMatchday = (selectedMatchday == 0 || match.getMatchday() == selectedMatchday);
 
                     if (matchesMatchday) {
                         matchesListModel.addElement(new MatchRow(zoneName, match));
@@ -275,7 +275,7 @@ public class StandingsPanel extends JPanel {
                                                       int index, boolean isSelected, boolean cellHasFocus) {
             GroupStageMatch m = row.getMatch();
 
-            lblBadge.setText(row.getZoneName() + " · Matchday " + m.getMATCHDAY());
+            lblBadge.setText(row.getZoneName() + " · Matchday " + m.getMatchday());
             lblTeam1.setText(m.getTeam1().getName());
             lblTeam2.setText(m.getTeam2().getName());
 

@@ -42,4 +42,10 @@ public abstract class Person implements Serializable {
         return documentNumber;
     }
 
+    public int getAge(){
+        if(birthDate != null)
+            return java.time.Period.between(birthDate, java.time.LocalDate.now()).getYears();
+        return 0;
+    }
+
 }

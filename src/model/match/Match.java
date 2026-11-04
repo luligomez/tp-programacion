@@ -1,9 +1,6 @@
 package model.match;
 
-import model.match.incident.Expulsion;
 import model.match.incident.Incident;
-import model.match.incident.Goal;
-import model.match.incident.YellowCard;
 import model.person.player.Player;
 import model.place.Stadium;
 import model.team.Team;
@@ -47,16 +44,10 @@ public abstract class Match implements Serializable {
         this.team2Formation = team2Formation;
         this.stadium = stadium;
     }
+
+    // Secondary constructor (calls the main one passing null for formations)
     public Match(Team team1, Team team2, Referee referee, Stadium stadium) {
-        this.team1 = team1;
-        this.team2 = team2;
-        this.referee = referee;
-        this.incidents = new ArrayList<>();
-        this.team1Goals = -1; //(no jugado aun)
-        this.team2Goals = -1;
-        this.team1Formation = null;
-        this.team2Formation = null;
-        this.stadium = stadium;
+        this(team1, team2, referee, null, null, stadium);
     }
 
     public void initializePlayerParticipation(Formation team1Formation, Formation team2Formation){

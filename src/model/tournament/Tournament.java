@@ -27,7 +27,7 @@ public class Tournament implements Serializable {
     private final ArrayList<Team> teams = new ArrayList<>();
     private final ArrayList<Referee> referees = new ArrayList<>();
     private transient ArrayList<Stadium> stadiums = new ArrayList<>(); // se recargan de la BD
-    private final ZoneStage ZoneStage = new ZoneStage();
+    private final ZoneStage zoneStage = new ZoneStage();
     private final KnockoutStage knockoutStage = new KnockoutStage();
     private TournamentState state = TournamentState.NOT_DRAWN;
 
@@ -38,24 +38,22 @@ public class Tournament implements Serializable {
     public ArrayList<Referee> getReferees() { return referees; }
     public ArrayList<Stadium> getStadiums() { return stadiums; }
     public void setStadiums(ArrayList<Stadium> stadiums) { this.stadiums = stadiums; }
-    public ZoneStage getZoneStage() { return ZoneStage; }
+    public ZoneStage getZoneStage() { return zoneStage; }
     public KnockoutStage getKnockoutStage() { return knockoutStage; }
 
     // los que usa medio proyecto siguen disponibles, delegando
-    public ArrayList<Zone> getZones() { return ZoneStage.getZones(); }
-    public int getCurrentMatchday() { return ZoneStage.getCurrentMatchday(); }
+    public ArrayList<Zone> getZones() { return zoneStage.getZones(); }
+    public int getCurrentMatchday() { return zoneStage.getCurrentMatchday(); }
 
     public void addTeam(Team team) {
         if (teams.size() < TEAMS) teams.add(team);
     }
     public void addReferee(Referee referee) { referees.add(referee); }
-    public void addStadium(Stadium stadium) { stadiums.add(stadium); }
-    public void addAllStadiums(ArrayList<Stadium> stadia) { stadiums.addAll(stadia); }
 
     // ---------- sorteo ----------
 
     public void zoneDraw() {
-        ZoneStage.draw(teams);
+        zoneStage.draw(teams);
         state = TournamentState.DRAWN_UNCONFIRMED;
     }
 
@@ -63,20 +61,20 @@ public class Tournament implements Serializable {
 
     public void confirmDraw() {
         state = TournamentState.GROUP_STAGE;
-        ZoneStage.generateMatches(referees, stadiums, LocalDate.now());
+        zoneStage.generateMatches(referees, stadiums, LocalDate.now());
     }
 
     // ---------- paso de una fase a la otra (acá está la coordinación) ----------
 
     public void simulateCurrentMatchday() {
-        if (ZoneStage.isFinished()) return;
-        ZoneStage.simulateCurrentMatchday();
-        if (ZoneStage.isFinished()) startKnockoutStage();
+        if (zoneStage.isFinished()) return;
+        zoneStage.simulateCurrentMatchday();
+        if (zoneStage.isFinished()) startKnockoutStage();
     }
 
     private void startKnockoutStage() {
         state = TournamentState.KNOCKOUT_STAGE;
-        knockoutStage.generateQuarterFinals(ZoneStage.getZones(), referees, stadiums, getLastMatchDate());
+        knockoutStage.generateQuarterFinals(zoneStage.getZones(), referees, stadiums, getLastMatchDate());
     }
 
     public void advanceKnockoutIfDecided(KnockoutPhase phase) {
@@ -88,7 +86,7 @@ public class Tournament implements Serializable {
     // ---------- consultas sobre todo el torneo ----------
 
     public List<Match> getAllMatches() {
-        List<Match> all = new ArrayList<>(ZoneStage.getMatches());
+        List<Match> all = new ArrayList<>(zoneStage.getMatches());
         all.addAll(knockoutStage.getMatches());
         return all;
     }

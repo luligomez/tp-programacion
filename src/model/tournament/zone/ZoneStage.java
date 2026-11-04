@@ -46,7 +46,7 @@ public class ZoneStage implements Serializable {
 
         for (Zone zone : zones) {
             zone.getGroupStageMatches().stream()
-                    .filter(m -> m.getMATCHDAY() == currentMatchday && !m.isPlayed())
+                    .filter(m -> m.getMatchday() == currentMatchday && !m.isPlayed())
                     .forEach(m -> {
                         MatchSimulator.simulateMatch(m);
                         zone.registerMatchResult(m);
@@ -68,7 +68,7 @@ public class ZoneStage implements Serializable {
     private void assignFormationsForMatchday(int matchday) {
         for (Zone zone : zones) {
             zone.getGroupStageMatches().stream()
-                    .filter(m -> m.getMATCHDAY() == matchday)
+                    .filter(m -> m.getMatchday() == matchday)
                     .forEach(m -> {
                         m.setTeam1Formation(FormationCreator.createAutomaticFormation(m.getTeam1()));
                         m.setTeam2Formation(FormationCreator.createAutomaticFormation(m.getTeam2()));

@@ -18,7 +18,7 @@ public class GroupStageMatch extends Match implements Serializable {
         this.MATCHDAY = matchday;
     }
 
-    public int getMATCHDAY() {
+    public int getMatchday() {
         return MATCHDAY;
     }
 

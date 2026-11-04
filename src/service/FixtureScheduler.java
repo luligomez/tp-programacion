@@ -27,13 +27,13 @@ public class FixtureScheduler {
 
             // Procesamos los grupos de a pares (Día 1: Grupos A y B, Día 2: Grupos C y D...)
             for (int i = 0; i < Zones.size(); i += 2) {
-                Zone Zone1 = Zones.get(i);
-                Zone Zone2 = (i + 1 < Zones.size()) ? Zones.get(i + 1) : null;
+                Zone zone1 = Zones.get(i);
+                Zone zone2 = (i + 1 < Zones.size()) ? Zones.get(i + 1) : null;
 
                 // Obtenemos los partidos correspondientes a esta Fecha/Jornada para ambos grupos
-                List<Match> matchesToday = Zone1.getMatchesForMatchday(matchday);
-                if (Zone2 != null) {
-                    matchesToday.addAll(Zone2.getMatchesForMatchday(matchday));
+                List<Match> matchesToday = zone1.getMatchesForMatchday(matchday);
+                if (zone2 != null) {
+                    matchesToday.addAll(zone2.getMatchesForMatchday(matchday));
                 }
 
                 // Asignamos los 4 slots de hora del día actual

@@ -2,6 +2,7 @@ package view;
 
 import model.reports.team.TeamReportItem;
 import view.components.StyledTable;
+import view.theme.Theme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,13 +14,9 @@ public class TeamsView extends JPanel {
     private final StyledTable table;
     private final DefaultTableModel tableModel;
 
-    private static final Color PRIMARY_BLUE = new Color(35, 95, 190);
-    private static final Color BACKGROUND_GRAY = new Color(245, 247, 250);
-    private static final Color TEXT_DARK = new Color(30, 40, 50);
-
     public TeamsView() {
         setLayout(new BorderLayout(15, 15));
-        setBackground(BACKGROUND_GRAY);
+        setBackground(Theme.BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         // Header
@@ -55,7 +52,7 @@ public class TeamsView extends JPanel {
         table.setNumericFormatWithFallback(6, "%.1f", "%"); // Effectiveness
 
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 220), 1));
+        scrollPane.setBorder(BorderFactory.createLineBorder(Theme.BORDER, 1));
         scrollPane.getViewport().setBackground(Color.WHITE);
 
         add(scrollPane, BorderLayout.CENTER);
@@ -66,12 +63,12 @@ public class TeamsView extends JPanel {
         panel.setOpaque(false);
 
         JLabel lblTitle = new JLabel("Team Overview");
-        lblTitle.setFont(new Font("SansSerif", Font.BOLD, 22));
-        lblTitle.setForeground(TEXT_DARK);
+        lblTitle.setFont(Theme.TITLE);
+        lblTitle.setForeground(Theme.TEXT);
 
         JLabel lblSubtitle = new JLabel("Team statistics, coaching staff info, and overall effectiveness");
-        lblSubtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        lblSubtitle.setForeground(Color.GRAY);
+        lblSubtitle.setFont(Theme.SUBTITLE);
+        lblSubtitle.setForeground(Theme.GRAY);
 
         JPanel textPanel = new JPanel(new GridLayout(2, 1, 0, 4));
         textPanel.setOpaque(false);

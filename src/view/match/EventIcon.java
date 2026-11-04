@@ -1,5 +1,7 @@
 package view.match;
 
+import view.theme.Theme;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -10,11 +12,6 @@ public class EventIcon implements Icon {
     public enum Kind { YELLOW_CARD, RED_CARD, GOAL, OWN_GOAL, SUBSTITUTION, SUB_IN, SUB_OUT, PENALTY_SCORED, PENALTY_MISSED }
 
     private final int SIZE;
-    private static final Color YELLOW = new Color(249, 190, 0);
-    private static final Color RED = new Color(211, 47, 47);
-    private static final Color GREEN = new Color(46, 125, 50);
-    private static final Color DARK = new Color(40, 40, 40);
-
     private final Kind kind;
 
     public EventIcon(Kind kind) {
@@ -37,20 +34,20 @@ public class EventIcon implements Icon {
         g2.scale(SIZE / 16.0, SIZE / 16.0);
         int x = 0, y = 0;
         switch (kind) {
-            case YELLOW_CARD -> card(g2, x, y, YELLOW);
-            case RED_CARD -> card(g2, x, y, RED);
-            case GOAL -> ball(g2, x, y, DARK);
-            case OWN_GOAL -> ball(g2, x, y, RED);
-            case SUB_IN -> triangle(g2, x, y, GREEN, true);
-            case SUB_OUT -> triangle(g2, x, y, RED, false);
+            case YELLOW_CARD -> card(g2, x, y, Theme.CARD_YELLOW);
+            case RED_CARD -> card(g2, x, y, Theme.DANGER);
+            case GOAL -> ball(g2, x, y, Theme.DARK);
+            case OWN_GOAL -> ball(g2, x, y, Theme.DANGER);
+            case SUB_IN -> triangle(g2, x, y, Theme.SUCCESS, true);
+            case SUB_OUT -> triangle(g2, x, y, Theme.DANGER, false);
             case SUBSTITUTION -> {
-                g2.setColor(GREEN);
+                g2.setColor(Theme.SUCCESS);
                 g2.fillPolygon(new int[]{x + 4, x + 1, x + 7}, new int[]{y + 2, y + 8, y + 8}, 3);
-                g2.setColor(RED);
+                g2.setColor(Theme.DANGER);
                 g2.fillPolygon(new int[]{x + 12, x + 9, x + 15}, new int[]{y + 14, y + 8, y + 8}, 3);
             }
-            case PENALTY_SCORED -> circleMark(g2, x, y, GREEN, true);
-            case PENALTY_MISSED -> circleMark(g2, x, y, RED, false);
+            case PENALTY_SCORED -> circleMark(g2, x, y, Theme.SUCCESS, true);
+            case PENALTY_MISSED -> circleMark(g2, x, y, Theme.DANGER, false);
         }
         g2.dispose();
     }

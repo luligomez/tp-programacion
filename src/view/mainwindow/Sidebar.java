@@ -1,5 +1,7 @@
 package view.mainwindow;
 
+import view.theme.Theme;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
@@ -15,7 +17,7 @@ public class Sidebar extends JPanel {
         this.onItemSelected = onItemSelected;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setPreferredSize(new Dimension(200, 0));
-        setBackground(new Color(45, 45, 45));
+        setBackground(Theme.SIDEBAR_BG);
 
         for (SidebarItem item : SidebarItem.values()) {
             JButton button = createSidebarButton(item);
@@ -34,16 +36,16 @@ public class Sidebar extends JPanel {
         button.setContentAreaFilled(false);
         button.setForeground(Color.WHITE);
         button.setOpaque(true);
-        button.setBackground(new Color(45, 45, 45));
+        button.setBackground(Theme.SIDEBAR_BG);
         button.addActionListener(e -> onItemSelected.accept(item));
         return button;
     }
 
     public void setActiveItem(SidebarItem item) {
         if (activeItem != null) {
-            buttons.get(activeItem).setBackground(new Color(45, 45, 45));
+            buttons.get(activeItem).setBackground(Theme.SIDEBAR_BG);
         }
         activeItem = item;
-        buttons.get(item).setBackground(new Color(70, 70, 70));
+        buttons.get(item).setBackground(Theme.SIDEBAR_ACTIVE);
     }
 }

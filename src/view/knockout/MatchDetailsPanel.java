@@ -5,6 +5,7 @@ import model.match.Match;
 import model.match.knockout.FinalMatch;
 import model.match.knockout.KnockoutTie;
 import model.person.Referee;
+import view.theme.Theme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,11 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
 public class MatchDetailsPanel extends JPanel {
-
-    private static final Color BLUE = new Color(35, 95, 190);
-    private static final Color GRAY = new Color(130, 130, 130);
-    private static final Font HEADER_FONT = new Font("SansSerif", Font.BOLD, 12);
-    private static final Font ROW_FONT = new Font("SansSerif", Font.PLAIN, 13);
 
     private boolean hasContent = false;
 
@@ -61,9 +57,9 @@ public class MatchDetailsPanel extends JPanel {
             t2Points = String.valueOf(tie.getTeam2Points());
         }
 
-        add(left(tableRow("Team", HEADER_FONT, GRAY, "1st", "2nd", "Goals", "Pts")));
-        add(left(tableRow(t1.getName(), ROW_FONT, Color.BLACK, t1Leg1, t1Leg2, t1Total, t1Points)));
-        add(left(tableRow(t2.getName(), ROW_FONT, Color.BLACK, t2Leg1, t2Leg2, t2Total, t2Points)));
+        add(left(tableRow("Team", Theme.LABEL_BOLD, Theme.GRAY, "1st", "2nd", "Goals", "Pts")));
+        add(left(tableRow(t1.getName(), Theme.SUBTITLE, Color.BLACK, t1Leg1, t1Leg2, t1Total, t1Points)));
+        add(left(tableRow(t2.getName(), Theme.SUBTITLE, Color.BLACK, t2Leg1, t2Leg2, t2Total, t2Points)));
         if (tie.isResolved()) {
             add(left(criterionLabel(tie.getWinningCriteria())));
         }
@@ -86,9 +82,9 @@ public class MatchDetailsPanel extends JPanel {
         String g2 = played ? cell(match.getTeam2Goals(), match.getPenaltiesScored(t2), pens) : "-";
 
         if (pens) {
-            add(left(tableRow("Team", HEADER_FONT, GRAY, "Goals")));
-            add(left(tableRow(t1.getName(), ROW_FONT, Color.BLACK, g1)));
-            add(left(tableRow(t2.getName(), ROW_FONT, Color.BLACK, g2)));
+            add(left(tableRow("Team", Theme.LABEL_BOLD, Theme.GRAY, "Goals")));
+            add(left(tableRow(t1.getName(), Theme.SUBTITLE, Color.BLACK, g1)));
+            add(left(tableRow(t2.getName(), Theme.SUBTITLE, Color.BLACK, g2)));
         }
         if (played && match.getWinner() != null) {
             add(left(criterionLabel(match.getWinningCriteria())));
@@ -104,7 +100,7 @@ public class MatchDetailsPanel extends JPanel {
         removeAll();
         add(Box.createVerticalStrut(6));
         JSeparator separator = new JSeparator();
-        separator.setForeground(new Color(220, 220, 220));
+        separator.setForeground(Theme.SEPARATOR);
         add(left(separator));
         add(Box.createVerticalStrut(6));
         hasContent = true;
@@ -145,8 +141,8 @@ public class MatchDetailsPanel extends JPanel {
 
     private JLabel criterionLabel(String criteria) {
         JLabel label = new JLabel("Decided by: " + criteria);
-        label.setFont(HEADER_FONT);
-        label.setForeground(BLUE);
+        label.setFont(Theme.LABEL_BOLD);
+        label.setForeground(Theme.PRIMARY);
         label.setBorder(BorderFactory.createEmptyBorder(6, 0, 4, 0));
         return label;
     }
@@ -182,8 +178,8 @@ public class MatchDetailsPanel extends JPanel {
 
     private JLabel smallLabel(String text, boolean bold) {
         JLabel label = new JLabel(text);
-        label.setFont(new Font("SansSerif", bold ? Font.BOLD : Font.PLAIN, 11));
-        label.setForeground(GRAY);
+        label.setFont(bold ? Theme.SMALL_BOLD : Theme.SMALL);
+        label.setForeground(Theme.GRAY);
         return label;
     }
 
@@ -198,7 +194,7 @@ public class MatchDetailsPanel extends JPanel {
 
     private JButton detailsButton(Match match) {
         JButton button = new JButton("Details");
-        button.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        button.setFont(Theme.SMALL);
         button.setFocusPainted(false);
         button.addActionListener(e -> {
             if (matchSelectedListener != null) matchSelectedListener.accept(match);

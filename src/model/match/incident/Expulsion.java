@@ -2,6 +2,7 @@ package model.match.incident;
 
 import model.match.Match;
 import model.person.player.Player;
+import model.person.player.TournamentStats;
 import model.reports.match.MatchReport.*;
 
 import java.io.Serial;
@@ -45,5 +46,17 @@ public class Expulsion extends Incident {
     @Override
     public Optional<PlayerMark> markFor(Player p) {
         return p == player ? Optional.of(new PlayerMark(MarkType.RED, getMinute())) : Optional.empty();
+    }
+
+    @Override
+    public void registerStats() {
+        if (player == null) return;
+        TournamentStats stats = player.getTournamentStats();
+        if (doubleYellow) {
+            stats.revertStandaloneYellow();
+            stats.registerDoubleYellowExpulsion();
+        } else {
+            stats.registerDirectRed();
+        }
     }
 }

@@ -99,47 +99,7 @@ public abstract class Match implements Serializable {
 
         // Se guarda en el historial cronológico del partido
         incidents.add(incident);
-
-        // 1. GOLES
-        switch (incident) {
-            case Goal goal -> {
-                // Registrar el gol del jugador, excepto si es en contra
-                if (!goal.isOwnGoal() && goal.getScorer() != null) {
-                    goal.getScorer()
-                            .getTournamentStats()
-                            .registerGoal(goal.isPenalty());
-                }
-
-                // Registrar el gol recibido por el arquero,
-                // incluso cuando se trata de un gol en contra
-                if (goal.getGoalkeeper() != null) {
-                    goal.getGoalkeeper()
-                            .getTournamentStats()
-                            .registerGoalConceded();
-                }
-            }
-            // 2. AMARILLAS
-            case YellowCard yc -> {
-                if (yc.getPlayer() != null) {
-                    yc.getPlayer()
-                            .getTournamentStats()
-                            .registerStandaloneYellow();
-                }
-            }
-            // 3. EXPULSIONES
-            case Expulsion exp -> {
-                if (exp.getPlayer() != null) {
-                    if (exp.isDoubleYellow()) {
-                        exp.getPlayer().getTournamentStats().revertStandaloneYellow();
-                        exp.getPlayer().getTournamentStats().registerDoubleYellowExpulsion();
-                    } else {
-                        exp.getPlayer().getTournamentStats().registerDirectRed();
-                    }
-                }
-            }
-            default -> {
-            }
-        }
+        incident.registerStats();
     }
 
     public int getTeam1Goals() {

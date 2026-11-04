@@ -4,15 +4,12 @@ import model.person.Position;
 import model.reports.match.MatchReport;
 import model.reports.match.MatchReport.*;
 import model.match.knockout.PenaltyShootout.*;
+import view.theme.Theme;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class MatchDetailView extends JPanel {
-    private static final Color BACKGROUND = new Color(245, 245, 247);
-    private static final Color ACCENT = new Color(35, 95, 190);
-    private static final Color TAG_BG = new Color(235, 240, 250);
-    private static final Color GRAY = new Color(120, 120, 120);
 
     private final JLabel team1Label = new JLabel("", SwingConstants.RIGHT);
     private final JLabel team2Label = new JLabel("", SwingConstants.LEFT);
@@ -26,7 +23,7 @@ public class MatchDetailView extends JPanel {
     private final JPanel shootoutPanel = new JPanel();
     private JScrollPane shootoutScroll;
 
-    private static final Color SEPARATOR = new Color(232, 235, 241);
+    private static final Color SEPARATOR = Theme.SEPARATOR;
     private static final int CONTENT_MAX_WIDTH = 1000;
     private static final int TIMELINE_ICON = 22;
     private static final int MARK_ICON = 18;
@@ -37,18 +34,18 @@ public class MatchDetailView extends JPanel {
 
     public MatchDetailView() {
         setLayout(new BorderLayout(0, 20));
-        setBackground(BACKGROUND);
+        setBackground(Theme.BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
         add(buildHeader(), BorderLayout.NORTH);
 
         timelinePanel.setLayout(new BoxLayout(timelinePanel, BoxLayout.Y_AXIS));
-        timelinePanel.setBackground(Color.WHITE);
+        timelinePanel.setBackground(Theme.BACKGROUND);
         timelinePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        lineupsPanel.setBackground(Color.WHITE);
+        lineupsPanel.setBackground(Theme.BACKGROUND);
 
         shootoutPanel.setLayout(new BoxLayout(shootoutPanel, BoxLayout.Y_AXIS));
-        shootoutPanel.setBackground(Color.WHITE);
+        shootoutPanel.setBackground(Theme.BACKGROUND);
         shootoutPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         shootoutScroll = scroll(shootoutPanel);
 
@@ -89,9 +86,9 @@ public class MatchDetailView extends JPanel {
         team1Label.setFont(team1Label.getFont().deriveFont(Font.BOLD, 20f));
         team2Label.setFont(team2Label.getFont().deriveFont(Font.BOLD, 20f));
         scoreLabel.setFont(scoreLabel.getFont().deriveFont(Font.BOLD, 28f));
-        scoreLabel.setForeground(ACCENT);
+        scoreLabel.setForeground(Theme.PRIMARY);
         scoreLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
-        infoLabel.setForeground(GRAY);
+        infoLabel.setForeground(Theme.GRAY);
         infoLabel.setFont(infoLabel.getFont().deriveFont(12f));
 
         JPanel scoreRow = new JPanel(new GridBagLayout());
@@ -198,12 +195,12 @@ public class MatchDetailView extends JPanel {
         column.setLayout(new BoxLayout(column, BoxLayout.Y_AXIS));
         column.setOpaque(false);
 
-        column.add(sectionLabel(lineup.teamName(), 16f, ACCENT));
-        column.add(sectionLabel("Starters", 12f, GRAY));
+        column.add(sectionLabel(lineup.teamName(), 16f, Theme.PRIMARY));
+        column.add(sectionLabel("Starters", 12f, Theme.GRAY));
         for (LineupPlayer player : lineup.starters()) {
             column.add(buildPlayerRow(player, false));
         }
-        column.add(sectionLabel("Substitutes", 12f, GRAY));
+        column.add(sectionLabel("Substitutes", 12f, Theme.GRAY));
         for (LineupPlayer player : lineup.substitutes()) {
             // un suplente que nunca entró se muestra en gris (solo si el partido ya se jugó)
             column.add(buildPlayerRow(player, played && !player.cameOn()));
@@ -223,7 +220,7 @@ public class MatchDetailView extends JPanel {
         JLabel name = new JLabel(player.name());
         name.setFont(name.getFont().deriveFont(14f));
         if (dimmed) {
-            name.setForeground(GRAY);
+            name.setForeground(Theme.GRAY);
         }
 
         // nombre y símbolos, uno detrás del otro y alineados a la izquierda
@@ -262,10 +259,10 @@ public class MatchDetailView extends JPanel {
 
     private Color positionColor(Position position) {
         return switch (position) {
-            case GOALKEEPER -> new Color(249, 168, 37);
-            case DEFENDER -> new Color(35, 95, 190);
-            case MIDFIELDER -> new Color(46, 125, 50);
-            case FORWARD -> new Color(198, 40, 40);
+            case GOALKEEPER -> Theme.POS_GOALKEEPER;
+            case DEFENDER -> Theme.POS_DEFENDER;
+            case MIDFIELDER -> Theme.POS_MIDFIELDER;
+            case FORWARD -> Theme.POS_FORWARD;
         };
     }
 
@@ -285,14 +282,14 @@ public class MatchDetailView extends JPanel {
 
     private JScrollPane scroll(JComponent content) {
         JScrollPane scroll = new JScrollPane(content);
-        scroll.setBorder(BorderFactory.createLineBorder(new Color(224, 224, 224)));
+        scroll.setBorder(BorderFactory.createLineBorder(Theme.BORDER));
         scroll.getVerticalScrollBar().setUnitIncrement(16);
         return scroll;
     }
 
     private JLabel message(String text) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
-        label.setForeground(GRAY);
+        label.setForeground(Theme.GRAY);
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
         return label;
     }
@@ -311,8 +308,8 @@ public class MatchDetailView extends JPanel {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
         label.setFont(label.getFont().deriveFont(Font.BOLD, size));
         label.setOpaque(true);
-        label.setBackground(TAG_BG);
-        label.setForeground(ACCENT);
+        label.setBackground(Theme.PRIMARY_LIGHT);
+        label.setForeground(Theme.PRIMARY);
         label.setBorder(BorderFactory.createEmptyBorder(3, horizontalPadding, 3, horizontalPadding));
         return label;
     }
@@ -328,7 +325,7 @@ public class MatchDetailView extends JPanel {
         JLabel summary = new JLabel("Penalties " + shootout.team1Score() + " - " + shootout.team2Score()
                 + "   ·   Winner: " + shootout.winnerName());
         summary.setFont(summary.getFont().deriveFont(Font.BOLD, 18f));
-        summary.setForeground(ACCENT);
+        summary.setForeground(Theme.PRIMARY);
         summary.setAlignmentX(Component.CENTER_ALIGNMENT);
         summary.setBorder(BorderFactory.createEmptyBorder(10, 0, 18, 0));
         shootoutPanel.add(summary);

@@ -42,4 +42,11 @@ public class YellowCard extends Incident {
     public Optional<PlayerMark> markFor(Player p) {
         return p == player ? Optional.of(new PlayerMark(MarkType.YELLOW, getMinute())) : Optional.empty();
     }
+
+    @Override
+    public void registerStats() {
+        if (player != null) {
+            player.getTournamentStats().registerStandaloneYellow();
+        }
+    }
 }

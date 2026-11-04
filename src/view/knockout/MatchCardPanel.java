@@ -3,15 +3,13 @@ package view.knockout;
 import model.match.Match;
 import model.match.knockout.FinalMatch;
 import model.match.knockout.KnockoutTie;
+import view.theme.Theme;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.function.Consumer;
 
 public class MatchCardPanel extends JPanel {
-
-    private static final Color BLUE = new Color(35, 95, 190);
-    private static final Color GRAY = new Color(130, 130, 130);
 
     private final JLabel lblStatus = new JLabel();
     private final JLabel lblHeader = new JLabel();
@@ -25,13 +23,13 @@ public class MatchCardPanel extends JPanel {
         setLayout(new BorderLayout(0, 6));
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createLineBorder(Theme.BORDER),
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)));
 
-        lblStatus.setFont(new Font("SansSerif", Font.BOLD, 11));
-        lblStatus.setForeground(GRAY);
-        lblHeader.setFont(new Font("SansSerif", Font.BOLD, 11));
-        lblHeader.setForeground(GRAY);
+        lblStatus.setFont(Theme.SMALL_BOLD);
+        lblStatus.setForeground(Theme.GRAY);
+        lblHeader.setFont(Theme.SMALL_BOLD);
+        lblHeader.setForeground(Theme.GRAY);
 
         JPanel top = new JPanel(new BorderLayout());
         top.setOpaque(false);
@@ -140,12 +138,12 @@ public class MatchCardPanel extends JPanel {
             boolean loser = winnerIndex >= 0 && !winner;
 
             names[i].setText(nameTexts[i]);
-            names[i].setFont(new Font("SansSerif", winner ? Font.BOLD : Font.PLAIN, 14));
-            names[i].setForeground(loser ? GRAY : Color.BLACK);
+            names[i].setFont(winner ? Theme.BODY_BOLD : Theme.BODY);
+            names[i].setForeground(loser ? Theme.GRAY : Color.BLACK);
 
             scores[i].setText(scoreTexts[i]);
-            scores[i].setFont(new Font("SansSerif", Font.BOLD, 15));
-            scores[i].setForeground(winner ? BLUE : GRAY);
+            scores[i].setFont(Theme.BIG_BOLD15);
+            scores[i].setForeground(winner ? Theme.PRIMARY : Theme.GRAY);
         }
     }
 

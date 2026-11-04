@@ -10,42 +10,40 @@ import java.util.List;
 
 public class DrawService {
 
+    private static final int POTS = 4;
+    private static final int TEAMS_PER_POT = 4;
+
     public static List<List<Team>> getPots(List<Team> teams) {
+        if (teams.size() != POTS * TEAMS_PER_POT) {
+            throw new IllegalArgumentException("The draw requires exactly " + POTS * TEAMS_PER_POT + " teams");
+        }
         List<Team> sortedTeams = new ArrayList<>(teams);
         sortedTeams.sort(Comparator.comparingInt(Team::getRankingPosition));
 
         List<List<Team>> pots = new ArrayList<>();
-        pots.add(new ArrayList<>(sortedTeams.subList(0, 4)));
-        pots.add(new ArrayList<>(sortedTeams.subList(4, 8)));
-        pots.add(new ArrayList<>(sortedTeams.subList(8, 12)));
-        pots.add(new ArrayList<>(sortedTeams.subList(12, 16)));
+        for (int i = 0; i < POTS; i++) {
+            int from = i * TEAMS_PER_POT;
+            pots.add(new ArrayList<>(sortedTeams.subList(from, from + TEAMS_PER_POT)));
+        }
         return pots;
     }
 
-    // Ahora recibe los equipos y devuelve la lista de zonas armadas
     public static ArrayList<Zone> zoneDraw(List<Team> teams) {
-        ArrayList<Zone> newZones = new ArrayList<>();
-
-        // Pasamos los equipos al méto do getPots
         List<List<Team>> pots = getPots(teams);
 
-        // Mezclamos cada bombo
         for (List<Team> pot : pots) {
             Collections.shuffle(pot);
         }
 
-        // Repartimos un equipo de cada bombo a cada zona
-        for (int i = 0; i < 4; i++) {
-            Zone currentZone = new Zone();
-            currentZone.addTeam(pots.get(0).get(i));
-            currentZone.addTeam(pots.get(1).get(i));
-            currentZone.addTeam(pots.get(2).get(i));
-            currentZone.addTeam(pots.get(3).get(i));
-
-            newZones.add(currentZone);
+        // zone i receives the team i from each pot
+        ArrayList<Zone> newZones = new ArrayList<>();
+        for (int zoneIndex = 0; zoneIndex < TEAMS_PER_POT; zoneIndex++) {
+            Zone zone = new Zone();
+            for (List<Team> pot : pots) {
+                zone.addTeam(pot.get(zoneIndex));
+            }
+            newZones.add(zone);
         }
-
-        // Retornamos las zonas ya sorteadas
         return newZones;
     }
 }

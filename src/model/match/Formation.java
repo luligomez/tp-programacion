@@ -12,7 +12,7 @@ public class Formation implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    public static int STARTERS_PER_TEAM = 11;
+    public static final int STARTERS_PER_TEAM = 11;
     private ArrayList<Player> starters = new ArrayList<>();
     private ArrayList<Player> substitutes = new ArrayList<>();
 

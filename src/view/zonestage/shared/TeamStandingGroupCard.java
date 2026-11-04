@@ -1,6 +1,7 @@
 package view.zonestage.shared;
 
 import model.tournament.zone.TeamStanding;
+import view.theme.Theme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,22 +9,18 @@ import java.util.List;
 
 public class TeamStandingGroupCard extends JPanel {
 
-    private static final Color CARD_BG = Color.WHITE;
-    private static final Color BORDER_COLOR = new Color(224, 224, 224);
-    private static final Color ACCENT = new Color(35, 95, 190);
-
     public TeamStandingGroupCard(String title, List<TeamStanding> standings) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(CARD_BG);
+        setBackground(Theme.SURFACE);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(BORDER_COLOR, 1, true),
+                BorderFactory.createLineBorder(Theme.BORDER, 1, true),
                 BorderFactory.createEmptyBorder(0, 0, 8, 0)
         ));
 
         // Título de la Zona (ej. "Zone A")
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 15f));
-        titleLabel.setForeground(ACCENT);
+        titleLabel.setForeground(Theme.PRIMARY);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(12, 12, 8, 12));
         add(titleLabel);

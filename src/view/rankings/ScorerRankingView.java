@@ -2,6 +2,7 @@ package view.rankings;
 
 import model.reports.scorer.ScorerReportItem;
 import view.components.StyledTable;
+import view.theme.Theme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,12 +15,12 @@ public class ScorerRankingView extends JPanel {
 
     public ScorerRankingView() {
         setLayout(new BorderLayout(15, 15));
-        setBackground(new Color(240, 240, 240));
+        setBackground(Theme.BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
 
         JLabel title = new JLabel("Top Scorers Ranking");
-        title.setFont(new Font("SansSerif", Font.BOLD, 24));
-        title.setForeground(new Color(35, 95, 190));
+        title.setFont(Theme.TITLE);
+        title.setForeground(Theme.PRIMARY);
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
         add(title, BorderLayout.NORTH);
@@ -46,7 +47,7 @@ public class ScorerRankingView extends JPanel {
         table.setColumnWidths(new int[]{80, 200, 200, 80, 120});
 
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 220), 1));
+        scrollPane.setBorder(BorderFactory.createLineBorder(Theme.BORDER, 1));
         scrollPane.getViewport().setBackground(Color.WHITE);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -54,7 +55,7 @@ public class ScorerRankingView extends JPanel {
                     "No goals have been scored yet.",
                     SwingConstants.CENTER
         );
-        emptyMessage.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        emptyMessage.setFont(Theme.BIG_BOLD16);
     }
 
     public void showScorers(List<ScorerReportItem> scorers) {

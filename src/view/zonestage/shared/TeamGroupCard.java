@@ -4,23 +4,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import model.team.Team;
+import view.theme.Theme;
 
 public class TeamGroupCard extends JPanel {
-    private static final Color CARD_BG = Color.WHITE;
-    private static final Color BORDER_COLOR = new Color(224, 224, 224);
-    private static final Color ACCENT = new Color(35, 95, 190);
 
     public TeamGroupCard(String title, List<Team> teams) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(CARD_BG);
+        setBackground(Theme.SURFACE);
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(BORDER_COLOR, 1, true),
+                BorderFactory.createLineBorder(Theme.BORDER, 1, true),
                 BorderFactory.createEmptyBorder(0, 0, 12, 0)
         ));
 
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 15f));
-        titleLabel.setForeground(ACCENT);
+        titleLabel.setForeground(Theme.PRIMARY);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(14, 14, 10, 14));
         add(titleLabel);

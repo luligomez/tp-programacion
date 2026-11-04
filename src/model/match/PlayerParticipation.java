@@ -34,10 +34,6 @@ public class PlayerParticipation implements Serializable {
         return starter;
     }
 
-    public void setStarter(boolean starter) {
-        this.starter = starter;
-    }
-
     public int getMinuteIn() {
         return minuteIn;
     }

@@ -4,6 +4,7 @@ import model.match.Match;
 import model.match.knockout.FinalMatch;
 import model.tournament.knockout.KnockoutStep;
 import model.match.knockout.KnockoutTie;
+import view.theme.Theme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +13,7 @@ import java.util.function.Consumer;
 
 public class KnockoutView extends JPanel {
 
-    private static final Color BLUE = new Color(35, 95, 190);
+    private static final Color BLUE = Theme.PRIMARY;
 
     private final JButton btnSimulate;
     private final BracketPanel bracketPanel = new BracketPanel();
@@ -27,11 +28,11 @@ public class KnockoutView extends JPanel {
         topPanel.setBorder(BorderFactory.createEmptyBorder(15, 30, 5, 30));
 
         JLabel lblTitle = new JLabel("Knockout Stage");
-        lblTitle.setFont(new Font("SansSerif", Font.BOLD, 22));
+        lblTitle.setFont(Theme.TITLE);
         topPanel.add(lblTitle);
 
         btnSimulate = new JButton("Simulate Next Round ⚽");
-        btnSimulate.setFont(new Font("SansSerif", Font.BOLD, 15));
+        btnSimulate.setFont(Theme.BIG_BOLD16);
         btnSimulate.setBackground(Color.WHITE);
         btnSimulate.setForeground(Color.BLACK);
         btnSimulate.setOpaque(true);

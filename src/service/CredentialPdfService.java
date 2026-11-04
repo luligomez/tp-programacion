@@ -22,6 +22,7 @@ import org.openpdf.text.pdf.PdfContentByte;
 import org.openpdf.text.pdf.PdfPCell;
 import org.openpdf.text.pdf.PdfPTable;
 import org.openpdf.text.pdf.PdfWriter;
+import view.theme.Theme;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -44,10 +45,6 @@ import java.util.List;
 public class CredentialPdfService {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final Color PLAYER_COLOR = new Color(35, 95, 190);
-    private static final Color COACH_COLOR = new Color(30, 130, 80);
-    private static final Color REFEREE_COLOR = new Color(190, 90, 30);
-    private static final Color CARD_BORDER = new Color(190, 190, 190);
     private static final float CARD_HEIGHT = 140f;
 
     // Everything a card needs, already turned into text
@@ -120,7 +117,7 @@ public class CredentialPdfService {
         details.add("Born: " + birthDate(player));
         details.add("Rating: " + player.getRating());
         return new Credential(player.getName(), "PLAYER · " + player.getPosition(),
-                PLAYER_COLOR, details, player.getDocumentNumber());
+                Theme.PRIMARY, details, player.getDocumentNumber());
     }
 
     private Credential coachCredential(Coach coach, Team team) {
@@ -130,7 +127,7 @@ public class CredentialPdfService {
         details.add("Born: " + birthDate(coach));
         details.add("Nationality: " + countryName(coach.getNationality()));
         details.add("Titles: " + coach.getTitlesWon());
-        return new Credential(coach.getName(), "COACH", COACH_COLOR, details, coach.getDocumentNumber());
+        return new Credential(coach.getName(), "COACH", Theme.COACH_COLOR, details, coach.getDocumentNumber());
     }
 
     private Credential refereeCredential(Referee referee) {
@@ -139,7 +136,7 @@ public class CredentialPdfService {
         details.add("Born: " + birthDate(referee));
         details.add("Nationality: " + countryName(referee.getNationality()));
         details.add("Years as referee: " + referee.getYearsOfExperience());
-        return new Credential(referee.getName(), "REFEREE", REFEREE_COLOR, details, referee.getDocumentNumber());
+        return new Credential(referee.getName(), "REFEREE", Theme.REFEREE_COLOR, details, referee.getDocumentNumber());
     }
 
     private String document(Person person) {
@@ -195,7 +192,7 @@ public class CredentialPdfService {
         // Photo
         PdfPCell photoCell = new PdfPCell(photo, false);
         photoCell.setBorder(Rectangle.LEFT);
-        photoCell.setBorderColor(CARD_BORDER);
+        photoCell.setBorderColor(Theme.CARD_BORDER);
         photoCell.setPadding(5f);
         photoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
         photoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -205,14 +202,14 @@ public class CredentialPdfService {
         Phrase info = new Phrase();
         info.add(new Phrase(card.name() + "\n",
                 FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11, Font.NORMAL, Color.BLACK)));
-        Font detailFont = FontFactory.getFont(FontFactory.HELVETICA, 8, Font.NORMAL, new Color(60, 60, 60));
+        Font detailFont = FontFactory.getFont(FontFactory.HELVETICA, 8, Font.NORMAL, Theme.TEXT_PDF);
         for (String detail : card.details()) {
             info.add(new Phrase(detail + "\n", detailFont));
         }
         PdfPCell infoCell = new PdfPCell(info);
         infoCell.setLeading(0f, 1.4f);
         infoCell.setBorder(Rectangle.RIGHT);
-        infoCell.setBorderColor(CARD_BORDER);
+        infoCell.setBorderColor(Theme.CARD_BORDER);
         infoCell.setPadding(5f);
         cardTable.addCell(infoCell);
 
@@ -240,7 +237,7 @@ public class CredentialPdfService {
         }
         cell.setColspan(2);
         cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
-        cell.setBorderColor(CARD_BORDER);
+        cell.setBorderColor(Theme.CARD_BORDER);
         cell.setPadding(4f);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         return cell;
@@ -251,9 +248,9 @@ public class CredentialPdfService {
         BufferedImage picture = new BufferedImage(112, 128, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = picture.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(new Color(225, 228, 232));
+        g.setColor(Theme.BACKGROUND);
         g.fillRect(0, 0, 112, 128);
-        g.setColor(new Color(150, 158, 168));
+        g.setColor(Theme.GRAY);
         g.fillOval(36, 22, 40, 40);   // head
         g.fillOval(14, 70, 84, 90);   // shoulders
         g.dispose();

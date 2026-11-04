@@ -38,7 +38,7 @@ public class ZoneStage implements Serializable {
             zone.generateMatches(referees, stadiums);
         }
         assignFormationsForMatchday(1);
-        FixtureScheduler.scheduleZoneStage(zones, start);
+        FixtureScheduler.scheduleZoneStage(zones, start, MATCHDAYS);
     }
 
     public void simulateCurrentMatchday() {

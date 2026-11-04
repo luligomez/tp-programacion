@@ -3,6 +3,7 @@ package view;
 import model.person.Position;
 import model.reports.player.PlayerReportItem;
 import view.components.StyledTable;
+import view.theme.Theme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,12 +21,10 @@ public class PlayersView extends JPanel {
 
     private List<PlayerReportItem> allPlayerItems = new ArrayList<>();
 
-    private static final Color BACKGROUND_GRAY = new Color(245, 247, 250);
-    private static final Color TEXT_DARK = new Color(30, 40, 50);
 
     public PlayersView() {
         setLayout(new BorderLayout(15, 15));
-        setBackground(BACKGROUND_GRAY);
+        setBackground(Theme.BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         // 1. NORTH PANEL: Header + Filters
@@ -79,8 +78,8 @@ public class PlayersView extends JPanel {
         table.setNumericFormatWithFallback(8, "%.2f"); //Promedio
 
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 220), 1));
-        scrollPane.getViewport().setBackground(Color.WHITE);
+        scrollPane.setBorder(BorderFactory.createLineBorder(Theme.BORDER, 1));
+        scrollPane.getViewport().setBackground(Theme.PRIMARY_LIGHT);
 
         add(scrollPane, BorderLayout.CENTER);
     }
@@ -90,11 +89,11 @@ public class PlayersView extends JPanel {
         panel.setOpaque(false);
 
         JLabel lblTitle = new JLabel("Players and Statistics");
-        lblTitle.setFont(new Font("SansSerif", Font.BOLD, 22));
-        lblTitle.setForeground(TEXT_DARK);
+        lblTitle.setFont(Theme.TITLE);
+        lblTitle.setForeground(Theme.TEXT);
 
         JLabel lblSubtitle = new JLabel("Search and filter by position, team, and performance");
-        lblSubtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        lblSubtitle.setFont(Theme.SUBTITLE);
         lblSubtitle.setForeground(Color.GRAY);
 
         panel.add(lblTitle);
@@ -106,15 +105,15 @@ public class PlayersView extends JPanel {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(210, 215, 220), 1),
+                BorderFactory.createLineBorder(Theme.BORDER, 1),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
 
         JLabel lblPos = new JLabel("Position:");
-        lblPos.setFont(new Font("SansSerif", Font.BOLD, 13));
+        lblPos.setFont(Theme.SMALL_BOLD13);
 
         JLabel lblTeam = new JLabel("Team:");
-        lblTeam.setFont(new Font("SansSerif", Font.BOLD, 13));
+        lblTeam.setFont(Theme.SMALL_BOLD13);
 
         panel.add(lblPos);
         panel.add(cbPosition);

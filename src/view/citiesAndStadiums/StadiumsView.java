@@ -3,6 +3,7 @@ package view.citiesAndStadiums;
 import model.place.City;
 import model.place.Stadium;
 import view.components.StyledTable;
+import view.theme.Theme;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -22,8 +23,8 @@ public class StadiumsView extends JPanel {
     private final JButton btnEdit = new JButton("Edit");
     private final JButton btnDelete = new JButton("Delete");
 
-    private static final Color BACKGROUND_GRAY = new Color(245, 247, 250);
-    private static final Color TEXT_DARK = new Color(30, 40, 50);
+    private static final Color BACKGROUND_GRAY = Theme.BACKGROUND;
+    private static final Color TEXT_DARK = Theme.TEXT;
 
     public StadiumsView() {
         setLayout(new BorderLayout(15, 15));
@@ -71,7 +72,7 @@ public class StadiumsView extends JPanel {
         });
 
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 220), 1));
+        scrollPane.setBorder(BorderFactory.createLineBorder(Theme.BORDER, 1));
         scrollPane.getViewport().setBackground(Color.WHITE);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -83,11 +84,11 @@ public class StadiumsView extends JPanel {
         panel.setOpaque(false);
 
         JLabel lblTitle = new JLabel("Stadiums");
-        lblTitle.setFont(new Font("SansSerif", Font.BOLD, 22));
+        lblTitle.setFont(Theme.TITLE);
         lblTitle.setForeground(TEXT_DARK);
 
         JLabel lblSubtitle = new JLabel("Add, edit or delete stadiums and assign them to a city");
-        lblSubtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        lblSubtitle.setFont(Theme.SUBTITLE);
         lblSubtitle.setForeground(Color.GRAY);
 
         JPanel textPanel = new JPanel(new GridLayout(2, 1, 0, 4));

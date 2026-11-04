@@ -1,6 +1,7 @@
 package view.zonestage;
 
 import model.team.Team;
+import view.theme.Theme;
 import view.zonestage.shared.TeamGroupCard;
 
 import javax.swing.*;
@@ -8,11 +9,10 @@ import java.awt.*;
 import java.util.List;
 
 public class DrawPotsPanel extends JPanel {
-    private static final Color BACKGROUND = new Color(245, 245, 247);
 
     public DrawPotsPanel(List<List<Team>> pots, Runnable onDrawRequested) {
         setLayout(new BorderLayout(0, 20));
-        setBackground(BACKGROUND);
+        setBackground(Theme.BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
         add(buildHeader(), BorderLayout.NORTH);
@@ -32,7 +32,7 @@ public class DrawPotsPanel extends JPanel {
 
         JLabel subtitle = new JLabel("16 teams grouped by ranking");
         subtitle.setFont(subtitle.getFont().deriveFont(13f));
-        subtitle.setForeground(new Color(120, 120, 120));
+        subtitle.setForeground(Theme.TEXT_MUTED);
         subtitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         subtitle.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
 
@@ -75,7 +75,7 @@ public class DrawPotsPanel extends JPanel {
         JButton drawButton = new JButton("Draw");
         drawButton.setFont(drawButton.getFont().deriveFont(Font.BOLD, 14f));
         drawButton.setFocusPainted(false);
-        drawButton.setBackground(new Color(35, 95, 190));
+        drawButton.setBackground(Theme.PRIMARY);
         drawButton.setForeground(Color.WHITE);
         drawButton.setOpaque(true);
         drawButton.setBorderPainted(false);

@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ZoneStage implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     public static final int MATCHDAYS = 3;
 
     private ArrayList<Zone> zones = new ArrayList<>();

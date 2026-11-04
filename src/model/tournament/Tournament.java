@@ -19,7 +19,7 @@ import java.util.Objects;
 
 public class Tournament implements Serializable {
     @Serial
-    private static final long serialVersionUID = 2L;   // cambió la estructura: los guardados viejos ya no cargan
+    private static final long serialVersionUID = 3L;   // cambió la estructura: los guardados viejos ya no cargan
 
     private static final int TEAMS = 16;
     public static final int TEAMS_PER_GROUP = 4;

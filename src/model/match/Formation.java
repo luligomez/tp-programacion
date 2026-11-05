@@ -3,7 +3,8 @@ package model.match;
 import model.exception.InvalidFormationException;
 import model.person.Position;
 import model.person.player.Player;
-
+import java.util.Collections;
+import java.util.List;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,8 +20,8 @@ public class Formation implements Serializable {
     public Formation() {
     }
 
-    public ArrayList<Player> getStarters() {
-        return starters;
+    public List<Player> getStarters() {
+        return Collections.unmodifiableList(starters);
     }
 
     public void addStarter(Player player) {
@@ -37,10 +38,9 @@ public class Formation implements Serializable {
         starters.add(player);
     }
 
-    public ArrayList<Player> getSubstitutes() {
-        return substitutes;
+    public List<Player> getSubstitutes() {
+        return Collections.unmodifiableList(substitutes);
     }
-
 
     public void addSubstitutes(Player player) {
         if (player == null) {

@@ -3,7 +3,7 @@ package model.team;
 import model.person.Coach;
 import model.person.player.Player;
 import model.place.Country;
-
+import java.util.Collections;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
@@ -76,7 +76,7 @@ public class Team implements Serializable {
     }
 
     public List<Player> getPlayers() {
-        return players;
+        return Collections.unmodifiableList(players);
     }
 
     public Coach getCoach() {

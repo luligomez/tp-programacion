@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Collections;
 
 public class Tournament implements Serializable {
     @Serial
@@ -35,8 +36,8 @@ public class Tournament implements Serializable {
     // ---------- data ----------
 
     public TournamentState getState() { return state; }
-    public ArrayList<Team> getTeams() { return teams; }
-    public ArrayList<Referee> getReferees() { return referees; }
+    public List<Team> getTeams() { return Collections.unmodifiableList(teams); }
+    public List<Referee> getReferees() { return Collections.unmodifiableList(referees); }
     public ArrayList<Stadium> getStadiums() { return stadiums; }
     public void setStadiums(ArrayList<Stadium> stadiums) { this.stadiums = stadiums; }
     public ZoneStage getZoneStage() { return zoneStage; }

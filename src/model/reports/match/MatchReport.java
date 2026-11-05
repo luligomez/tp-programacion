@@ -12,7 +12,8 @@ public record MatchReport(
         List<TimelineEvent> timeline,
         TeamLineupReport team1Lineup,   // null if the formations are not confirmed
         TeamLineupReport team2Lineup,
-        PenaltyShootoutReport shootout) {
+        PenaltyShootoutReport shootout,
+        StandingsReport standings) {
 
     public enum Side { TEAM1, TEAM2 }
 
@@ -44,6 +45,15 @@ public record MatchReport(
     public record PenaltyRound(int number, PenaltyShootout.PenaltyKick team1Kick, PenaltyShootout.PenaltyKick team2Kick) {}
 
     public record PenaltyShootoutReport(List<PenaltyRound> rounds, int team1Score, int team2Score, String winnerName) {}
+
+    public record StandingRow(int position, String teamName, int points, int matchesPlayed, int wins,
+                              int draws, int losses, int goalsFor, int goalsAgainst, int goalDifference) {}
+
+    public record StandingsReport(List<StandingRow> before, List<StandingRow> after) {}
+
+    public boolean hasStandings() {
+        return standings != null;
+    }
 
     public boolean hasShootout() {
         return shootout != null;

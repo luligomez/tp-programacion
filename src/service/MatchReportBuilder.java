@@ -6,7 +6,9 @@ import model.match.Match;
 import model.person.player.Player;
 import model.reports.match.MatchReport;
 import model.reports.match.MatchReport.*;
-
+import model.match.zone.GroupStageMatch;
+import model.tournament.zone.TeamStanding;
+import java.util.ArrayList;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
@@ -28,8 +30,29 @@ public class MatchReportBuilder {
                 match.isPlayed() ? buildTimeline(match) : List.of(),
                 confirmed ? buildLineup(match, match.getTeam1(), formation1) : null,
                 confirmed ? buildLineup(match, match.getTeam2(), formation2) : null,
-                match.toShootoutReport().orElse(null)
+                match.toShootoutReport().orElse(null),
+                buildStandings(match)
         );
+    }
+
+    private static StandingsReport buildStandings(Match match) {
+        if (match instanceof GroupStageMatch groupMatch && groupMatch.hasStandings()) {
+            return new StandingsReport(
+                    toRows(groupMatch.getStandingsBefore()),
+                    toRows(groupMatch.getStandingsAfter()));
+        }
+        return null;
+    }
+
+    private static List<StandingRow> toRows(List<TeamStanding> standings) {
+        List<StandingRow> rows = new ArrayList<>();
+        for (int i = 0; i < standings.size(); i++) {
+            TeamStanding s = standings.get(i);
+            rows.add(new StandingRow(i + 1, s.getTeam().getName(), s.getPoints(), s.getMatchesPlayed(),
+                    s.getMatchesWon(), s.getMatchesDrawn(), s.getMatchesLost(),
+                    s.getGoalsFor(), s.getGoalsAgainst(), s.getGoalDifference()));
+        }
+        return rows;
     }
 
     private static List<TimelineEvent> buildTimeline(Match match) {

@@ -15,8 +15,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Consumer;
-import model.tournament.zone.TeamStanding;
-import model.tournament.zone.MatchStandingComparison;
 
 public class StandingsPanel extends JPanel {
 
@@ -151,117 +149,6 @@ public class StandingsPanel extends JPanel {
         add(mainScrollPane, BorderLayout.CENTER);
 
         updateGroups(zones);
-    }
-
-    public void showComparison(List<List<TeamStanding>> standingsBefore) {
-        StringBuilder message = new StringBuilder();
-
-        message.append("STANDINGS BEFORE MATCHDAY\n\n");
-
-        for (int i = 0; i < standingsBefore.size(); i++) {
-            message.append("ZONE ")
-                    .append((char) ('A' + i))
-                    .append("\n");
-
-            int position = 1;
-
-            for (TeamStanding standing : standingsBefore.get(i)) {
-                message.append(position++)
-                        .append(". ")
-                        .append(standing.getTeam().getName())
-                        .append(" - ")
-                        .append(standing.getPoints())
-                        .append(" points\n");
-            }
-
-            message.append("\n");
-        }
-
-        JTextArea textArea = new JTextArea(message.toString());
-        textArea.setEditable(false);
-        textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
-
-        JOptionPane.showMessageDialog(
-                this,
-                new JScrollPane(textArea),
-                "Standings Before Simulation",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-    }
-
-    public void showMatchComparisons(List<MatchStandingComparison> comparisons) {
-
-        if (comparisons == null || comparisons.isEmpty()) {
-            return;
-        }
-
-        StringBuilder message = new StringBuilder();
-
-        for (MatchStandingComparison comparison : comparisons) {
-            var match = comparison.getMatch();
-
-            message.append("MATCH: ")
-                    .append(match.getTeam1().getName())
-                    .append(" ")
-                    .append(match.getTeam1Goals())
-                    .append(" - ")
-                    .append(match.getTeam2Goals())
-                    .append(" ")
-                    .append(match.getTeam2().getName())
-                    .append("\n\n");
-
-            message.append("STANDINGS BEFORE MATCH\n");
-            appendStandingsTable(message, comparison.getStandingsBefore());
-
-            message.append("\nSTANDINGS AFTER MATCH\n");
-            appendStandingsTable(message, comparison.getStandingsAfter());
-
-            message.append("\n")
-                    .append("------------------------------------------------")
-                    .append("\n\n");
-        }
-
-        JTextArea textArea = new JTextArea(message.toString());
-        textArea.setEditable(false);
-        textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        textArea.setCaretPosition(0);
-
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setPreferredSize(new Dimension(950, 500));
-
-        JOptionPane.showMessageDialog(
-                this,
-                scrollPane,
-                "Standings Before and After Each Match",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-    }
-
-    private void appendStandingsTable(
-            StringBuilder message,
-            List<TeamStanding> standings) {
-
-        message.append(String.format(
-                "%-30s %4s %3s %3s %3s %3s %3s %3s %4s%n",
-                "TEAM", "PTS", "MP", "W", "D", "L", "GF", "GA", "GD"
-        ));
-
-        int position = 1;
-
-        for (TeamStanding standing : standings) {
-            message.append(String.format(
-                    "%-30s %4d %3d %3d %3d %3d %3d %3d %4d%n",
-                    position++ + ". " + standing.getTeam().getName(),
-                    standing.getPoints(),
-                    standing.getMatchesPlayed(),
-                    standing.getMatchesWon(),
-                    standing.getMatchesDrawn(),
-                    standing.getMatchesLost(),
-                    standing.getGoalsFor(),
-                    standing.getGoalsAgainst(),
-                    standing.getGoalDifference()
-            ));
-        }
     }
 
     /**

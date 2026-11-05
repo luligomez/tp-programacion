@@ -15,7 +15,7 @@ public class FieldPlayer extends Player {
         super(name, birthDate, documentType, documentNumber, position, RatingCalculator.calculateRating(attributes, careerStats, position), attributes, careerStats);
     }
 
-    public FieldPlayerAttributes getATTRIBUTES() {
+    public FieldPlayerAttributes getAtributes() {
         return null;
     }
 

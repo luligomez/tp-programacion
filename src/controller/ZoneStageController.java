@@ -6,10 +6,6 @@ import model.tournament.TournamentState;
 import model.match.Match;
 import service.DrawService;
 import view.zonestage.ZoneStageView;
-import model.tournament.zone.TeamStanding;
-import model.tournament.zone.Zone;
-import java.util.ArrayList;
-import java.util.List;
 import model.tournament.zone.ZoneStage;
 import java.util.function.Consumer;
 
@@ -86,19 +82,9 @@ public class ZoneStageController {
             return;
         }
 
-        List<List<TeamStanding>> standingsBefore = new ArrayList<>();
-        for (Zone zone : tournament.getZones()) {
-            standingsBefore.add(zone.getStandingsSnapshot());
-        }
-
         tournament.simulateCurrentMatchday();
         onProgress.run();
-
-        view.showStandingsComparison(
-                tournament.getZones(),
-                standingsBefore,
-                tournament.getZoneStage().getLastMatchdayComparisons()
-        );
+        view.updateStandings(tournament.getZones());
 
         if (tournament.getState() == TournamentState.KNOCKOUT_STAGE) {
             view.disableSimulateButton();

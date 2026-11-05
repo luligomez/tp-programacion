@@ -28,6 +28,127 @@ public class FileReader {
 
     private record PersonData(String name, LocalDate birthDate, String documentType, String documentNumber) {}
 
+    public static Tournament fileReader(String file) throws IOException, ParseException {
+        Tournament tournament = new Tournament();
+        Map<String, Country> countries = new HashMap<>();
+
+        JSONObject tournamentJson = readTournamentJson(file);
+
+        JSONObject teamsObj = (JSONObject) tournamentJson.get("equipos");
+        for (Object team : (JSONArray) teamsObj.get("equipo")) {
+            tournament.addTeam(readTeam((JSONObject) team, countries));
+        }
+
+        JSONObject refereesObj = (JSONObject) tournamentJson.get("arbitros");
+        for (Object referee : (JSONArray) refereesObj.get("arbitro")) {
+            tournament.addReferee(readReferee((JSONObject) referee, countries));
+        }
+        return tournament;
+    }
+
+    private static JSONObject readTournamentJson(String file) throws IOException, ParseException {
+        try (java.io.FileReader reader = new java.io.FileReader(file)) {
+            JSONObject root = (JSONObject) new JSONParser().parse(reader);
+            return (JSONObject) root.get("torneo");
+        }
+    }
+
+    // ---------- teams ----------
+
+    private static Team readTeam(JSONObject teamJson, Map<String, Country> countries) {
+        String name = (String) teamJson.get("nombre");
+        Country country = countryNamed((String) teamJson.get("pais"), countries);
+        int rankingPosition = readInt(teamJson, "ranking");
+
+        JSONObject squad = (JSONObject) teamJson.get("plantel");
+        JSONObject playersObj = (JSONObject) squad.get("jugadores");
+
+        List<Player> players = new ArrayList<>();
+        for (Object player : (JSONArray) playersObj.get("jugador")) {
+            players.add(readPlayer((JSONObject) player));
+        }
+
+        Coach coach = readCoach((JSONObject) squad.get("dt"), countries);
+
+        // The Team constructor validates the squad (18 players and its composition)
+        return new Team(name, country, rankingPosition, players, coach);
+    }
+
+    private static Coach readCoach(JSONObject coachJson, Map<String, Country> countries) {
+        PersonData person = readPerson(coachJson);
+        Country country = countryNamed((String) coachJson.get("pais"), countries);
+        int titles = readInt(coachJson, "titulosObtenidos");
+        return new Coach(person.name(), person.birthDate(), person.documentType(),
+                person.documentNumber(), country, titles);
+    }
+
+    // ---------- players ----------
+
+    private static Player readPlayer(JSONObject playerJson) {
+        Position position = mapPosition((String) playerJson.get("posicion"));
+        PersonData person = readPerson(playerJson);
+        JSONObject attributes = (JSONObject) playerJson.get("caracteristicas");
+        JSONObject stats = (JSONObject) playerJson.get("estadisticas");
+
+        if (position == Position.GOALKEEPER) {
+            return readGoalkeeper(person, position, attributes, stats);
+        }
+        return readFieldPlayer(person, position, attributes, stats);
+    }
+
+    private static Goalkeeper readGoalkeeper(PersonData person, Position position,
+                                             JSONObject attributes, JSONObject stats) {
+        GoalkeeperAttributes goalkeeperAttributes = new GoalkeeperAttributes(
+                readInt(attributes, "reflejos"),
+                readInt(attributes, "juegoAereo"),
+                readInt(attributes, "ubicacion"),
+                readInt(attributes, "achique"),
+                readInt(attributes, "seguridadManos"),
+                readInt(attributes, "juegoPies"));
+        GoalkeeperCareerStats careerStats = new GoalkeeperCareerStats(
+                readInt(stats, "partidosJugados"),
+                readInt(stats, "expulsiones"),
+                readInt(stats, "golesRecibidos"),
+                readInt(stats, "penalesRecibidos"),
+                readInt(stats, "penalesAtajados"));
+        return new Goalkeeper(person.name(), person.birthDate(), person.documentType(), person.documentNumber(),
+                position, goalkeeperAttributes, careerStats);
+    }
+
+    private static FieldPlayer readFieldPlayer(PersonData person, Position position,
+                                               JSONObject attributes, JSONObject stats) {
+        FieldPlayerAttributes playerAttributes = new FieldPlayerAttributes(
+                readInt(attributes, "capacidadQuite"),
+                readInt(attributes, "velocidad"),
+                readInt(attributes, "habilidad"),
+                readInt(attributes, "cabezazo"),
+                readInt(attributes, "definicion"),
+                readInt(attributes, "potenciaDisparo"),
+                readInt(attributes, "visionDeJuego"),
+                readInt(attributes, "resistenciaFisica"));
+        FieldPlayerCareerStats careerStats = new FieldPlayerCareerStats(
+                readInt(stats, "partidosJugados"),
+                readInt(stats, "expulsiones"),
+                readInt(stats, "goles"),
+                readInt(stats, "penales"),
+                readInt(stats, "penalesConvertidos"),
+                readInt(stats, "pasesGol"));
+        return new FieldPlayer(person.name(), person.birthDate(), person.documentType(), person.documentNumber(),
+                position, playerAttributes, careerStats);
+    }
+
+    // ---------- referees ----------
+
+    private static Referee readReferee(JSONObject refereeJson, Map<String, Country> countries) {
+        PersonData person = readPerson(refereeJson);
+        Country country = countryNamed((String) refereeJson.get("pais"), countries);
+        int yearsAsReferee = readInt(refereeJson, "aniosReferato");
+        return new Referee(person.name(), person.birthDate(), person.documentType(),
+                person.documentNumber(), country, yearsAsReferee);
+    }
+
+    // ---------- shared helpers ----------
+
     private static PersonData readPerson(JSONObject parent) {
         JSONObject person = (JSONObject) parent.get("persona");
         return new PersonData(
@@ -37,120 +158,13 @@ public class FileReader {
                 person.get("nroDocumento").toString());
     }
 
-    public static Tournament fileReader(String file) throws IOException, ParseException{
-        Tournament tournament = new Tournament();
-        Map<String, Country> countries = new HashMap<>();
-        JSONParser parser = new JSONParser();
-        JSONObject jsonObject = (JSONObject) parser.parse(new java.io.FileReader(file));
-        JSONObject tournamentJ = (JSONObject) jsonObject.get("torneo");
-        JSONObject teamsObj = (JSONObject) tournamentJ.get("equipos");
-        JSONArray teams = (JSONArray)  teamsObj.get("equipo");
+    private static int readInt(JSONObject object, String key) {
+        return ((Long) object.get(key)).intValue();
+    }
 
-        for (Object team: teams){
-            JSONObject e = (JSONObject) team;
-            String nameT = (String) e.get("nombre");
-            String countryName = (String) e.get("pais");
-            Country country = countries.computeIfAbsent(
-                    countryName, Country::new
-            );
-            int rankingPosition = ((Long) e.get("ranking")).intValue();
-
-            JSONObject teamP = (JSONObject) e.get("plantel");
-            JSONObject playersObj = (JSONObject) teamP.get("jugadores");
-            JSONArray players = (JSONArray) playersObj.get("jugador");
-
-            List<Player> playerList = new ArrayList<>();
-            for (Object p : players) {
-                JSONObject j = (JSONObject) p;
-                String position = (String) j.get("posicion");
-                Position positionEnum = mapPosition(position);
-                PersonData person = readPerson(j);
-                JSONObject attributes = (JSONObject) j.get("caracteristicas");
-                JSONObject stats = (JSONObject) j.get("estadisticas");
-
-                Player player;
-                int matchesPlayed = ((Long) stats.get("partidosJugados")).intValue();
-                int expulsions = ((Long) stats.get("expulsiones")).intValue();
-
-                if (positionEnum == Position.GOALKEEPER) {
-                    int reflexes = ((Long) attributes.get("reflejos")).intValue();
-                    int aerialGame = ((Long) attributes.get("juegoAereo")).intValue();
-                    int positioning = ((Long) attributes.get("ubicacion")).intValue();
-                    int rushingOut = ((Long) attributes.get("achique")).intValue();
-                    int handling = ((Long) attributes.get("seguridadManos")).intValue();
-                    int footwork = ((Long) attributes.get("juegoPies")).intValue();
-
-                    int goalsReceived = ((Long) stats.get("golesRecibidos")).intValue();
-                    int penaltiesReceived = ((Long) stats.get("penalesRecibidos")).intValue();
-                    int penaltiesSaved = ((Long) stats.get("penalesAtajados")).intValue();
-
-                    GoalkeeperAttributes goalkeeperAttributes = new GoalkeeperAttributes(reflexes, aerialGame, positioning,
-                            rushingOut, handling, footwork);
-                    GoalkeeperCareerStats goalkeeperCareerStats = new GoalkeeperCareerStats(matchesPlayed, expulsions,goalsReceived,
-                            penaltiesReceived, penaltiesSaved);
-                    player = new Goalkeeper(person.name(), person.birthDate(), person.documentType(), person.documentNumber(),
-                            positionEnum, goalkeeperAttributes, goalkeeperCareerStats);
-                } else {
-                    int tackling = ((Long) attributes.get("capacidadQuite")).intValue();
-                    int speed = ((Long) attributes.get("velocidad")).intValue();
-                    int skill = ((Long) attributes.get("habilidad")).intValue();
-                    int heading = ((Long) attributes.get("cabezazo")).intValue();
-                    int finishing = ((Long) attributes.get("definicion")).intValue();
-                    int shotPower = ((Long) attributes.get("potenciaDisparo")).intValue();
-                    int gameVision = ((Long) attributes.get("visionDeJuego")).intValue();
-                    int physicalResistance = ((Long) attributes.get("resistenciaFisica")).intValue();
-
-                    int goals = ((Long) stats.get("goles")).intValue();
-                    int penalties = ((Long) stats.get("penales")).intValue();
-                    int penaltiesScored = ((Long) stats.get("penalesConvertidos")).intValue();
-                    int assists = ((Long) stats.get("pasesGol")).intValue();
-                    FieldPlayerAttributes playerAttributes = new FieldPlayerAttributes(tackling,speed,skill,heading,finishing,shotPower,gameVision,physicalResistance);
-                    FieldPlayerCareerStats playerCareerStats = new FieldPlayerCareerStats(matchesPlayed, expulsions, goals, penalties, penaltiesScored, assists);
-                    player = new FieldPlayer(person.name(), person.birthDate(), person.documentType(), person.documentNumber(),
-                            positionEnum, playerAttributes, playerCareerStats);
-                }
-
-                playerList.add(player);
-            }
-
-            JSONObject dtObj = (JSONObject) teamP.get("dt");
-            PersonData coachPerson = readPerson(dtObj);
-            String dtCountryName = (String) dtObj.get("pais");
-            Country dtCountry = countries.computeIfAbsent(
-                    dtCountryName, Country::new
-            );
-            int titles = ((Long) dtObj.get("titulosObtenidos")).intValue();
-            Coach coach = new Coach(coachPerson.name(), coachPerson.birthDate(), coachPerson.documentType(),
-                    coachPerson.documentNumber(), dtCountry, titles);
-            if (playerList.size() != 18) {
-                throw new IllegalArgumentException(
-                        "El equipo " + nameT + " tiene " + playerList.size() +
-                                " jugadores. Debe tener exactamente 18."
-                );
-            }
-
-            Team cTeam = new Team(nameT, country, rankingPosition, playerList, coach);
-            tournament.addTeam(cTeam);
-        }
-
-
-        JSONObject refereesObj = (JSONObject) tournamentJ.get("arbitros");
-        JSONArray referees = (JSONArray) refereesObj.get("arbitro");
-
-        for (Object r : referees) {
-            JSONObject refObj = (JSONObject) r;
-            PersonData refPerson = readPerson(refObj);
-            String refCountryName = (String) refObj.get("pais");
-            Country refCountry = countries.computeIfAbsent(
-                    refCountryName, Country::new
-            );
-            int yearsAsReferee = ((Long) refObj.get("aniosReferato")).intValue();
-            Referee referee = new Referee(refPerson.name(), refPerson.birthDate(), refPerson.documentType(),
-                    refPerson.documentNumber(), refCountry, yearsAsReferee);
-            tournament.addReferee(referee);
-
-        }
-        return tournament;
+    // One Country object per country name, shared by every team, coach and referee
+    private static Country countryNamed(String name, Map<String, Country> countries) {
+        return countries.computeIfAbsent(name, Country::new);
     }
 
     private static Position mapPosition(String positionStr) {

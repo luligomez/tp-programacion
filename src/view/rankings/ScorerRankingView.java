@@ -2,82 +2,30 @@ package view.rankings;
 
 import model.reports.scorer.ScorerReportItem;
 import view.components.StyledTable;
-import view.theme.Theme;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.List;
-
-public class ScorerRankingView extends JPanel {
-    private final DefaultTableModel tableModel;
-    private final JLabel emptyMessage;
+public class ScorerRankingView extends RankingView<ScorerReportItem> {
 
     public ScorerRankingView() {
-        setLayout(new BorderLayout(15, 15));
-        setBackground(Theme.BACKGROUND);
-        setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
-
-        JLabel title = new JLabel("Top Scorers Ranking");
-        title.setFont(Theme.TITLE);
-        title.setForeground(Theme.PRIMARY);
-        title.setHorizontalAlignment(SwingConstants.CENTER);
-
-        add(title, BorderLayout.NORTH);
-
-        String[] columns = {
-                "Position",
-                "Player",
-                "Team",
-                "Goals",
-                "Penalty Goals"
-        };
-
-        tableModel =
-                new DefaultTableModel(columns, 0) {
-                    @Override
-                    public boolean isCellEditable(int row, int column) {
-                        return false;
-                    }
-                };
-
-
-        StyledTable table = new StyledTable(tableModel);
-        table.centerAllRows();
-        table.setColumnWidths(new int[]{80, 200, 200, 80, 120});
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBorder(BorderFactory.createLineBorder(Theme.BORDER, 1));
-        scrollPane.getViewport().setBackground(Color.WHITE);
-        add(scrollPane, BorderLayout.CENTER);
-
-        emptyMessage = new JLabel(
-                    "No goals have been scored yet.",
-                    SwingConstants.CENTER
-        );
-        emptyMessage.setFont(Theme.BIG_BOLD16);
+        super("Top Scorers Ranking", "No goals have been scored yet.");
     }
 
-    public void showScorers(List<ScorerReportItem> scorers) {
-        tableModel.setRowCount(0);
+    @Override
+    protected String[] columns() {
+        return new String[]{"Position", "Player", "Team", "Goals", "Penalty Goals"};
+    }
 
-        int position = 1;
-        for (ScorerReportItem scorer : scorers) {
-            tableModel.addRow(new Object[]{
-                    position++,
-                    scorer.getPlayerName(),
-                    scorer.getTeamName(),
-                    scorer.getGoals(),
-                    scorer.getPenaltyGoals()
-            });
-        }
+    @Override
+    protected Object[] rowOf(ScorerReportItem scorer) {
+        return new Object[]{
+                scorer.getPlayerName(),
+                scorer.getTeamName(),
+                scorer.getGoals(),
+                scorer.getPenaltyGoals()
+        };
+    }
 
-        if (scorers.isEmpty()) {
-            add(emptyMessage, BorderLayout.SOUTH);
-        } else {
-            remove(emptyMessage);
-        }
-        revalidate();
-        repaint();
+    @Override
+    protected void configureTable(StyledTable table) {
+        table.setColumnWidths(new int[]{80, 200, 200, 80, 120});
     }
 }

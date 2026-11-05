@@ -273,12 +273,6 @@ public class MatchSimulator {
                 .orElse(null);
     }
 
-    private static Player getHighestRatingPlayer(List<Player> bench) {
-        return bench.stream()
-                .max(Comparator.comparingDouble(Player::getRating))
-                .orElse(null);
-    }
-
     // SENDING-OFF AND PARTICIPATION HANDLING
     private static boolean simulateCardsForMinute(Match match, List<Player> activePlayers, List<Player> benchPlayers,
                                                int minute, Map<Player, Integer> yellowCardsMap, boolean isGkAlreadyExpelled, Random random) {

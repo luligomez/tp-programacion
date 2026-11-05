@@ -127,7 +127,7 @@ public class Tournament implements Serializable {
                 .map(Match::getStadium)
                 .filter(Objects::nonNull)
                 .forEach(used -> stadiums.stream()
-                        .filter(s -> s.getName().equals(used.getName()))
+                        .filter(s -> s.getId() == used.getId())
                         .findFirst()
                         .ifPresent(s -> s.setUsed(true)));
     }

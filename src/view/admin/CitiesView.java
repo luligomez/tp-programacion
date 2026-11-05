@@ -1,7 +1,6 @@
-package view.citiesAndStadiums;
+package view.admin;
 
-import model.place.City;
-import model.place.Stadium;
+import model.place.City; // adjust the import if City is in another package
 import view.components.StyledTable;
 import view.theme.Theme;
 
@@ -11,14 +10,13 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-public class StadiumsView extends JPanel {
+public class CitiesView extends JPanel {
 
     private final StyledTable table;
     private final DefaultTableModel tableModel;
 
     private final JTextField txtName = new JTextField(15);
-    private final JTextField txtCapacity = new JTextField(8);
-    private final JComboBox<City> cmbCity = new JComboBox<>();
+    private final JTextField txtCountry = new JTextField(15);
     private final JButton btnAdd = new JButton("Add");
     private final JButton btnEdit = new JButton("Edit");
     private final JButton btnDelete = new JButton("Delete");
@@ -26,14 +24,14 @@ public class StadiumsView extends JPanel {
     private static final Color BACKGROUND_GRAY = Theme.BACKGROUND;
     private static final Color TEXT_DARK = Theme.TEXT;
 
-    public StadiumsView() {
+    public CitiesView() {
         setLayout(new BorderLayout(15, 15));
         setBackground(BACKGROUND_GRAY);
         setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
         add(createHeaderPanel(), BorderLayout.NORTH);
 
-        String[] columns = {"ID", "Name", "Capacity", "City"};
+        String[] columns = {"ID", "Name", "Country"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -46,27 +44,14 @@ public class StadiumsView extends JPanel {
         table.setAutoCreateRowSorter(true);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // The combo shows "Name (Country)" instead of City's default toString
-        cmbCity.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                          boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof City) {
-                    setText(cityLabel((City) value));
-                }
-                return this;
-            }
-        });
-
+        // When a row is selected, copy its values into the text fields
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int viewRow = table.getSelectedRow();
                 if (viewRow >= 0) {
                     int row = table.convertRowIndexToModel(viewRow);
                     txtName.setText(tableModel.getValueAt(row, 1).toString());
-                    txtCapacity.setText(tableModel.getValueAt(row, 2).toString());
-                    selectCityByLabel(tableModel.getValueAt(row, 3).toString());
+                    txtCountry.setText(tableModel.getValueAt(row, 2).toString());
                 }
             }
         });
@@ -83,11 +68,11 @@ public class StadiumsView extends JPanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
 
-        JLabel lblTitle = new JLabel("Stadiums");
+        JLabel lblTitle = new JLabel("Cities");
         lblTitle.setFont(Theme.TITLE);
         lblTitle.setForeground(TEXT_DARK);
 
-        JLabel lblSubtitle = new JLabel("Add, edit or delete stadiums and assign them to a city");
+        JLabel lblSubtitle = new JLabel("Add, edit or delete the cities that host stadiums");
         lblSubtitle.setFont(Theme.SUBTITLE);
         lblSubtitle.setForeground(Color.GRAY);
 
@@ -106,45 +91,22 @@ public class StadiumsView extends JPanel {
 
         panel.add(new JLabel("Name:"));
         panel.add(txtName);
-        panel.add(new JLabel("Capacity:"));
-        panel.add(txtCapacity);
-        panel.add(new JLabel("City:"));
-        panel.add(cmbCity);
+        panel.add(new JLabel("Country:"));
+        panel.add(txtCountry);
         panel.add(btnAdd);
         panel.add(btnEdit);
         panel.add(btnDelete);
         return panel;
     }
 
-    private String cityLabel(City city) {
-        return city == null ? "" : city.getName() + " (" + city.getCountry() + ")";
-    }
-
-    private void selectCityByLabel(String label) {
-        for (int i = 0; i < cmbCity.getItemCount(); i++) {
-            if (cityLabel(cmbCity.getItemAt(i)).equals(label)) {
-                cmbCity.setSelectedIndex(i);
-                return;
-            }
-        }
-    }
-
-    public void setStadiumsData(List<Stadium> stadiums) {
+    public void setCitiesData(List<City> cities) {
         tableModel.setRowCount(0);
-        for (Stadium stadium : stadiums) {
-            tableModel.addRow(new Object[]{
-                    stadium.getId(),
-                    stadium.getName(),
-                    stadium.getCapacity(),
-                    cityLabel(stadium.getCity())
-            });
-        }
-    }
-
-    public void setCities(List<City> cities) {
-        cmbCity.removeAllItems();
         for (City city : cities) {
-            cmbCity.addItem(city);
+            tableModel.addRow(new Object[]{
+                    city.getId(),
+                    city.getName(),
+                    city.getCountry()
+            });
         }
     }
 
@@ -152,15 +114,11 @@ public class StadiumsView extends JPanel {
         return txtName.getText().trim();
     }
 
-    public String getCapacityText() {
-        return txtCapacity.getText().trim();
+    public String getCountryText() {
+        return txtCountry.getText().trim();
     }
 
-    public City getSelectedCity() {
-        return (City) cmbCity.getSelectedItem();
-    }
-
-    public long getSelectedStadiumId() {
+    public long getSelectedCityId() {
         int viewRow = table.getSelectedRow();
         if (viewRow < 0) {
             return -1;
@@ -171,7 +129,7 @@ public class StadiumsView extends JPanel {
 
     public void clearFields() {
         txtName.setText("");
-        txtCapacity.setText("");
+        txtCountry.setText("");
         table.clearSelection();
     }
 
@@ -190,5 +148,4 @@ public class StadiumsView extends JPanel {
     public void showMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
     }
-
 }

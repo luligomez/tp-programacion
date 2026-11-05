@@ -1,10 +1,10 @@
-package controller;
+package controller.admin;
 
 import DAO.CityDAO;
 import DAO.StadiumDAO;
 import model.place.City;
 import model.place.Stadium;
-import view.citiesAndStadiums.StadiumsView;
+import view.admin.StadiumsView;
 import java.util.function.Consumer;
 import javax.swing.*;
 import java.sql.SQLException;

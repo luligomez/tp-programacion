@@ -7,7 +7,7 @@ import java.io.Serial;
 
 public class GoalkeeperAttributes extends Attributes {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     private final int REFLEXES;
     private final int AERIALGAME;
     private final int POSITIONING;
@@ -15,36 +15,36 @@ public class GoalkeeperAttributes extends Attributes {
     private final int HANDLING;
     private final int FOOTWORK;
 
-    public GoalkeeperAttributes(int REFLEXES, int AERIALGAME, int POSITIONING, int RUSHINGOUT, int HANDLING, int FOOTWORK) {
-        this.REFLEXES = REFLEXES;
-        this.AERIALGAME = AERIALGAME;
-        this.POSITIONING = POSITIONING;
-        this.RUSHINGOUT = RUSHINGOUT;
-        this.HANDLING = HANDLING;
-        this.FOOTWORK = FOOTWORK;
+    public GoalkeeperAttributes(int reflexes, int aerialgame, int positioning, int rushingout, int handling, int footwork) {
+        this.REFLEXES = reflexes;
+        this.AERIALGAME = aerialgame;
+        this.POSITIONING = positioning;
+        this.RUSHINGOUT = rushingout;
+        this.HANDLING = handling;
+        this.FOOTWORK = footwork;
     }
 
-    public int getREFLEXES() {
+    public int getReflexes() {
         return REFLEXES;
     }
 
-    public int getAERIALGAME() {
+    public int getAerialGame() {
         return AERIALGAME;
     }
 
-    public int getPOSITIONING() {
+    public int getPositioning() {
         return POSITIONING;
     }
 
-    public int getRUSHINGOUT() {
+    public int getRushingout() {
         return RUSHINGOUT;
     }
 
-    public int getHANDLING() {
+    public int getHandling() {
         return HANDLING;
     }
 
-    public int getFOOTWORK() {
+    public int getFootwork() {
         return FOOTWORK;
     }
 

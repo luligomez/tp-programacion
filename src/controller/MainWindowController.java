@@ -2,20 +2,25 @@ package controller;
 
 import DAO.CityDAO;
 import DAO.StadiumDAO;
+import controller.admin.CitiesController;
+import controller.admin.StadiumsController;
+import controller.rankings.FairPlayRankingController;
+import controller.rankings.MostMinutesRankingController;
+import controller.rankings.ScorerRankingController;
 import model.place.Stadium;
 import service.FileReader;
 import model.tournament.Tournament;
 import model.tournament.TournamentState;
 import model.match.Match;
 import service.TournamentRepository;
+import view.admin.AdminView;
 import view.mainwindow.MainWindowView;
 import view.mainwindow.SidebarItem;
-import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
+import view.rankings.RankingsView;
 import service.CredentialPdfService;
-import view.theme.Theme;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.SQLException;
@@ -26,9 +31,9 @@ import static model.tournament.TournamentState.*;
 
 public class MainWindowController {
 
-    private final MainWindowView view;
+    private MainWindowView view;
     private Tournament tournament;
-    private final TournamentRepository repository;
+    private TournamentRepository repository;
 
     public MainWindowController(MainWindowView view, Tournament tournament, TournamentRepository repository) {
         this.view = view;
@@ -38,11 +43,8 @@ public class MainWindowController {
     }
 
     private void initController() {
-        // 1. Listen to the events emitted by the main window
         view.setOnSidebarSelectListener(this::onSidebarItemSelected);
         view.setOnResetListener(this::onResetTournament);
-
-        // 2. Load the initial screen (group stage by default)
         navigateToGroups();
     }
 
@@ -60,63 +62,48 @@ public class MainWindowController {
     }
 
     private void navigateToGroups() {
-        // STEP 1: Create the child controller (it binds itself to the view and the tournament)
-        ZoneStageController zoneStageController = new ZoneStageController(tournament,
+        ZoneStageController zoneStageController = new ZoneStageController(
+                tournament,
                 match -> showMatchDetail(match, this::navigateToGroups, SidebarItem.GROUPS),
-                this::saveTournament);
-        // STEP 2: Tell the main window to show the child view's panel
+                this::saveTournament
+        );
         view.showScreen(zoneStageController.getView(), SidebarItem.GROUPS);
     }
 
     private void onResetTournament() {
-        int confirm = JOptionPane.showConfirmDialog(
-                view,
+        boolean confirmed = view.showConfirm(
                 "Are you sure? The current tournament will be lost.",
-                "Reset tournament",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE
+                "Reset tournament"
         );
 
-        if (confirm == JOptionPane.YES_OPTION) {
+        if (confirmed) {
             try {
-                // 1. Reload the model from the JSON
                 this.tournament = FileReader.fileReader("torneo.json");
                 repository.delete();
                 this.tournament.setStadiums(new StadiumDAO().getAllStadiums());
-                // 2. Reload the clean groups screen with the new tournament
                 navigateToGroups();
 
-                JOptionPane.showMessageDialog(
-                        view,
-                        "Tournament successfully reset!",
-                        "Reset Complete",
-                        JOptionPane.INFORMATION_MESSAGE
-                );
+                view.showInfo("Tournament successfully reset!", "Reset Complete");
             } catch (IOException | ParseException | SQLException e) {
-                JOptionPane.showMessageDialog(
-                        view,
-                        "Error loading tournament file: " + e.getMessage(),
-                        "Error Resetting Tournament",
-                        JOptionPane.ERROR_MESSAGE
-                );
+                view.showError("Error loading tournament file: " + e.getMessage(), "Error Resetting Tournament");
             }
         }
     }
 
-    private void navigateToKnockout(){
+    private void navigateToKnockout() {
         TournamentState state = tournament.getState();
         if (state == NOT_DRAWN || state == DRAWN_UNCONFIRMED || state == GROUP_STAGE) {
-            JOptionPane.showMessageDialog(
-                    view,
+            view.showWarning(
                     "You must complete the group stage before accessing the knockout stage.",
-                    "Group stage not finished",
-                    JOptionPane.WARNING_MESSAGE
+                    "Group stage not finished"
             );
             return;
         }
-        KnockoutController knockoutController = new KnockoutController(tournament,
+        KnockoutController knockoutController = new KnockoutController(
+                tournament,
                 match -> showMatchDetail(match, this::navigateToKnockout, SidebarItem.KNOCKOUT),
-                this::saveTournament);
+                this::saveTournament
+        );
         view.showScreen(knockoutController.getView(), SidebarItem.KNOCKOUT);
     }
 
@@ -138,50 +125,39 @@ public class MainWindowController {
     private void navigateToRankings() {
         ScorerRankingController scorerRankingController = new ScorerRankingController(tournament);
         FairPlayRankingController fairPlayRankingController = new FairPlayRankingController(tournament);
+        MostMinutesRankingController mostMinutesRankingController = new MostMinutesRankingController(tournament);
 
-        // Create tabs for both rankings
-        JTabbedPane tabs = new JTabbedPane();
+        RankingsView rankingsView = new RankingsView(
+                scorerRankingController.getView(),
+                fairPlayRankingController.getView(),
+                mostMinutesRankingController.getView()
 
-        tabs.addTab("Top Scorers", scorerRankingController.getView());
-        tabs.addTab("Fair Play", fairPlayRankingController.getView());
+        );
 
-        // Apply the existing tab style
-        styleTabs(tabs);
+        view.showScreen(rankingsView, SidebarItem.RANKINGS);
 
-        // Display rankings in the main window
-        JPanel rankingsPanel = new JPanel(new BorderLayout());
-        rankingsPanel.add(tabs, BorderLayout.CENTER);
-
-        view.showScreen(rankingsPanel, SidebarItem.RANKINGS);
     }
 
     private void navigateToAdmin() {
         CitiesController citiesController = new CitiesController(new CityDAO());
-        StadiumsController stadiumsController = new StadiumsController(new StadiumDAO(), new CityDAO(), this::refreshTournamentStadiums);
-        JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab("Cities", citiesController.getView());
-        tabs.addTab("Stadiums", stadiumsController.getView());
-        styleTabs(tabs);
-        tabs.addChangeListener(e -> stadiumsController.loadCities());
-        JPanel adminPanel = new JPanel(new BorderLayout());
-        adminPanel.add(tabs, BorderLayout.CENTER);
-        view.showScreen(adminPanel, SidebarItem.ADMIN);
+        StadiumsController stadiumsController = new StadiumsController(
+                new StadiumDAO(),
+                new CityDAO(),
+                this::refreshTournamentStadiums
+        );
+
+        AdminView adminView = new AdminView(
+                citiesController.getView(),
+                stadiumsController.getView(),
+                stadiumsController::loadCities
+        );
+
+        view.showScreen(adminView, SidebarItem.ADMIN);
     }
 
-    // The stadium CRUD changes the database;
     private void refreshTournamentStadiums(List<Stadium> stadiums) {
         tournament.setStadiums(new ArrayList<>(stadiums));
         tournament.syncUsedStadiums();
-    }
-
-    private void styleTabs(JTabbedPane tabs) {
-        tabs.setFont(Theme.BIG_BOLD16);
-        for (int i = 0; i < tabs.getTabCount(); i++) {
-            JLabel label = new JLabel(tabs.getTitleAt(i));
-            label.setFont(Theme.BIG_BOLD16);
-            label.setBorder(BorderFactory.createEmptyBorder(8, 30, 8, 30));
-            tabs.setTabComponentAt(i, label);
-        }
     }
 
     private void showMatchDetail(Match match, Runnable onBack, SidebarItem item) {
@@ -190,18 +166,15 @@ public class MainWindowController {
     }
 
     private void generateCredentials() {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setDialogTitle("Save credentials PDF");
-        chooser.setSelectedFile(new File("credentials.pdf"));
-        if (chooser.showSaveDialog(view) != JFileChooser.APPROVE_OPTION) {
+        File destinationFile = view.chooseSaveFile("credentials.pdf", "Save credentials PDF");
+        if (destinationFile == null) {
             return;
         }
         try {
-            new CredentialPdfService().generate(tournament, chooser.getSelectedFile().toPath());
-            JOptionPane.showMessageDialog(view, "Credentials PDF created.");
+            new CredentialPdfService().generate(tournament, destinationFile.toPath());
+            view.showInfo("Credentials PDF created successfully.", "Success");
         } catch (IOException | DocumentException e) {
-            JOptionPane.showMessageDialog(view, "Could not create credentials: " + e.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            view.showError("Could not create credentials: " + e.getMessage(), "Error");
         }
     }
 
@@ -209,10 +182,7 @@ public class MainWindowController {
         try {
             repository.save(tournament);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(view, "Could not save progress: " + e.getMessage(),
-                    "Save error", JOptionPane.WARNING_MESSAGE);
+            view.showWarning("Could not save progress: " + e.getMessage(), "Save error");
         }
     }
-
-
 }

@@ -82,11 +82,17 @@ public class PlayersView extends JPanel {
 
         table.setAutoCreateRowSorter(true);
 
-        table.setColumnSuffix(3, " yrs");
-        table.setColumnSuffix(9, "'");
-
-        table.setNumericFormatWithFallback(11, null);
-        table.setNumericFormatWithFallback(12, "%.2f");
+        table.setNumericFormatWithFallback(3, null," yrs"); //age
+        table.setNumericFormatWithFallback(6, null); // Document
+        table.setNumericFormatWithFallback(7, null); //Rating
+        table.setNumericFormatWithFallback(8, null); //MP
+        table.setNumericFormatWithFallback(9, null,"'"); //Minutes
+        table.setNumericFormatWithFallback(10, null); //Goals
+        table.setNumericFormatWithFallback(11, null); //GC
+        table.setNumericFormatWithFallback(12, "%.2f"); //Avg goals p match
+        table.setNumericFormatWithFallback(13, null); //YC
+        table.setNumericFormatWithFallback(14, null); //Double YC
+        table.setNumericFormatWithFallback(15, null); //Direct Red
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createLineBorder(Theme.BORDER, 1));

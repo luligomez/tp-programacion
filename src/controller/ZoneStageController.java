@@ -85,24 +85,26 @@ public class ZoneStageController {
         if (tournament.getCurrentMatchday() > ZoneStage.MATCHDAYS) {
             return;
         }
-        List<List<TeamStanding>> standingsBefore = new ArrayList<>();
 
+        List<List<TeamStanding>> standingsBefore = new ArrayList<>();
         for (Zone zone : tournament.getZones()) {
             standingsBefore.add(zone.getStandingsSnapshot());
         }
+
         tournament.simulateCurrentMatchday();
         onProgress.run();
+
         view.showStandingsComparison(
                 tournament.getZones(),
-                standingsBefore
-        );
-        view.getStandingsPanel().showMatchComparisons(
+                standingsBefore,
                 tournament.getZoneStage().getLastMatchdayComparisons()
         );
+
         if (tournament.getState() == TournamentState.KNOCKOUT_STAGE) {
             view.disableSimulateButton();
         } else {
             view.setMatchdayLabel(tournament.getCurrentMatchday());
         }
     }
+
 }

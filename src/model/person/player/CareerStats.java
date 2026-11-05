@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 public abstract class CareerStats implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     private final int MATCHESPLAYED;
     private final int EXPULSIONS;
 
@@ -16,11 +16,11 @@ public abstract class CareerStats implements Serializable {
         this.EXPULSIONS = expulsions;
     }
 
-    public int getMATCHESPLAYED() {
+    public int getMatchesPlayed() {
         return MATCHESPLAYED;
     }
 
-    public int getEXPULSIONS() {
+    public int getExpulsions() {
         return EXPULSIONS;
     }
 

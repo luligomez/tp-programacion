@@ -2,6 +2,7 @@ package view.mainwindow;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.function.Consumer;
 
 public class MainWindowView extends JFrame {
@@ -50,5 +51,40 @@ public class MainWindowView extends JFrame {
         contentPanel.repaint();
 
         sidebar.setActiveItem(correspondingItem);
+    }
+
+    // --- Dialog Methods and Notifications ---
+
+    public boolean showConfirm(String message, String title) {
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                message,
+                title,
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+        return confirm == JOptionPane.YES_OPTION;
+    }
+
+    public void showInfo(String message, String title) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void showWarning(String message, String title) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.WARNING_MESSAGE);
+    }
+
+    public void showError(String message, String title) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    public File chooseSaveFile(String defaultFileName, String dialogTitle) {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle(dialogTitle);
+        chooser.setSelectedFile(new File(defaultFileName));
+        if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            return chooser.getSelectedFile();
+        }
+        return null;
     }
 }

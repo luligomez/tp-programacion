@@ -1,5 +1,6 @@
 package service;
 
+import model.reports.playerMinutes.MostMinutesReportItem;
 import model.tournament.Tournament;
 import model.match.Match;
 import model.person.Coach;
@@ -18,6 +19,7 @@ import model.reports.scorer.ScorerReportItem;
 import model.reports.fairplay.FairPlayReportItem;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class TournamentReportsService {
@@ -276,4 +278,34 @@ public class TournamentReportsService {
         }
         return 0;
     }
+
+    public static List<MostMinutesReportItem> getMostMinutesRanking(Tournament tournament) {
+        List<MostMinutesReportItem> result = new ArrayList<>();
+
+        for (Team team : tournament.getTeams()) {
+            for (Player player : team.getPlayers()) {
+                TournamentStats playerStats = player.getTournamentStats();
+
+                int matchesPlayed = playerStats.getMatchesPlayed();
+                int minutesPlayed = playerStats.getMinutesPlayed();
+
+                if (minutesPlayed > 0) {
+                    result.add(new MostMinutesReportItem(
+                            player.getName(),
+                            team.getName(),
+                            matchesPlayed,
+                            minutesPlayed
+                    ));
+                }
+            }
+        }
+
+        result.sort(Comparator.comparing(MostMinutesReportItem::getMinutesPlayed,Comparator.reverseOrder())
+                .thenComparing(MostMinutesReportItem::getMatchesPlayed,Comparator.reverseOrder())
+                .thenComparing(MostMinutesReportItem::getPlayerName)
+        );
+
+        return result;
+    }
+
 }

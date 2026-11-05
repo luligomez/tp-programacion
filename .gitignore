@@ -4,6 +4,10 @@ out/
 !**/src/test/**/out/
 .idea/
 
+## Serialized & Temp Files
+*.ser
+*.tmp
+
 ### Eclipse ###
 .apt_generated
 .classpath
@@ -28,3 +32,4 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+

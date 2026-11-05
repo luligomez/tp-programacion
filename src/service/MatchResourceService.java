@@ -10,7 +10,7 @@ import java.util.Random;
 import model.exception.InvalidMatchResourceException;
 
 public class MatchResourceService {
-    public static Stadium pickRandomUnusedStadium(ArrayList<Stadium> stadiums) {
+    public static Stadium pickRandomUnusedStadium(ArrayList<Stadium> stadiums) throws InvalidMatchResourceException{
         List<Stadium> available = stadiums.stream()
                 .filter(s -> !s.isUsed())
                 .toList();

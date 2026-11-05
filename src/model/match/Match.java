@@ -153,8 +153,9 @@ public abstract class Match implements Serializable {
     }
 
     public PlayerParticipation getParticipationFor(Player player) {
-        if (player == null) return null;//TODO exception
-
+        if (player == null) {
+            throw new IllegalArgumentException("Player cannot be null.");
+        }
         for (PlayerParticipation pp : playerParticipations) {
             if (pp.getPlayer().equals(player)) {
                 return pp;

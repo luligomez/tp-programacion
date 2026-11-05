@@ -98,11 +98,10 @@ public class MatchSimulator {
 
     public static void simulateMatch(Match match) {
 
-        // If it was already simulated, exit
+        // A match can only be simulated once
         if (match.isPlayed()) {
-            System.out.println("El partido entre " + match.getTeam1().getName() + //TODO agregar exception
-                    " y " + match.getTeam2().getName() + " ya fue simulado.");
-            return;
+            throw new IllegalStateException("The match between " + match.getTeam1().getName()
+                    + " and " + match.getTeam2().getName() + " was already simulated.");
         }
 
         Team team1 = match.getTeam1();
@@ -358,7 +357,8 @@ public class MatchSimulator {
             totalWeight += weight;
         }
 
-        if (totalWeight <= 0) return activePlayers.getFirst(); //TODO exception?
+        // Nobody on the pitch has any scoring weight: any player may score, the match goes on
+        if (totalWeight <= 0) return activePlayers.getFirst();
 
         // 2. Roulette / weighted draw
         double randomValue = random.nextDouble() * totalWeight; // [0.0, totalWeight)
@@ -371,7 +371,8 @@ public class MatchSimulator {
             }
         }
 
-        return activePlayers.getFirst(); //TODO exception?
+        // Only reached because of floating point rounding at the very end of the draw
+        return activePlayers.getLast();
     }
 
     private static Player selectWeightedFouler(List<Player> activePlayers, Map<Player, Integer> yellowCardsMap, boolean isGkAlreadyExpelled, Random random) {

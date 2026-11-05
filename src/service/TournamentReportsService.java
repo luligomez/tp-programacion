@@ -75,92 +75,80 @@ public class TournamentReportsService {
 
     public static TeamReportData generateTeamsReportData(Tournament tournament) {
         List<TeamReportItem> items = new ArrayList<>();
+        List<Match> matches = tournament.getAllMatches();
 
         for (Team team : tournament.getTeams()) {
-
-            // 1. Average age of its players
-            double avgPlayerAge = 0.0;
-            if (team.getPlayers() != null && !team.getPlayers().isEmpty()) {
-                double totalAge = 0;
-                for (Player player : team.getPlayers()) {
-                    totalAge += player.getAge();
-                }
-                avgPlayerAge = totalAge / team.getPlayers().size();
-            }
-
-            // 2. Age and nationality of the coach
-            int coachAge = 0;
-            String coachNationality = "N/A";
-            if (team.getCoach() != null) {
-                Coach coach = team.getCoach();
-                coachAge = coach.getAge();
-                if (coach.getNationality() != null) {
-                    coachNationality = coach.getNationality().getName();
-                }
-            }
-
-            // 3. Goals for, goals against, matches played and points obtained
-            int gf = 0;
-            int gc = 0;
-            int matchesPlayed = 0;
-            int pointsObtained = 0;
-
-            for (Match match : tournament.getAllMatches()) {
-                if (match != null && match.isPlayed()) {
-                    boolean isTeam1 = match.getTeam1().equals(team);
-                    boolean isTeam2 = match.getTeam2().equals(team);
-
-                    // If the team played this match (either as team1 or team2)
-                    if (isTeam1 || isTeam2) {
-                        matchesPlayed++;
-
-                        // Add goals depending on which side they played
-                        if (isTeam1) {
-                            gf += match.getTeam1Goals();
-                            gc += match.getTeam2Goals();
-                        } else {
-                            gf += match.getTeam2Goals();
-                            gc += match.getTeam1Goals();
-                        }
-
-                        // Unified points calculation (done only once)
-                        if (isTeam1) {
-                            pointsObtained += pointsOf(
-                                    match.getTeam1Goals(),
-                                    match.getTeam2Goals()
-                            );
-                        } else {
-                            pointsObtained += pointsOf(
-                                    match.getTeam2Goals(),
-                                    match.getTeam1Goals()
-                            );
-                        }
-                    }
-                }
-            }
-
-            // 4. Effectiveness (% of points obtained over points available)
-            double effectiveness = 0.0;
-            if (matchesPlayed > 0) {
-                int maxPossiblePoints = matchesPlayed * 3;
-                effectiveness = (pointsObtained * 100.0) / maxPossiblePoints;
-            }
+            TeamResults results = resultsOf(team, matches);
 
             items.add(new TeamReportItem(
                     team.getName(),
-                    avgPlayerAge,
-                    coachAge,
-                    coachNationality,
-                    gf,
-                    gc,
-                    effectiveness
+                    averagePlayerAge(team),
+                    coachAge(team),
+                    coachNationality(team),
+                    results.goalsFor(),
+                    results.goalsAgainst(),
+                    effectiveness(results)
             ));
         }
 
-        // 5. Sort alphabetically by team name
+        // Sort alphabetically by team name
         items.sort((t1, t2) -> t1.getTeamName().compareToIgnoreCase(t2.getTeamName()));
 
         return new TeamReportData(items);
+    }
+
+    // Goals, matches played and points obtained by a team in the matches already played
+    private record TeamResults(int matchesPlayed, int goalsFor, int goalsAgainst, int points) {}
+
+    private static TeamResults resultsOf(Team team, List<Match> matches) {
+        int matchesPlayed = 0;
+        int goalsFor = 0;
+        int goalsAgainst = 0;
+        int points = 0;
+
+        for (Match match : matches) {
+            if (match == null || !match.isPlayed()) continue;
+
+            boolean isTeam1 = match.getTeam1().equals(team);
+            boolean isTeam2 = match.getTeam2().equals(team);
+            if (!isTeam1 && !isTeam2) continue;
+
+            // Goals from the point of view of this team, depending on which side it played
+            int scored = isTeam1 ? match.getTeam1Goals() : match.getTeam2Goals();
+            int conceded = isTeam1 ? match.getTeam2Goals() : match.getTeam1Goals();
+
+            matchesPlayed++;
+            goalsFor += scored;
+            goalsAgainst += conceded;
+            points += pointsOf(scored, conceded);
+        }
+        return new TeamResults(matchesPlayed, goalsFor, goalsAgainst, points);
+    }
+
+    private static double averagePlayerAge(Team team) {
+        if (team.getPlayers() == null || team.getPlayers().isEmpty()) return 0.0;
+
+        double totalAge = 0;
+        for (Player player : team.getPlayers()) {
+            totalAge += player.getAge();
+        }
+        return totalAge / team.getPlayers().size();
+    }
+
+    private static int coachAge(Team team) {
+        return team.getCoach() != null ? team.getCoach().getAge() : 0;
+    }
+
+    private static String coachNationality(Team team) {
+        Coach coach = team.getCoach();
+        if (coach == null || coach.getNationality() == null) return "N/A";
+        return coach.getNationality().getName();
+    }
+
+    // Percentage of points obtained over points available
+    private static double effectiveness(TeamResults results) {
+        if (results.matchesPlayed() == 0) return 0.0;
+        return (results.points() * 100.0) / (results.matchesPlayed() * 3);
     }
 
     public static RefereeReportData generateRefereesReportData(Tournament tournament) {

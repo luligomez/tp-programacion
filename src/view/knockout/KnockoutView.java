@@ -84,6 +84,10 @@ public class KnockoutView extends JPanel {
         btnSimulate.setEnabled(step != KnockoutStep.DONE);
     }
 
+    public void showWarning(String title, String message) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.WARNING_MESSAGE);
+    }
+
     public void enableSimulateButton() {
         btnSimulate.setEnabled(true);
     }

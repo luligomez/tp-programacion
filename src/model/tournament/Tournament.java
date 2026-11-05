@@ -88,9 +88,23 @@ public class Tournament implements Serializable {
     }
 
     // ---------- moving from one stage to the next (coordination happens here) ----------
+    // Checks, before anything is played, that the phases still to be generated will find enough unused stadiums
+    public void requireKnockoutStadiums() {
+        int needed = 0;
+        if (knockoutStage.getTies(KnockoutPhase.QUARTER_FINAL).isEmpty()) needed += 8;   // 4 ties x 2 legs
+        if (knockoutStage.getTies(KnockoutPhase.SEMI_FINAL).isEmpty()) needed += 4;      // 2 ties x 2 legs
+        if (!knockoutStage.hasFinal()) needed += 1;
+        long available = stadiums == null ? 0 : stadiums.stream().filter(s -> !s.isUsed()).count();
+        if (available < needed) {
+            throw new InvalidTournamentException(
+                    "At least " + needed + " unused stadiums are needed for the rest of the tournament, but only "
+                            + available + " are available. Add more in Cities & Stadiums.");
+        }
+    }
 
     public void simulateCurrentMatchday() {
         if (zoneStage.isFinished()) return;
+        requireKnockoutStadiums();
         zoneStage.simulateCurrentMatchday();
         if (zoneStage.isFinished()) startKnockoutStage();
     }

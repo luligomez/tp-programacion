@@ -1,5 +1,6 @@
 package controller;
 
+import model.exception.InvalidMatchResourceException;
 import model.exception.InvalidTournamentException;
 import model.tournament.Tournament;
 import model.tournament.TournamentState;
@@ -81,8 +82,12 @@ public class ZoneStageController {
         if (tournament.getCurrentMatchday() > ZoneStage.MATCHDAYS) {
             return;
         }
-
-        tournament.simulateCurrentMatchday();
+        try {
+            tournament.simulateCurrentMatchday();
+        } catch (InvalidTournamentException | InvalidMatchResourceException e) {
+            view.showWarning("Cannot simulate", e.getMessage());
+            return;
+        }
         onProgress.run();
         view.updateStandings(tournament.getZones());
 

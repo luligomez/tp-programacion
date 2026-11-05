@@ -52,4 +52,17 @@ public class Stadium implements Serializable {
     public void setUsed(boolean used){
         this.used = used;
     }
+
+    // Identified by its database id; an object not saved yet (id 0) is only equal to itself
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Stadium other)) return false;
+        return id != 0 && id == other.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
+    }
 }

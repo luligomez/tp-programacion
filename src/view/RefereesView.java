@@ -22,17 +22,17 @@ public class RefereesView extends JPanel {
         setBackground(Theme.BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
-        // --- 1. ENCABEZADO DE LA PANTALLA ---
+        // --- 1. SCREEN HEADER ---
         JPanel headerPanel = createHeaderPanel();
         add(headerPanel, BorderLayout.NORTH);
 
-        // --- 2. MODELO Y TABLA ---
+        // --- 2. MODEL AND TABLE ---
         String[] columns = {"Rank", "Referee Name", "Nationality", "Matches Officiated", "Years as Referee"};
 
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Tabla de solo lectura
+                return false; // Read-only table
             }
 
         };
@@ -46,7 +46,7 @@ public class RefereesView extends JPanel {
 
         add(scrollPane, BorderLayout.CENTER);
 
-        // --- 3. PANEL INFERIOR (TARJETAS DE RESUMEN) ---
+        // --- 3. BOTTOM PANEL (SUMMARY CARDS) ---
         lblAverageYears = new JLabel("0.0 yrs", SwingConstants.CENTER);
         lblTotalReferees = new JLabel("0", SwingConstants.CENTER);
         JPanel footerPanel = createFooterPanel();
@@ -79,7 +79,7 @@ public class RefereesView extends JPanel {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         footer.setOpaque(false);
 
-        // Card con el total y promedio resaltado
+        // Card with the highlighted total and average
         JPanel summaryCard = new JPanel(new GridLayout(1, 2, 20, 0));
         summaryCard.setBackground(Theme.PRIMARY_LIGHT);
         summaryCard.setBorder(BorderFactory.createCompoundBorder(
@@ -98,12 +98,12 @@ public class RefereesView extends JPanel {
         return footer;
     }
 
-    // --- MÉTODOS PARA POBLAR LA TABLA DESDE EL CONTROLADOR ---
+    // --- METHODS TO POPULATE THE TABLE FROM THE CONTROLLER ---
 
     public void setRefereesData(RefereeReportData data) {
         List<RefereeReportItem> referees = data.getItems();
         double averageYears= data.getAverageYears();
-        tableModel.setRowCount(0); // Limpiar tabla
+        tableModel.setRowCount(0); // Clear the table
 
         int rank = 1;
         for (RefereeReportItem ref : referees) {
@@ -116,7 +116,7 @@ public class RefereesView extends JPanel {
             });
         }
 
-        // 👈 AQUÍ SE AGREGA LA FILA EXTRA EXIGIDA POR LA CÁTEDRA
+        // Extra row required by the course
         tableModel.addRow(new Object[]{
                 "---",
                 "AVERAGE (All Referees)",
@@ -125,7 +125,7 @@ public class RefereesView extends JPanel {
                 String.format("%.2f yrs", averageYears)
         });
 
-        // Actualizar etiqueta del pie de página
+        // Update the footer label
         lblAverageYears.setText(String.format("%.2f yrs", averageYears));
         lblAverageYears.setFont(Theme.BODY_BOLD);
         lblAverageYears.setForeground(Theme.PRIMARY);

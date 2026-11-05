@@ -45,7 +45,7 @@ public abstract class KnockoutMatch extends Match {
 
         List<PenaltyKick> kicks1 = new ArrayList<>();
         List<PenaltyKick> kicks2 = new ArrayList<>();
-        for (PenaltyKick kick : penalties.getKicks()) {          // ver nota abajo
+        for (PenaltyKick kick : penalties.getKicks()) {
             PenaltyKick entry = new PenaltyKick(kick.getTeam(), kick.getKicker(), kick.hasScored());
             (isTeam1Player(kick.getKicker()) ? kicks1 : kicks2).add(entry);
         }

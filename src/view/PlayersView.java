@@ -63,7 +63,7 @@ public class PlayersView extends JPanel {
 
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                // Le indica a Swing el tipo real (Integer, Double, String) de la celda
+                // Tells Swing the actual type (Integer, Double, String) of the cell
                 if (getRowCount() > 0 && getValueAt(0, columnIndex) != null) {
                     return getValueAt(0, columnIndex).getClass();
                 }

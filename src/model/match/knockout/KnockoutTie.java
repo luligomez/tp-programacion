@@ -27,7 +27,7 @@ public class KnockoutTie implements Serializable {
     }
 
     private void initTie(ArrayList<Referee> referees, ArrayList<Stadium> stadiums){
-        // La serie se encarga de instanciar la ida y la vuelta con localías invertidas
+        // The tie is in charge of creating the first and second legs with swapped home teams
         Referee ref1 = MatchResourceService.pickValidReferee(team1, team2, referees);
         Stadium st1 = MatchResourceService.pickRandomUnusedStadium(stadiums);
         Formation formation1 = FormationCreator.createAutomaticFormation(team1);

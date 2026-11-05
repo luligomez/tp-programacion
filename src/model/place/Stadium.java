@@ -16,7 +16,7 @@ public class Stadium implements Serializable {
 
 
     public Stadium(String name, int capacity, City city) {
-        this(0, name, capacity, city); //llama al constructor de abajo
+        this(0, name, capacity, city); // calls the constructor below
     }
 
     public Stadium(long id ,String name, int capacity, City city) {

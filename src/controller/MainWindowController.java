@@ -2,6 +2,7 @@ package controller;
 
 import DAO.CityDAO;
 import DAO.StadiumDAO;
+import model.place.Stadium;
 import service.FileReader;
 import model.tournament.Tournament;
 import model.tournament.TournamentState;
@@ -14,8 +15,12 @@ import java.awt.*;
 import java.io.IOException;
 import service.CredentialPdfService;
 import view.theme.Theme;
-
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.sql.SQLException;
+import org.json.simple.parser.ParseException;
+import org.openpdf.text.DocumentException;
 
 import static model.tournament.TournamentState.*;
 
@@ -33,11 +38,11 @@ public class MainWindowController {
     }
 
     private void initController() {
-        // 1. Escuchamos los eventos que emite la ventana principal
+        // 1. Listen to the events emitted by the main window
         view.setOnSidebarSelectListener(this::onSidebarItemSelected);
         view.setOnResetListener(this::onResetTournament);
 
-        // 2. Cargamos la pantalla inicial (Fase de Grupos por defecto)
+        // 2. Load the initial screen (group stage by default)
         navigateToGroups();
     }
 
@@ -55,11 +60,11 @@ public class MainWindowController {
     }
 
     private void navigateToGroups() {
-        // PASO 1: Crear el controlador hijo (él solito se vincula con la vista y el torneo)
+        // STEP 1: Create the child controller (it binds itself to the view and the tournament)
         ZoneStageController zoneStageController = new ZoneStageController(tournament,
                 match -> showMatchDetail(match, this::navigateToGroups, SidebarItem.GROUPS),
                 this::saveTournament);
-        // PASO 2: Indicarle a la ventana principal que muestre el panel de la vista hija
+        // STEP 2: Tell the main window to show the child view's panel
         view.showScreen(zoneStageController.getView(), SidebarItem.GROUPS);
     }
 
@@ -74,11 +79,11 @@ public class MainWindowController {
 
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-                // 1. Recargamos el modelo desde el JSON
+                // 1. Reload the model from the JSON
                 this.tournament = FileReader.fileReader("torneo.json");
                 repository.delete();
                 this.tournament.setStadiums(new StadiumDAO().getAllStadiums());
-                // 2. Volvemos a cargar la pantalla de grupos limpia con el nuevo torneo
+                // 2. Reload the clean groups screen with the new tournament
                 navigateToGroups();
 
                 JOptionPane.showMessageDialog(
@@ -87,7 +92,7 @@ public class MainWindowController {
                         "Reset Complete",
                         JOptionPane.INFORMATION_MESSAGE
                 );
-            } catch (Exception e) {
+            } catch (IOException | ParseException | SQLException e) {
                 JOptionPane.showMessageDialog(
                         view,
                         "Error loading tournament file: " + e.getMessage(),
@@ -152,7 +157,7 @@ public class MainWindowController {
 
     private void navigateToAdmin() {
         CitiesController citiesController = new CitiesController(new CityDAO());
-        StadiumsController stadiumsController = new StadiumsController(new StadiumDAO(), new CityDAO());
+        StadiumsController stadiumsController = new StadiumsController(new StadiumDAO(), new CityDAO(), this::refreshTournamentStadiums);
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("Cities", citiesController.getView());
         tabs.addTab("Stadiums", stadiumsController.getView());
@@ -161,6 +166,12 @@ public class MainWindowController {
         JPanel adminPanel = new JPanel(new BorderLayout());
         adminPanel.add(tabs, BorderLayout.CENTER);
         view.showScreen(adminPanel, SidebarItem.ADMIN);
+    }
+
+    // The stadium CRUD changes the database;
+    private void refreshTournamentStadiums(List<Stadium> stadiums) {
+        tournament.setStadiums(new ArrayList<>(stadiums));
+        tournament.syncUsedStadiums();
     }
 
     private void styleTabs(JTabbedPane tabs) {
@@ -188,7 +199,7 @@ public class MainWindowController {
         try {
             new CredentialPdfService().generate(tournament, chooser.getSelectedFile().toPath());
             JOptionPane.showMessageDialog(view, "Credentials PDF created.");
-        } catch (Exception e) {
+        } catch (IOException | DocumentException e) {
             JOptionPane.showMessageDialog(view, "Could not create credentials: " + e.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }

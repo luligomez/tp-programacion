@@ -39,14 +39,14 @@ public class PenaltyShootout implements Serializable {
     public Team getWinner() {
         if (team1Goals > team2Goals) return team1;
         if (team2Goals > team1Goals) return team2;
-        return null; // Aún en definición o no iniciada
+        return null; // Still undecided or not started
     }
 
     public int getTeam1Goals() { return team1Goals; }
     public int getTeam2Goals() { return team2Goals; }
     public List<PenaltyKick> getKicks() { return kicks; }
 
-    // Clase interna o separada para representar cada tiro individual de la tanda
+    // Inner or separate class to represent each individual kick of the shootout
     public static class PenaltyKick implements Serializable {
         private final Team team;
         private final Player kicker;

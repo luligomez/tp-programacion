@@ -16,41 +16,41 @@ public class FormationCreator {
         Formation formation = new Formation();
         Random random = new Random();
 
-        // 1. Filtrar los jugadores habilitados (excluyendo a los suspendidos)
+        // 1. Filter the available players (excluding suspended ones)
         List<Player> available = new ArrayList<>(team.getPlayers().stream()
                 .filter(p -> {
                     if (p.getTournamentStats().isSuspended()) {
-                        p.getTournamentStats().setSuspended(false); // Cumple la fecha de sanción
+                        p.getTournamentStats().setSuspended(false); // Serves the suspension matchday
                         return false;
                     }
                     return true;
                 })
                 .toList());
 
-        // 2. Elegir una táctica al azar para este partido
+        // 2. Pick a random tactic for this match
         // 0 -> 4-3-3 | 1 -> 4-4-2 | 2 -> 5-3-2
         int tactic = random.nextInt(3);
         int defNeeded = (tactic == 2) ? 5 : 4;
         int midNeeded = (tactic == 1) ? 4 : 3;
         int fwdNeeded = (tactic == 0) ? 3 : 2;
 
-        // 3. Seleccionar obligado 1 Arquero
+        // 3. Always select 1 goalkeeper
         selectBestForPosition(available, formation, Position.GOALKEEPER, 1, random);
 
-        // 4. Seleccionar los jugadores de campo según la táctica elegida
+        // 4. Select the field players according to the chosen tactic
         selectBestForPosition(available, formation, Position.DEFENDER, defNeeded, random);
         selectBestForPosition(available, formation, Position.MIDFIELDER, midNeeded, random);
         selectBestForPosition(available, formation, Position.FORWARD, fwdNeeded, random);
 
-        // 5. Plan de Respaldo: Si faltaron jugadores en alguna posición específica para llegar a 11 titulares,
-        // completamos con los mejores disponibles restantes de cualquier posición
+        // 5. Fallback plan: if there were not enough players in a specific position to reach 11 starters,
+        // fill in with the best remaining available players from any position
         while (formation.getStarters().size() < Formation.STARTERS_PER_TEAM && !available.isEmpty()) {
             Player bestRemaining = getBestByForm(available, random);
             formation.addStarter(bestRemaining);
             available.remove(bestRemaining);
         }
 
-        // 6. El resto de los convocados disponibles van a la banca de suplentes
+        // 6. The rest of the available squad goes to the substitutes bench
         for (Player substitute : available) {
             formation.addSubstitutes(substitute);
         }
@@ -59,7 +59,7 @@ public class FormationCreator {
     }
     
 
-    // elegir cant de jugadores de una posición específica según la forma del día
+    // pick the number of players for a specific position according to the day's form
     private static void selectBestForPosition(List<Player> pool, Formation formation,
                                               Position position, int count, Random random) {
         for (int i = 0; i < count; i++) {
@@ -75,7 +75,7 @@ public class FormationCreator {
         }
     }
 
-    // Calcula la "forma del día" con ±10% de variación aleatoria
+    // Calculates the "form of the day" with ±10% random variation
     private static double getEffectiveRating(Player player, Random random) {
         double formFactor = 0.90 + (0.20 * random.nextDouble());
         return player.getRating() * formFactor;

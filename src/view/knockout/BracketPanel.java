@@ -22,7 +22,7 @@ public class BracketPanel extends JPanel {
     private static final int SLOT_H = 110;
     private static final int TITLE_H = 45;
     private static final int MARGIN = 30;
-    private static final int EXPAND_X = 60; // cuánto se ensancha al expandirse
+    private static final int EXPAND_X = 60; // how much it widens when expanded
 
     private static final String[] TITLES = {"Quarter Finals", "Semi Finals", "Final"};
 
@@ -31,7 +31,7 @@ public class BracketPanel extends JPanel {
     private final MatchCardPanel finalCard = new MatchCardPanel();
 
     public BracketPanel() {
-        setLayout(null); // las posiciones las calcula doLayout()
+        setLayout(null); // positions are computed by doLayout()
 
         for (int i = 0; i < quarterCards.length; i++) {
             quarterCards[i] = new MatchCardPanel();
@@ -69,12 +69,12 @@ public class BracketPanel extends JPanel {
         return new Dimension(2 * MARGIN + 3 * CARD_W + 2 * COL_GAP, TITLE_H + 4 * SLOT_H + MARGIN);
     }
 
-    // Altura del centro de cada tarjeta: las semis quedan entre sus dos cuartos, y la final entre las semis
+    // Center height of each card: semis sit between their two quarters, and the final between the semis
     private int quarterCenter(int i) { return TITLE_H + i * SLOT_H + SLOT_H / 2; }
     private int semiCenter(int j) { return (quarterCenter(2 * j) + quarterCenter(2 * j + 1)) / 2; }
     private int finalCenter() { return (semiCenter(0) + semiCenter(1)) / 2; }
 
-    // Centra la llave si la ventana es más ancha que lo necesario
+    // Centers the bracket if the window is wider than needed
     private int columnX(int col) {
         int offset = Math.max(0, (getWidth() - getPreferredSize().width) / 2);
         return offset + MARGIN + col * (CARD_W + COL_GAP);
@@ -109,7 +109,7 @@ public class BracketPanel extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-        // Titulos
+        // Titles
         g2.setFont(Theme.BIG_BOLD18);
         g2.setColor(Theme.PRIMARY);
         FontMetrics fm = g2.getFontMetrics();
@@ -118,7 +118,7 @@ public class BracketPanel extends JPanel {
             g2.drawString(TITLES[col], x, 22);
         }
 
-        // Llaves que unen las columnas
+        // Brackets joining the columns
         g2.setColor(Theme.LINE);
         g2.setStroke(new BasicStroke(2f));
         connect(g2, 0, quarterCenter(0), quarterCenter(1), semiCenter(0));
@@ -128,7 +128,7 @@ public class BracketPanel extends JPanel {
         g2.dispose();
     }
 
-    // Une dos tarjetas de una columna con la tarjeta de la columna siguiente
+    // Joins two cards of a column with the card of the next column
     private void connect(Graphics2D g2, int fromCol, int y1, int y2, int yTo) {
         int xRight = columnX(fromCol) + CARD_W;
         int xMid = xRight + COL_GAP / 2;
@@ -147,7 +147,7 @@ public class BracketPanel extends JPanel {
         return all;
     }
 
-    // Una sola tarjeta expandida a la vez, y la expandida se dibuja arriba de las demás
+    // Only one card expanded at a time, and the expanded one is drawn on top of the others
     private void toggle(MatchCardPanel clicked) {
         boolean wasExpanded = clicked.isExpanded();
         for (MatchCardPanel card : allCards()) card.collapse();

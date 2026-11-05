@@ -1,5 +1,6 @@
 package controller;
 
+import model.exception.InvalidTournamentException;
 import model.tournament.Tournament;
 import model.tournament.TournamentState;
 import model.match.Match;
@@ -10,7 +11,6 @@ import model.tournament.zone.Zone;
 import java.util.ArrayList;
 import java.util.List;
 import model.tournament.zone.ZoneStage;
-
 import java.util.function.Consumer;
 
 public class ZoneStageController {
@@ -33,7 +33,7 @@ public class ZoneStageController {
         view.setOnDrawConfirmedListener(this::onDrawConfirmed);
         view.setOnRedrawListener(this::onRedraw);
         view.setOnSimulateMatchdayListener(this::simulateNextMatchday);
-        view.setOnMatchSelectedListener(onOpenMatch); // nuevo
+        view.setOnMatchSelectedListener(onOpenMatch);
         updateView();
     }
     public ZoneStageView getView() {
@@ -66,21 +66,12 @@ public class ZoneStageController {
     }
 
     private void onDrawConfirmed() {
-
-        if (tournament.getStadiums() == null ||
-                tournament.getStadiums().size() < 13) {
-
-            javax.swing.JOptionPane.showMessageDialog(
-                    view,
-                    "Se necesitan al menos 13 estadios para iniciar el torneo.",
-                    "Estadios insuficientes",
-                    javax.swing.JOptionPane.WARNING_MESSAGE
-            );
-
+        try {
+            tournament.confirmDraw();
+        } catch (InvalidTournamentException e) {
+            view.showWarning("Not enough stadiums", e.getMessage());
             return;
         }
-
-        tournament.confirmDraw();
         onProgress.run();
         updateView();
     }

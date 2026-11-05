@@ -23,6 +23,10 @@ public class ZoneStageView extends JPanel {
         setLayout(new BorderLayout());
     }
 
+    public void showWarning(String title, String message) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.WARNING_MESSAGE);
+    }
+
     public void setOnDrawRequestedListener(Runnable listener) {
         this.onDrawRequestedListener = listener;
     }
@@ -66,7 +70,7 @@ public class ZoneStageView extends JPanel {
             if (onSimulateMatchdayListener != null) {
                 standingsPanel.setOnSimulateMatchdayListener(onSimulateMatchdayListener);
             }
-            // la lambda lee el campo al momento del click, no al construir
+            // the lambda reads the field at click time, not at construction
             standingsPanel.setOnMatchSelectedListener(match -> {
                 if (matchSelectedListener != null) matchSelectedListener.accept(match);
             });
@@ -83,10 +87,8 @@ public class ZoneStageView extends JPanel {
             standingsPanel.updateGroups(zones);
         }
     }
-    public void showStandingsComparison(
-            List<Zone> zones,
-            List<List<TeamStanding>> standingsBefore) {
 
+    public void showStandingsComparison(List<Zone> zones, List<List<TeamStanding>> standingsBefore) {
         if (standingsPanel != null) {
             standingsPanel.updateGroups(zones);
             standingsPanel.showComparison(standingsBefore);

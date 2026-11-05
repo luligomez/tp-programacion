@@ -17,10 +17,10 @@ public class PlayersController {
         this.view = new PlayersView();
         this.tournament = tournament;
 
-        // 1. El Controlador escucha los eventos de los filtros en la Vista
+        // 1. The controller listens to the filter events in the view
         this.view.addFilterListener(e -> this.view.applyFilters());
 
-        // 2. Cargar datos del modelo
+        // 2. Load data from the model
         loadReportData();
     }
 

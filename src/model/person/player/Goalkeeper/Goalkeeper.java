@@ -12,7 +12,7 @@ public class Goalkeeper extends Player {
     private static final long serialVersionUID = 1L;
 
     public Goalkeeper(String name, LocalDate birthDate, String documentType, String documentNumber, Position position, GoalkeeperAttributes attributes, GoalkeeperCareerStats careerStats) {
-        super(name, birthDate, documentType, documentNumber, position, calculateRating(attributes, careerStats, position),attributes, careerStats); //CALCULAR RATING
+        super(name, birthDate, documentType, documentNumber, position, calculateRating(attributes, careerStats, position),attributes, careerStats); // Compute the rating
 
     }
 

@@ -54,7 +54,7 @@ public class MatchCardPanel extends JPanel {
         showEmpty();
     }
 
-    //expandir o contraer
+    // expand or collapse
     public boolean isExpanded() {
         return expanded;
     }
@@ -70,7 +70,7 @@ public class MatchCardPanel extends JPanel {
         details.setVisible(false);
     }
 
-    // Cruce de cuartos o semis. Si todavía no existe (null), queda "por definir".
+    // Quarter or semi final tie. If it does not exist yet (null), it stays "to be defined".
     public void showTie(KnockoutTie tie) {
         if (tie == null) {
             showEmpty();
@@ -96,7 +96,7 @@ public class MatchCardPanel extends JPanel {
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
-    // La final es un partido único
+    // The final is a single match
     public void showFinal(FinalMatch match) {
         if (match == null) {
             showEmpty();

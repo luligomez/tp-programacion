@@ -150,7 +150,7 @@ public class Zone implements Serializable {
             }
             if (j > i) {
                 List<TeamStanding> tiedGroup = sorted.subList(i, j + 1);
-                    applyMultiWayHeadToHead(tiedGroup); // mini-tabla
+                    applyMultiWayHeadToHead(tiedGroup); // mini-table
             }
             i = j + 1;
         }
@@ -163,13 +163,13 @@ public class Zone implements Serializable {
     }
 
     private void applyMultiWayHeadToHead(List<TeamStanding> tiedGroup) {
-        // Extraigo los equipos del bloque empatado, para filtrar los partidos entre ellos
+        // Extract the teams of the tied block, to filter the matches between them
         List<Team> tiedTeams = new ArrayList<>();
         for (TeamStanding standing : tiedGroup) {
             tiedTeams.add(standing.getTeam());
         }
 
-        // Armo una mini-tabla, solo con puntos/goles de los partidos JUGADOS ENTRE ESTOS EQUIPOS
+        // Build a mini-table with only the points/goals of the matches PLAYED BETWEEN THESE TEAMS
         Map<Team, Integer> miniPoints = new HashMap<>();
         Map<Team, Integer> miniGoalsFor = new HashMap<>();
         Map<Team, Integer> miniGoalsAgainst = new HashMap<>();
@@ -186,7 +186,7 @@ public class Zone implements Serializable {
             Team team1 = match.getTeam1();
             Team team2 = match.getTeam2();
 
-            // solo cuenta si AMBOS equipos del partido están en el bloque empatado
+            // only counts if BOTH teams of the match are in the tied block
             if (tiedTeams.contains(team1) && tiedTeams.contains(team2)) {
 
                 int goals1 = match.getTeam1Goals();
@@ -208,7 +208,7 @@ public class Zone implements Serializable {
             }
         }
 
-        // Ordeno el bloque empatado según la mini-tabla: puntos, luego diferencia de gol, luego goles a favor
+        // Sort the tied block by the mini-table: points, then goal difference, then goals for
         tiedGroup.sort((s1, s2) -> {
             Team t1 = s1.getTeam();
             Team t2 = s2.getTeam();
@@ -243,7 +243,7 @@ public class Zone implements Serializable {
                 Referee referee = MatchResourceService.pickValidReferee(team1, team2, referees);
                 Stadium stadium = MatchResourceService.pickRandomStadium(stadiums);
 
-                // Creamos el partido sin fecha (se le asigna después)
+                // Create the match without a date (assigned later)
                 GroupStageMatch match = new GroupStageMatch(
                         team1,
                         team2,
@@ -254,7 +254,7 @@ public class Zone implements Serializable {
 
                 addMatch(match);
             }
-            // Rotación Round-Robin
+            // Round-robin rotation
             Team lastTeam = teamsInZone.remove(numTeams - 1);
             teamsInZone.add(1, lastTeam);
         }

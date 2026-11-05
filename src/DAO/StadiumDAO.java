@@ -54,7 +54,7 @@ public class StadiumDAO {
                         // Chile
                         "('Estadio Nacional Julio Martínez Prádanos', 48665, 10), " +
                         "('Estadio Monumental David Arellano', 47347, 10), " +
-                        // Perú
+                        // Peru
                         "('Estadio Monumental U', 80093, 11), " +
                         "('Estadio Nacional del Perú', 50000, 11), " +
                         // Colombia

@@ -70,7 +70,7 @@ public class ZoneStageView extends JPanel {
             if (onSimulateMatchdayListener != null) {
                 standingsPanel.setOnSimulateMatchdayListener(onSimulateMatchdayListener);
             }
-            // la lambda lee el campo al momento del click, no al construir
+            // the lambda reads the field at click time, not at construction
             standingsPanel.setOnMatchSelectedListener(match -> {
                 if (matchSelectedListener != null) matchSelectedListener.accept(match);
             });

@@ -16,7 +16,7 @@ public class TeamStandingRowPanel extends JPanel {
         setOpaque(false);
         setBorder(BorderFactory.createEmptyBorder(6, 10, 6, 10));
 
-        // 1. Posición y Nombre del Equipo (Izquierda)
+        // 1. Position and team name (left)
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
         leftPanel.setOpaque(false);
 
@@ -31,7 +31,7 @@ public class TeamStandingRowPanel extends JPanel {
         leftPanel.add(nameLabel);
         add(leftPanel, BorderLayout.CENTER);
 
-        // 2. Estadísticas: Pts, PJ, PG, PE, PP, GF, GC, DG (Derecha)
+        // 2. Stats: points, played, won, drawn, lost, goals for, goals against, goal difference (right)
         JPanel statsPanel = new JPanel(new GridLayout(1, 8, 11, 0));
         statsPanel.setOpaque(false);
 

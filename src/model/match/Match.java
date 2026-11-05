@@ -88,7 +88,7 @@ public abstract class Match implements Serializable {
     public void addIncident(Incident incident) {
         if (incident == null) return;
 
-        // Se guarda en el historial cronológico del partido
+        // It is stored in the match's chronological history
         incidents.add(incident);
         incident.registerStats();
     }
@@ -120,7 +120,7 @@ public abstract class Match implements Serializable {
 
     public void registerPlayerStatistics() {
 
-        // Evitar registrar dos veces las estadísticas del mismo partido
+        // Avoid registering the stats of the same match twice
         if (playerStatisticsRegistered) {
             return;
         }
@@ -144,7 +144,7 @@ public abstract class Match implements Serializable {
             }
         }
 
-        // Marcar las estadísticas como registradas
+        // Mark the stats as registered
         playerStatisticsRegistered = true;
     }
 

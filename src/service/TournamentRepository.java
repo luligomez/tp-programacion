@@ -13,8 +13,8 @@ public class TournamentRepository {
         return Files.exists(FILE);
     }
 
-    // Se escribe a un temporal y después se reemplaza: si la app se cierra a mitad de escritura,
-    // el guardado anterior queda intacto
+    // It is written to a temporary file and then replaced: if the app closes mid-write,
+    // the previous save stays intact
     public void save(Tournament tournament) throws IOException {
         try (ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(TMP)))) {
             out.writeObject(tournament);

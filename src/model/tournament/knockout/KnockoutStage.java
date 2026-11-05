@@ -34,7 +34,7 @@ public class KnockoutStage implements Serializable {
         return ties.stream().filter(t -> t.getPhase() == phase).collect(Collectors.toList());
     }
 
-    public FinalMatch getFinalMatch() { return finalMatch; }   // null si todavía no existe
+    public FinalMatch getFinalMatch() { return finalMatch; }   // null if it does not exist yet
 
     public boolean hasFinal() { return finalMatch != null; }
 
@@ -42,7 +42,7 @@ public class KnockoutStage implements Serializable {
 
     public boolean hasUnresolvedFinal() { return hasFinal() && finalMatch.getWinner() == null; }
 
-    // "!isEmpty()": allMatch devuelve true en una lista vacía, y una fase que no existe no está jugada
+    // "!isEmpty()": allMatch returns true on an empty list, and a phase that does not exist is not played
     public boolean isFirstLegPlayed(KnockoutPhase phase) {
         List<KnockoutTie> phaseTies = getTies(phase);
         return !phaseTies.isEmpty() && phaseTies.stream().allMatch(t -> t.getFirstLeg().isPlayed());
@@ -74,7 +74,7 @@ public class KnockoutStage implements Serializable {
         return matches;
     }
 
-    // Qué falta jugar
+    // What is left to play
     public KnockoutStep currentStep() {
         KnockoutPhase qf = KnockoutPhase.QUARTER_FINAL, sf = KnockoutPhase.SEMI_FINAL;
         if (!isFirstLegPlayed(qf)) return KnockoutStep.QUARTERS_FIRST_LEG;
@@ -88,7 +88,7 @@ public class KnockoutStage implements Serializable {
         return KnockoutStep.DONE;
     }
 
-    // ---------- simulación ----------
+    // ---------- simulation ----------
 
     public void simulateFirstLegs(KnockoutPhase phase) {
         getTies(phase).forEach(tie -> MatchSimulator.simulateMatch(tie.getFirstLeg()));
@@ -117,7 +117,7 @@ public class KnockoutStage implements Serializable {
         }
     }
 
-    // ---------- generación (árbitros y estadios llegan por parámetro porque son del torneo) ----------
+    // ---------- generation (referees and stadiums come as parameters because they belong to the tournament) ----------
 
     public void generateQuarterFinals(ArrayList<Zone> zones, ArrayList<Referee> referees,
                                       ArrayList<Stadium> stadiums, LocalDate after) {

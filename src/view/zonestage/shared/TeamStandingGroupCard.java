@@ -17,7 +17,7 @@ public class TeamStandingGroupCard extends JPanel {
                 BorderFactory.createEmptyBorder(0, 0, 8, 0)
         ));
 
-        // Título de la Zona (ej. "Zone A")
+        // Zone title (e.g. "Zone A")
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 15f));
         titleLabel.setForeground(Theme.PRIMARY);
@@ -29,7 +29,7 @@ public class TeamStandingGroupCard extends JPanel {
         add(createHeaderPanel());
         add(new JSeparator());
 
-        // Filas de equipos ordenadas por puntos/posición
+        // Team rows sorted by points/position
         for (int i = 0; i < standings.size(); i++) {
             add(new TeamStandingRowPanel(i + 1, standings.get(i)));
         }

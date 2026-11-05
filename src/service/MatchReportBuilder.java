@@ -36,7 +36,7 @@ public class MatchReportBuilder {
         return match.getIncidents().stream()
                 .map(incident -> incident.toTimelineEvent(match))
                 .flatMap(Optional::stream)
-                .sorted(Comparator.comparingInt(TimelineEvent::minute)) // estable: mismo minuto conserva el orden
+                .sorted(Comparator.comparingInt(TimelineEvent::minute)) // stable: same minute keeps the order
                 .toList();
     }
 
@@ -49,7 +49,7 @@ public class MatchReportBuilder {
 
     private static List<LineupPlayer> toLineupPlayers(Match match, List<Player> players) {
         return players.stream()
-                .sorted(Comparator.comparing(Player::getPosition)) // orden de declaración del enum Position
+                .sorted(Comparator.comparing(Player::getPosition)) // declaration order of the Position enum
                 .map(player -> toLineupPlayer(match, player))
                 .toList();
     }

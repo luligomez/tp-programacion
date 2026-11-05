@@ -57,7 +57,7 @@ public class Goal extends Incident {
 
     @Override
     public Optional<TimelineEvent> toTimelineEvent(Match match) {
-        // un gol en contra suma para el equipo rival del autor
+        // an own goal counts for the author's opposing team
         Side side = (match.isTeam1Player(scorer) != ownGoal) ? Side.TEAM1 : Side.TEAM2;
         EventType type = ownGoal ? EventType.OWN_GOAL
                 : penalty ? EventType.PENALTY_GOAL : EventType.GOAL;
@@ -76,7 +76,7 @@ public class Goal extends Incident {
         if (!ownGoal && scorer != null) {
             scorer.getTournamentStats().registerGoal(penalty);
         }
-        // el arquero recibe el gol incluso si fue en contra
+        // the goalkeeper concedes the goal even if it was an own goal
         if (goalkeeper != null) {
             goalkeeper.getTournamentStats().registerGoalConceded();
         }

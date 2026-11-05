@@ -35,14 +35,14 @@ public class StandingsPanel extends JPanel {
     private final JComboBox<String> comboZoneFilter;
     private final JComboBox<String> comboMatchdayFilter;
 
-    // LISTA DE PARTIDOS (FIXTURE)
+    // MATCH LIST (FIXTURE)
     private final DefaultListModel<MatchRow> matchesListModel;
     private final JList<MatchRow> matchesList;
 
     private Consumer<Match> matchSelectedListener;
 
 
-    /** Fila del fixture: partido + nombre de la zona a la que pertenece. */
+    /** Fixture row: match + name of the zone it belongs to. */
     public static class MatchRow {
         final String zoneName;
         final GroupStageMatch match;
@@ -62,7 +62,7 @@ public class StandingsPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
 // ------------------------------------------------------------------
-// 1. BARRA SUPERIOR (Botón de Simulación)
+// 1. TOP BAR (Simulation button)
 // ------------------------------------------------------------------
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         btnSimulateMatchday = new JButton("Simulate Next Matchday 1 ⚽");
@@ -90,10 +90,10 @@ public class StandingsPanel extends JPanel {
         groupsGrid.setPreferredSize(new Dimension(0, 600));
         contentPanel.add(groupsGrid);
 
-// Espaciador entre las tablas y el fixture
+// Spacer between the tables and the fixture
         contentPanel.add(Box.createVerticalStrut(20));
 
-// B) Fixture con Filtros de Zona y Fecha
+// B) Fixture with Zone and Matchday filters
         JPanel fixtureContainer = new JPanel(new BorderLayout(0, 8));
         fixtureContainer.setBorder(BorderFactory.createTitledBorder("MATCHES & FIXTURE"));
 
@@ -114,14 +114,14 @@ public class StandingsPanel extends JPanel {
         fixtureContainer.add(filterBar, BorderLayout.NORTH);
 
 
-// Lista de partidos (Sin JScrollPane propio para que expanda su altura)
+// Match list (no own JScrollPane so that it expands its height)
         matchesListModel = new DefaultListModel<>();
         matchesList = new JList<>(matchesListModel);
         matchesList.setCellRenderer(new MatchCellRenderer());
         matchesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         matchesList.setFixedCellHeight(40);
         matchesList.setLayoutOrientation(JList.VERTICAL);
-        matchesList.setVisibleRowCount(-1); // Permite que el JList crezca a lo largo según la cantidad de partidos
+        matchesList.setVisibleRowCount(-1); // Lets the JList grow according to the number of matches
 
         matchesList.addMouseListener(new MouseAdapter() {
             @Override
@@ -141,11 +141,11 @@ public class StandingsPanel extends JPanel {
         contentPanel.add(fixtureContainer);
 
 // ------------------------------------------------------------------
-// 3. UN SOLO JSCROLLPANE PARA TODA LA PANTALLA
+// 3. A SINGLE JSCROLLPANE FOR THE WHOLE SCREEN
 // ------------------------------------------------------------------
         JScrollPane mainScrollPane = new JScrollPane(contentPanel);
         mainScrollPane.setBorder(null);
-        mainScrollPane.getVerticalScrollBar().setUnitIncrement(16); // Scroll fluido con la rueda del mouse
+        mainScrollPane.getVerticalScrollBar().setUnitIncrement(16); // Smooth scrolling with the mouse wheel
         mainScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         add(mainScrollPane, BorderLayout.CENTER);
@@ -262,7 +262,7 @@ public class StandingsPanel extends JPanel {
         }
     }
     /**
-     * Refresca tanto las tablas como la lista filtrada de partidos.
+     * Refreshes both the tables and the filtered match list.
      */
     public void updateGroups(List<Zone> zones) {
         this.zones = zones;
@@ -281,7 +281,7 @@ public class StandingsPanel extends JPanel {
     }
 
     /**
-     * Aplica los filtros de Zona y Matchday sobre los partidos de las zonas.
+     * Applies the Zone and Matchday filters over the zones' matches.
      */
     public void refreshMatchesList() {
         matchesListModel.clear();
@@ -338,23 +338,23 @@ public class StandingsPanel extends JPanel {
             JPanel badgeWrap = new JPanel(new GridBagLayout());
             badgeWrap.setOpaque(false);
             badgeWrap.add(lblBadge);
-            // 1. Configuración y alineación de las etiquetas
+            // 1. Label setup and alignment
             lblTeam1.setFont(Theme.SMALL_BOLD13);
             lblTeam1.setHorizontalAlignment(SwingConstants.RIGHT); // Pegado al marcador
-            lblTeam1.setPreferredSize(new Dimension(0, 24));       // TRUCO: Ancho 0 para forzar reparto 50/50
+            lblTeam1.setPreferredSize(new Dimension(0, 24));       // TRICK: width 0 to force a 50/50 split
 
             lblTeam2.setFont(Theme.SMALL_BOLD13);
             lblTeam2.setHorizontalAlignment(SwingConstants.LEFT);  // Pegado al marcador
-            lblTeam2.setPreferredSize(new Dimension(0, 24));       // TRUCO: Ancho 0 para forzar reparto 50/50
+            lblTeam2.setPreferredSize(new Dimension(0, 24));       // TRICK: width 0 to force a 50/50 split
 
             lblScore.setFont(Theme.BODY_BOLD);
-            lblScore.setHorizontalAlignment(SwingConstants.CENTER);// Texto en el centro
+            lblScore.setHorizontalAlignment(SwingConstants.CENTER);// Text in the center
             lblScore.setPreferredSize(new Dimension(60, 24));
 
             lblStatus.setFont(Theme.SMALL12);
             lblStatus.setPreferredSize(new Dimension(110, 20));
 
-            // 2. Armado del panel central (tu código GridBagLayout se mantiene igual)
+            // 2. Build the center panel (GridBagLayout)
             JPanel center = new JPanel(new GridBagLayout());
             center.setOpaque(false);
             GridBagConstraints gc = new GridBagConstraints();
@@ -431,7 +431,7 @@ public class StandingsPanel extends JPanel {
         int index = matchesList.locationToIndex(point);
         if (index < 0) return;
 
-        // locationToIndex devuelve la fila más cercana aunque hayas tocado el espacio vacío debajo
+        // locationToIndex returns the closest row even if the empty space below was clicked
         Rectangle bounds = matchesList.getCellBounds(index, index);
         if (bounds == null || !bounds.contains(point)) return;
 

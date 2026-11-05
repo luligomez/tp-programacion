@@ -76,7 +76,7 @@ public class TournamentReportsService {
 
         for (Team team : tournament.getTeams()) {
 
-            // 1. Edad promedio de sus jugadores
+            // 1. Average age of its players
             double avgPlayerAge = 0.0;
             if (team.getPlayers() != null && !team.getPlayers().isEmpty()) {
                 double totalAge = 0;
@@ -86,7 +86,7 @@ public class TournamentReportsService {
                 avgPlayerAge = totalAge / team.getPlayers().size();
             }
 
-            // 2. Edad y Nacionalidad del DT
+            // 2. Age and nationality of the coach
             int coachAge = 0;
             String coachNationality = "N/A";
             if (team.getCoach() != null) {
@@ -155,7 +155,7 @@ public class TournamentReportsService {
             ));
         }
 
-        // 5. Ordenar alfabéticamente por nombre del equipo
+        // 5. Sort alphabetically by team name
         items.sort((t1, t2) -> t1.getTeamName().compareToIgnoreCase(t2.getTeamName()));
 
         return new TeamReportData(items);

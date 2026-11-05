@@ -10,7 +10,7 @@ public record MatchReport(
         boolean played, int team1Goals, int team2Goals,
         String date, String stadiumName, String refereeName,
         List<TimelineEvent> timeline,
-        TeamLineupReport team1Lineup,   // null si las formaciones no están confirmadas
+        TeamLineupReport team1Lineup,   // null if the formations are not confirmed
         TeamLineupReport team2Lineup,
         PenaltyShootoutReport shootout) {
 
@@ -40,7 +40,7 @@ public record MatchReport(
         return team1Lineup != null && team2Lineup != null;
     }
 
-    // una ronda: puede faltar la patada del equipo 2 si la tanda se definió antes
+    // one round: team 2's kick may be missing if the shootout was decided earlier
     public record PenaltyRound(int number, PenaltyShootout.PenaltyKick team1Kick, PenaltyShootout.PenaltyKick team2Kick) {}
 
     public record PenaltyShootoutReport(List<PenaltyRound> rounds, int team1Score, int team2Score, String winnerName) {}

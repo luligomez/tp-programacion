@@ -30,10 +30,10 @@ public abstract class Incident implements Serializable {
         return "Min " + minute + "'";
     }
 
-    // Cómo aparece esta incidencia en la línea de tiempo (vacío si no se muestra)
+    // How this incident appears on the timeline (empty if not shown)
     public abstract Optional<TimelineEvent> toTimelineEvent(Match match);
 
-    // Qué símbolo le corresponde a este jugador por esta incidencia (vacío si no está involucrado)
+    // Which symbol this player gets for this incident (empty if not involved)
     public Optional<PlayerMark> markFor(Player player) {
         return Optional.empty();
     }

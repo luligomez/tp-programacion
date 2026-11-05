@@ -38,11 +38,11 @@ public class MainWindowController {
     }
 
     private void initController() {
-        // 1. Escuchamos los eventos que emite la ventana principal
+        // 1. Listen to the events emitted by the main window
         view.setOnSidebarSelectListener(this::onSidebarItemSelected);
         view.setOnResetListener(this::onResetTournament);
 
-        // 2. Cargamos la pantalla inicial (Fase de Grupos por defecto)
+        // 2. Load the initial screen (group stage by default)
         navigateToGroups();
     }
 
@@ -60,11 +60,11 @@ public class MainWindowController {
     }
 
     private void navigateToGroups() {
-        // PASO 1: Crear el controlador hijo (él solito se vincula con la vista y el torneo)
+        // STEP 1: Create the child controller (it binds itself to the view and the tournament)
         ZoneStageController zoneStageController = new ZoneStageController(tournament,
                 match -> showMatchDetail(match, this::navigateToGroups, SidebarItem.GROUPS),
                 this::saveTournament);
-        // PASO 2: Indicarle a la ventana principal que muestre el panel de la vista hija
+        // STEP 2: Tell the main window to show the child view's panel
         view.showScreen(zoneStageController.getView(), SidebarItem.GROUPS);
     }
 
@@ -79,11 +79,11 @@ public class MainWindowController {
 
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-                // 1. Recargamos el modelo desde el JSON
+                // 1. Reload the model from the JSON
                 this.tournament = FileReader.fileReader("torneo.json");
                 repository.delete();
                 this.tournament.setStadiums(new StadiumDAO().getAllStadiums());
-                // 2. Volvemos a cargar la pantalla de grupos limpia con el nuevo torneo
+                // 2. Reload the clean groups screen with the new tournament
                 navigateToGroups();
 
                 JOptionPane.showMessageDialog(

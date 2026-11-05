@@ -5,7 +5,7 @@ import java.awt.Font;
 
 public final class Theme {
 
-    private Theme() { }   // clase de utilidad: no se instancia
+    private Theme() { }   // utility class: not instantiated
 
     // ---------- Colores de marca ----------
     public static final Color PRIMARY = new Color(35, 95, 190);
@@ -46,7 +46,7 @@ public final class Theme {
     public static final Color REFEREE_COLOR = new Color(190, 90, 30);
     public static final Color CARD_BORDER = new Color(190, 190, 190);
 
-    // ---------- Barras de navegación ----------
+    // ---------- Navigation bars ----------
     public static final Color TOPBAR_BG = new Color(30, 30, 30);
     public static final Color SIDEBAR_BG = new Color(45, 45, 45);
     public static final Color SIDEBAR_ACTIVE = new Color(70, 70, 70);

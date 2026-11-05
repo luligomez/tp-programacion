@@ -54,7 +54,7 @@ public class MatchDetailView extends JPanel {
         add(tabs, BorderLayout.CENTER);
     }
 
-    // ---------- API para el controller ----------
+    // ---------- API for the controller ----------
 
     public void setOnBackListener(Runnable listener) {
         backButton.addActionListener(e -> listener.run());
@@ -130,7 +130,7 @@ public class MatchDetailView extends JPanel {
         timelinePanel.repaint();
     }
 
-    // Una fila: [evento equipo 1] | minuto | [evento equipo 2]
+    // One row: [team 1 event] | minute | [team 2 event]
     private JPanel buildTimelineRow(TimelineEvent event) {
         JLabel left = sideLabel(true);
         JLabel right = sideLabel(false);
@@ -140,7 +140,7 @@ public class MatchDetailView extends JPanel {
         target.setText(textFor(event));
         target.setIcon(iconFor(event.type()));
         if (isTeam1) {
-            target.setHorizontalTextPosition(SwingConstants.LEFT); // texto a la izquierda, ícono pegado al minuto
+            target.setHorizontalTextPosition(SwingConstants.LEFT); // text on the left, icon next to the minute
         }
         return threeColumnRow(left, centerTag(event.minute() + "'"), right);
     }
@@ -202,7 +202,7 @@ public class MatchDetailView extends JPanel {
         }
         column.add(sectionLabel("Substitutes", 12f, Theme.GRAY));
         for (LineupPlayer player : lineup.substitutes()) {
-            // un suplente que nunca entró se muestra en gris (solo si el partido ya se jugó)
+            // a substitute who never came on is shown in gray (only if the match was already played)
             column.add(buildPlayerRow(player, played && !player.cameOn()));
         }
         return column;
@@ -223,7 +223,7 @@ public class MatchDetailView extends JPanel {
             name.setForeground(Theme.GRAY);
         }
 
-        // nombre y símbolos, uno detrás del otro y alineados a la izquierda
+        // name and symbols, one after the other and left-aligned
         JPanel info = new JPanel();
         info.setLayout(new BoxLayout(info, BoxLayout.X_AXIS));
         info.setOpaque(false);
@@ -246,7 +246,7 @@ public class MatchDetailView extends JPanel {
         return label;
     }
 
-    // Pastilla de posición, sin borde interno para que "GK" entre sin truncarse
+    // Position pill, without inner border so that "GK" fits without being truncated
     private JLabel positionTag(Position position) {
         JLabel label = new JLabel(position.getShortName(), SwingConstants.CENTER);
         label.setFont(label.getFont().deriveFont(Font.BOLD, 10f));
@@ -303,7 +303,7 @@ public class MatchDetailView extends JPanel {
         return label;
     }
 
-    // Etiqueta tipo "píldora" (minuto o posición)
+    // Pill-style label (minute or position)
     private JLabel tag(String text, float size, int horizontalPadding) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
         label.setFont(label.getFont().deriveFont(Font.BOLD, size));
@@ -347,14 +347,14 @@ public class MatchDetailView extends JPanel {
     }
 
     private void fillKick(JLabel label, PenaltyKick kick, boolean rightAligned) {
-        if (kick == null) return;   // el equipo 2 no llegó a patear esta ronda
+        if (kick == null) return;   // team 2 did not get to kick this round
         label.setText(kick.getKicker().getName());
         label.setIcon(icon(kick.hasScored() ? EventIcon.Kind.PENALTY_SCORED : EventIcon.Kind.PENALTY_MISSED,
                 TIMELINE_ICON));
         if (rightAligned) label.setHorizontalTextPosition(SwingConstants.LEFT);
     }
 
-    // [izquierda] | centro | [derecha], con separador abajo y ancho máximo centrado
+    // [left] | center | [right], with a separator below and centered maximum width
     private JPanel threeColumnRow(JComponent left, JComponent center, JComponent right) {
         JPanel row = new JPanel(new GridBagLayout());
         row.setOpaque(false);
@@ -368,23 +368,23 @@ public class MatchDetailView extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridy = 0;
 
-        // Columna Izquierda (45% del ancho)
+        // Left column (45% of the width)
         gbc.gridx = 0;
         gbc.weightx = 0.45;
         row.add(left, gbc);
-        // Columna Central - Minuto (10% del ancho)
+        // Center column - Minute (10% of the width)
         gbc.gridx = 1;
         gbc.weightx = 0.0;
         gbc.insets = new Insets(0, 8, 0, 8);
         row.add(center, gbc);
-        // Columna Derecha (45% del ancho)
+        // Right column (45% of the width)
         gbc.gridx = 2;
         gbc.weightx = 0.45;
         row.add(right, gbc);
         return row;
     }
 
-    // Etiqueta lateral: ancho 0 para que el reparto sea 50/50 y el centro quede siempre centrado
+    // Side label: width 0 so the split is 50/50 and the center always stays centered
     private JLabel sideLabel(boolean rightAligned) {
         JLabel label = new JLabel("", rightAligned ? SwingConstants.RIGHT : SwingConstants.LEFT);
         label.setFont(label.getFont().deriveFont(15f));

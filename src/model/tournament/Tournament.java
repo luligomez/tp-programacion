@@ -19,7 +19,7 @@ import java.util.Objects;
 
 public class Tournament implements Serializable {
     @Serial
-    private static final long serialVersionUID = 3L;   // cambió la estructura: los guardados viejos ya no cargan
+    private static final long serialVersionUID = 3L;   // structure changed: old saved files can no longer be loaded
 
     private static final int TEAMS = 16;
     public static final int TEAMS_PER_GROUP = 4;
@@ -27,7 +27,7 @@ public class Tournament implements Serializable {
 
     private final ArrayList<Team> teams = new ArrayList<>();
     private final ArrayList<Referee> referees = new ArrayList<>();
-    private transient ArrayList<Stadium> stadiums = new ArrayList<>(); // se recargan de la BD
+    private transient ArrayList<Stadium> stadiums = new ArrayList<>(); // reloaded from the DB
     private final ZoneStage zoneStage = new ZoneStage();
     private final KnockoutStage knockoutStage = new KnockoutStage();
     private TournamentState state = TournamentState.NOT_DRAWN;
@@ -42,7 +42,7 @@ public class Tournament implements Serializable {
     public ZoneStage getZoneStage() { return zoneStage; }
     public KnockoutStage getKnockoutStage() { return knockoutStage; }
 
-    // los que usa medio proyecto siguen disponibles, delegando
+    // the ones used across the project remain available, delegating
     public ArrayList<Zone> getZones() { return zoneStage.getZones(); }
     public int getCurrentMatchday() { return zoneStage.getCurrentMatchday(); }
 
@@ -86,7 +86,7 @@ public class Tournament implements Serializable {
         zoneStage.generateMatches(referees, stadiums, LocalDate.now());
     }
 
-    // ---------- paso de una fase a la otra (acá está la coordinación) ----------
+    // ---------- moving from one stage to the next (coordination happens here) ----------
 
     public void simulateCurrentMatchday() {
         if (zoneStage.isFinished()) return;
@@ -121,7 +121,7 @@ public class Tournament implements Serializable {
                 .orElse(LocalDate.now());
     }
 
-    // Marca como usados los estadios de las eliminatorias, tras recargarlos de la BD
+    // Marks the knockout stadiums as used, after reloading them from the DB
     public void syncUsedStadiums() {
         knockoutStage.getMatches().stream()
                 .map(Match::getStadium)

@@ -19,7 +19,7 @@ public class KnockoutService {
     public static List<KnockoutTie> generateQuarterFinals(List<Zone> zones, ArrayList<Referee> referees, ArrayList<Stadium> stadiums) {
         List<KnockoutTie> qfTies = new ArrayList<>();
 
-        // 1° y 2° de cada Zona
+        // 1st and 2nd of each Zone
         Team firstA = zones.get(0).getQualifiedTeams().get(0);
         Team secondA = zones.get(0).getQualifiedTeams().get(1);
         Team firstB = zones.get(1).getQualifiedTeams().get(0);
@@ -54,7 +54,7 @@ public class KnockoutService {
         return semiTies;
     }
 
-    // 3. Generar la Final
+    // 3. Generate the Final
     public static FinalMatch generateFinal(List<Team> semiWinners, ArrayList<Referee> referees, ArrayList<Stadium> stadiums) {
         if (semiWinners == null || semiWinners.size() != 2) {
             throw new InvalidTournamentException(

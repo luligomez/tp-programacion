@@ -32,7 +32,7 @@ public class MatchDetailsPanel extends JPanel {
         hasContent = false;
     }
 
-    // Cuartos y semis: tabla con ida, vuelta y global
+    // Quarter and semi finals: table with first leg, second leg and aggregate
     public void showTie(KnockoutTie tie) {
         begin();
 
@@ -69,7 +69,7 @@ public class MatchDetailsPanel extends JPanel {
         end();
     }
 
-    // Final: un solo partido
+    // Final: a single match
     public void showFinal(FinalMatch match) {
         begin();
 
@@ -110,7 +110,7 @@ public class MatchDetailsPanel extends JPanel {
         revalidate();
     }
 
-    // Usar html para simplificar el codigo y poder poner los penales en un tamaño mas chico
+    // Use HTML to simplify the code and show the penalties in a smaller size
     private String cell(int goals, int penalties, boolean showPenalties) {
         if (!showPenalties) return String.valueOf(goals);
         return "<html>" + goals + " <font size='-2'>(" + penalties + ")</font></html>";
@@ -156,7 +156,7 @@ public class MatchDetailsPanel extends JPanel {
         component.setAlignmentX(Component.LEFT_ALIGNMENT);
         return component;
     }
-    // Dos líneas por partido: 1ra cuál es y quién es local, 2da fecha y hora, estadio, árbitro
+    // Two lines per match: 1st which leg it is and who is home, 2nd date and time, stadium, referee
     private JPanel infoBlock(String legName, Match match) {
         String stadium = match.getStadium() != null ? match.getStadium().getName() : "-";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM HH:mm");

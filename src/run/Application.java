@@ -17,21 +17,21 @@ public class Application {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
-                // 1. Establecer el diseño de la interfaz
+                // 1. Set the UI look and feel
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-                // 2. 🗄️ INICIALIZAR BASE DE DATOS (Crear tablas e insertar sample data si está vacía)
+                // 2. INITIALIZE DATABASE (create tables and insert sample data if empty)
                 initializeDatabase();
 
-                // 3. Cargar el Torneo (Repositorio o JSON)
+                // 3. Load the tournament (repository or JSON)
                 TournamentRepository repository = new TournamentRepository();
                 Tournament tournament = loadOrFetchTournament(repository);
 
-                // 4. Asignar estadios desde la BD
+                // 4. Assign stadiums from the DB
                 tournament.setStadiums(new StadiumDAO().getAllStadiums());
                 tournament.syncUsedStadiums();
 
-                // 5. Iniciar Vista y Controlador
+                // 5. Start the view and controller
                 MainWindowView windowView = new MainWindowView();
                 MainWindowController mainController = new MainWindowController(windowView, tournament, repository);
 
@@ -51,7 +51,7 @@ public class Application {
             try {
                 return repository.load();
             } catch (ClassNotFoundException | IOException e) {
-                // Si el archivo guardado falla o es de una versión vieja de la clase, cae al JSON
+                // If the saved file fails or is from an old version of the class, fall back to the JSON
                 return loadTournamentFromJson();
             }
         }
@@ -69,11 +69,11 @@ public class Application {
         CityDAO cityDAO = new CityDAO();
         StadiumDAO stadiumDAO = new StadiumDAO();
 
-        // 1. Crear tablas si no existen
+        // 1. Create tables if dont exist
         cityDAO.createTable();
         stadiumDAO.createTable();
 
-        // 2. Poblar solo si están vacías
+        // 2. Populate only if empty
         if (cityDAO.isEmpty()) {
             cityDAO.insertSampleData();
         }

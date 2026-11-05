@@ -49,19 +49,19 @@ public class KnockoutView extends JPanel {
         buttonWrapper.add(btnSimulate);
         topPanel.add(buttonWrapper);
 
-        topPanel.add(new JLabel()); // columna vacía para equilibrar
+        topPanel.add(new JLabel()); // empty column to balance
 
         add(topPanel, BorderLayout.NORTH);
 
         JPanel centerContainer = new JPanel(new GridBagLayout());
-        // GridBagLayout centra automáticamente
+        // GridBagLayout centers automatically
         bracketPanel.setOnMatchSelectedListener(match -> {
             if (matchSelectedListener != null) matchSelectedListener.accept(match);
         });
         centerContainer.add(bracketPanel);
         JScrollPane scroll = new JScrollPane(centerContainer);
         scroll.setBorder(null);
-        scroll.getVerticalScrollBar().setUnitIncrement(16); // Para un scroll fluido
+        scroll.getVerticalScrollBar().setUnitIncrement(16); // For smooth scrolling
         add(scroll, BorderLayout.CENTER);
     }
 

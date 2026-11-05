@@ -22,7 +22,7 @@ public class StyledTable extends JTable {
         setSelectionBackground(Theme.SELECTION);
         setSelectionForeground(Theme.TEXT);
 
-        // 🔒 Bloquear reordenamiento de columnas globalmente
+        // Lock column reordering globally
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setPreferredSize(new Dimension(0, 38));
         getTableHeader().setResizingAllowed(false);

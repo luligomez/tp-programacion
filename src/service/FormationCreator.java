@@ -34,7 +34,7 @@ public class FormationCreator {
         int midNeeded = (tactic == 1) ? 4 : 3;
         int fwdNeeded = (tactic == 0) ? 3 : 2;
 
-        // 3. Seleccionar obligado 1 Arquero
+        // 3. Always select 1 goalkeeper
         selectBestForPosition(available, formation, Position.GOALKEEPER, 1, random);
 
         // 4. Select the field players according to the chosen tactic

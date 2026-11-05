@@ -28,7 +28,7 @@ public class KnockoutStage implements Serializable {
     private final ArrayList<KnockoutTie> ties = new ArrayList<>();
     private FinalMatch finalMatch;
 
-    // ---------- consultas ----------
+    // ---------- queries ----------
 
     public List<KnockoutTie> getTies(KnockoutPhase phase) {
         return ties.stream().filter(t -> t.getPhase() == phase).collect(Collectors.toList());

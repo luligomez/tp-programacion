@@ -7,7 +7,7 @@ public class TeamReportItem {
     private final String coachNationality;
     private final int goalsFor;
     private final int goalsAgainst;
-    private final double effectiveness; // Porcentaje de 0.0 a 100.0
+    private final double effectiveness; // Percentage from 0.0 to 100.0
 
     public TeamReportItem(String teamName, double averagePlayerAge, int coachAge,
                           String coachNationality, int goalsFor, int goalsAgainst, double effectiveness) {

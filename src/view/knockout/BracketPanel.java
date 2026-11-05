@@ -109,7 +109,7 @@ public class BracketPanel extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-        // Titulos
+        // Titles
         g2.setFont(Theme.BIG_BOLD18);
         g2.setColor(Theme.PRIMARY);
         FontMetrics fm = g2.getFontMetrics();

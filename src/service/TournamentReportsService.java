@@ -97,7 +97,7 @@ public class TournamentReportsService {
                 }
             }
 
-            // 3. Goles a favor, en contra, partidos jugados y puntos obtenidos
+            // 3. Goals for, goals against, matches played and points obtained
             int gf = 0;
             int gc = 0;
             int matchesPlayed = 0;
@@ -137,7 +137,7 @@ public class TournamentReportsService {
                 }
             }
 
-            // 4. Efectividad (% de puntos obtenidos sobre puntos posibles)
+            // 4. Effectiveness (% of points obtained over points available)
             double effectiveness = 0.0;
             if (matchesPlayed > 0) {
                 int maxPossiblePoints = matchesPlayed * 3;

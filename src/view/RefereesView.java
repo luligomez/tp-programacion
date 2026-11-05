@@ -26,7 +26,7 @@ public class RefereesView extends JPanel {
         JPanel headerPanel = createHeaderPanel();
         add(headerPanel, BorderLayout.NORTH);
 
-        // --- 2. MODELO Y TABLA ---
+        // --- 2. MODEL AND TABLE ---
         String[] columns = {"Rank", "Referee Name", "Nationality", "Matches Officiated", "Years as Referee"};
 
         tableModel = new DefaultTableModel(columns, 0) {
@@ -46,7 +46,7 @@ public class RefereesView extends JPanel {
 
         add(scrollPane, BorderLayout.CENTER);
 
-        // --- 3. PANEL INFERIOR (TARJETAS DE RESUMEN) ---
+        // --- 3. BOTTOM PANEL (SUMMARY CARDS) ---
         lblAverageYears = new JLabel("0.0 yrs", SwingConstants.CENTER);
         lblTotalReferees = new JLabel("0", SwingConstants.CENTER);
         JPanel footerPanel = createFooterPanel();
@@ -103,7 +103,7 @@ public class RefereesView extends JPanel {
     public void setRefereesData(RefereeReportData data) {
         List<RefereeReportItem> referees = data.getItems();
         double averageYears= data.getAverageYears();
-        tableModel.setRowCount(0); // Limpiar tabla
+        tableModel.setRowCount(0); // Clear the table
 
         int rank = 1;
         for (RefereeReportItem ref : referees) {

@@ -54,7 +54,7 @@ public class MatchCardPanel extends JPanel {
         showEmpty();
     }
 
-    //expandir o contraer
+    // expand or collapse
     public boolean isExpanded() {
         return expanded;
     }

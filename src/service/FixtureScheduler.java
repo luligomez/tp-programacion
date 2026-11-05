@@ -105,7 +105,7 @@ public class FixtureScheduler {
     
     public static void scheduleFinal(Match finalMatch, LocalDate startDate) {
         LocalDate finalDate = startDate.plusDays(5);
-        LocalTime finalTime = LocalTime.of(19, 0); // 19:00 hs
+        LocalTime finalTime = LocalTime.of(19, 0); // 19:00
 
         finalMatch.setDateTime(LocalDateTime.of(finalDate, finalTime));
     }

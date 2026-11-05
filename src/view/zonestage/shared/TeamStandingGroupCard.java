@@ -25,7 +25,7 @@ public class TeamStandingGroupCard extends JPanel {
         titleLabel.setBorder(BorderFactory.createEmptyBorder(12, 12, 8, 12));
         add(titleLabel);
 
-        // Encabezado de columnas (Pts, PJ, PG, PE, PP, GF, GC, DG)
+        // Column header (Pts, MP, W, D, L, GF, GA, GD)
         add(createHeaderPanel());
         add(new JSeparator());
 

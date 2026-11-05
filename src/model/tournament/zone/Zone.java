@@ -150,7 +150,7 @@ public class Zone implements Serializable {
             }
             if (j > i) {
                 List<TeamStanding> tiedGroup = sorted.subList(i, j + 1);
-                    applyMultiWayHeadToHead(tiedGroup); // mini-tabla
+                    applyMultiWayHeadToHead(tiedGroup); // mini-table
             }
             i = j + 1;
         }

@@ -22,7 +22,7 @@ public class TeamsView extends JPanel {
         // Header
         add(createHeaderPanel(), BorderLayout.NORTH);
 
-        // Tabla y columnas
+        // Table and columns
         String[] columns = {
                 "Team", "Avg. Player Age", "Coach Age",
                 "Coach Nationality", "GF", "GA", "Effectiveness"

@@ -69,7 +69,7 @@ public class Application {
         CityDAO cityDAO = new CityDAO();
         StadiumDAO stadiumDAO = new StadiumDAO();
 
-        // 1. Create tables if dont exist
+        // 1. Create the tables if they don't exist
         cityDAO.createTable();
         stadiumDAO.createTable();
 

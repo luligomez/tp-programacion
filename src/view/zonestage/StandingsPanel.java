@@ -31,7 +31,7 @@ public class StandingsPanel extends JPanel {
     private final JPanel groupsGrid;
     private final JButton btnSimulateMatchday;
 
-    // FILTROS
+    // FILTERS
     private final JComboBox<String> comboZoneFilter;
     private final JComboBox<String> comboMatchdayFilter;
 
@@ -80,12 +80,12 @@ public class StandingsPanel extends JPanel {
         add(topPanel, BorderLayout.NORTH);
 
 // ------------------------------------------------------------------
-// 2. PANEL CONTENEDOR PRINCIPAL (Agrupa verticalmente)
+// 2. MAIN CONTAINER PANEL (stacks vertically)
 // ------------------------------------------------------------------
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
-// A) Tablas de Posiciones (Grilla 2x2)
+// A) Standings tables (2x2 grid)
         groupsGrid = new JPanel(new GridLayout(2, 2, 12, 12));
         groupsGrid.setPreferredSize(new Dimension(0, 600));
         contentPanel.add(groupsGrid);
@@ -97,7 +97,7 @@ public class StandingsPanel extends JPanel {
         JPanel fixtureContainer = new JPanel(new BorderLayout(0, 8));
         fixtureContainer.setBorder(BorderFactory.createTitledBorder("MATCHES & FIXTURE"));
 
-// Barra de filtros horizontal
+// Horizontal filter bar
         JPanel filterBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 4));
         comboZoneFilter = new JComboBox<>(new String[]{"All", "Zone A", "Zone B", "Zone C", "Zone D"});
         comboMatchdayFilter = new JComboBox<>(new String[]{"All", "Matchday 1", "Matchday 2", "Matchday 3"});
@@ -340,11 +340,11 @@ public class StandingsPanel extends JPanel {
             badgeWrap.add(lblBadge);
             // 1. Label setup and alignment
             lblTeam1.setFont(Theme.SMALL_BOLD13);
-            lblTeam1.setHorizontalAlignment(SwingConstants.RIGHT); // Pegado al marcador
+            lblTeam1.setHorizontalAlignment(SwingConstants.RIGHT); // Next to the score
             lblTeam1.setPreferredSize(new Dimension(0, 24));       // TRICK: width 0 to force a 50/50 split
 
             lblTeam2.setFont(Theme.SMALL_BOLD13);
-            lblTeam2.setHorizontalAlignment(SwingConstants.LEFT);  // Pegado al marcador
+            lblTeam2.setHorizontalAlignment(SwingConstants.LEFT);  // Next to the score
             lblTeam2.setPreferredSize(new Dimension(0, 24));       // TRICK: width 0 to force a 50/50 split
 
             lblScore.setFont(Theme.BODY_BOLD);

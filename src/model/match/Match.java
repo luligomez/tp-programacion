@@ -38,7 +38,7 @@ public abstract class Match implements Serializable {
         this.team2 = team2;
         this.referee = referee;
         this.incidents = new ArrayList<>();
-        this.team1Goals = -1; //(no jugado aun)
+        this.team1Goals = -1; // (not played yet)
         this.team2Goals = -1;
         this.team1Formation = team1Formation;
         this.team2Formation = team2Formation;

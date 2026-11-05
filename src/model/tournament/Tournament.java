@@ -32,7 +32,7 @@ public class Tournament implements Serializable {
     private final KnockoutStage knockoutStage = new KnockoutStage();
     private TournamentState state = TournamentState.NOT_DRAWN;
 
-    // ---------- datos ----------
+    // ---------- data ----------
 
     public TournamentState getState() { return state; }
     public ArrayList<Team> getTeams() { return teams; }

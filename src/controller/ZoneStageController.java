@@ -33,7 +33,7 @@ public class ZoneStageController {
         view.setOnDrawConfirmedListener(this::onDrawConfirmed);
         view.setOnRedrawListener(this::onRedraw);
         view.setOnSimulateMatchdayListener(this::simulateNextMatchday);
-        view.setOnMatchSelectedListener(onOpenMatch); // nuevo
+        view.setOnMatchSelectedListener(onOpenMatch);
         updateView();
     }
     public ZoneStageView getView() {

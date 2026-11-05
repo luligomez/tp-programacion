@@ -116,7 +116,7 @@ public class MatchSimulator {
         boolean isGkAlreadyExpelled1 = false;
         boolean isGkAlreadyExpelled2 = false;
 
-        // Jugadores en cancha (activos)
+        // Players on the pitch (active)
         List<Player> activeTeam1 = new ArrayList<>(form1.getStarters());
         List<Player> activeTeam2 = new ArrayList<>(form2.getStarters());
 
@@ -124,7 +124,7 @@ public class MatchSimulator {
         List<Player> benchTeam1 = new ArrayList<>(form1.getSubstitutes());
         List<Player> benchTeam2 = new ArrayList<>(form2.getSubstitutes());
 
-        //Suplentes en cancha
+        // Substitutes who came on
         Set<Player> cameOnTeam1 = new HashSet<>();
         Set<Player> cameOnTeam2 = new HashSet<>();
 
@@ -133,7 +133,7 @@ public class MatchSimulator {
         int goalsTeam1 = 0, goalsTeam2 = 0;
 
 
-        // BUCLE MINUTO A MINUTO
+        // MINUTE-BY-MINUTE LOOP
         for (int minute = 1; minute <= 90; minute+=1) {
 
             // A. Recalculate the power of the players on the pitch
@@ -142,7 +142,7 @@ public class MatchSimulator {
             double attack2 = calculateAttackPower(team2, activeTeam2);
             double defense2 = calculateDefensePower(team2, activeTeam2);
 
-            // B. Sustituciones (Minutos 45 a 85)
+            // B. Substitutions (minutes 45 to 85)
             if (minute >= 45 && minute <= 85) {
                 if (subsTeam1 < 5 && random.nextDouble() < 0.08) {
                     if (trySubstitution(match, activeTeam1, benchTeam1, cameOnTeam1, goalsTeam1, goalsTeam2, minute, random)) {
@@ -156,11 +156,11 @@ public class MatchSimulator {
                 }
             }
 
-            // C. Tarjetas y Expulsiones
+            // C. Cards and sending-offs
             isGkAlreadyExpelled1=simulateCardsForMinute(match, activeTeam1, benchTeam1, minute, yellowCardsMap, isGkAlreadyExpelled1, random);
             isGkAlreadyExpelled2=simulateCardsForMinute(match, activeTeam2, benchTeam2, minute, yellowCardsMap, isGkAlreadyExpelled2, random);
 
-            // D. Oportunidades de Gol
+            // D. Goal chances
             if (checkGoalOccurred(attack1, defense2, random)) {
                 goalsTeam1++;
                 Player currentGk2 = getCurrentGoalkeeper(activeTeam2);
@@ -197,7 +197,7 @@ public class MatchSimulator {
 
         int scoreDiff = teamGoals - opponentGoals;
 
-        //SI VA PERDIENDO -> Necesita atacar (Mete delantero/volante, saca defensor/volante)
+        // IF LOSING -> Needs to attack (bring on forward/midfielder, take off defender/midfielder)
         if (scoreDiff < 0) {
             playerIn = findRandomByPositions(fieldBench, Position.FORWARD, Position.MIDFIELDER, random);
             if (playerIn != null) {
@@ -336,10 +336,10 @@ public class MatchSimulator {
         return isGkAlreadyExpelled;
     }
 
-    // AUXILIARES
+    // HELPERS
     private static boolean checkGoalOccurred(double attack, double opposingDefense, Random random) {
         double advantage = attack - opposingDefense;
-        double minuteChance = Math.max(0.002, Math.min(0.06, 0.018 + (advantage * 0.0008))); //0,2% - 6% goal/min
+        double minuteChance = Math.max(0.002, Math.min(0.06, 0.018 + (advantage * 0.0008))); // 0.2% - 6% goal/min
         return random.nextDouble() < minuteChance;
     }
 
@@ -360,7 +360,7 @@ public class MatchSimulator {
 
         if (totalWeight <= 0) return activePlayers.getFirst(); //TODO exception?
 
-        // 2. Ruleta / Sorteo Ponderado
+        // 2. Roulette / weighted draw
         double randomValue = random.nextDouble() * totalWeight; // [0.0, totalWeight)
         double cumulative = 0.0;
 
@@ -401,7 +401,7 @@ public class MatchSimulator {
             totalWeight += weight;
         }
 
-        // Ruleta / Sorteo Ponderado
+        // Roulette / weighted draw
         double randomValue = random.nextDouble() * totalWeight;
         double cumulative = 0.0;
 
@@ -445,7 +445,7 @@ public class MatchSimulator {
     private static Player selectOwnGoalScorer(List<Player> defendingPlayers, Random random) {
         if (defendingPlayers.isEmpty()) return null;
 
-        // Filtrar defensores y arqueros
+        // Filter defenders and goalkeepers
         List<Player> candidates = defendingPlayers.stream()
                 .filter(p -> p.getPosition() == Position.DEFENDER || p.getPosition() == Position.GOALKEEPER)
                 .toList();
@@ -496,7 +496,7 @@ public class MatchSimulator {
             double rating = p.getRating();
             double weight = switch (p.getPosition()) {
                 case GOALKEEPER -> 1.2; // The goalkeeper has a large defensive impact
-                case DEFENDER -> 1.0;   // 100% de aporte
+                case DEFENDER -> 1.0;   // 100% contribution
                 case MIDFIELDER -> 0.5; // 50% contribution (marks in midfield)
                 case FORWARD -> 0.05;   // 5% contribution (high press)
             };
@@ -542,7 +542,7 @@ public class MatchSimulator {
         Player benchGK = findGoalkeeper(benchPlayers);
 
         if (benchGK != null) {
-            // sacamos a un fieldplayer
+            // take off a field player
             Player fieldPlayerToSacrifice = getLowestRatingPlayer(activePlayers);
 
             if (fieldPlayerToSacrifice != null) {
@@ -553,7 +553,7 @@ public class MatchSimulator {
                     ppSacrifice.setMinuteOut(minute);
                 }
 
-                // B. Ingresamos al arquero suplente
+                // B. Bring on the substitute goalkeeper
                 activePlayers.add(benchGK);
                 benchPlayers.remove(benchGK);
                 PlayerParticipation ppGK = match.getParticipationFor(benchGK);

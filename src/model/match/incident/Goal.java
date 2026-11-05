@@ -72,7 +72,7 @@ public class Goal extends Incident {
 
     @Override
     public void registerStats() {
-        // un gol en contra no le suma al autor
+        // an own goal does not count for its author
         if (!ownGoal && scorer != null) {
             scorer.getTournamentStats().registerGoal(penalty);
         }

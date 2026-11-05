@@ -14,6 +14,7 @@ public class StyledTable extends JTable {
         setupStandardStyle();
     }
 
+
     private void setupStandardStyle() {
         setFont(Theme.BODY);
         setRowHeight(32);
@@ -24,19 +25,37 @@ public class StyledTable extends JTable {
 
         // Lock column reordering globally
         getTableHeader().setReorderingAllowed(false);
-        getTableHeader().setPreferredSize(new Dimension(0, 38));
         getTableHeader().setResizingAllowed(false);
+
+        getTableHeader().setPreferredSize(new Dimension(0, 65));
 
         // Apply the styled blue header
         applyHeaderStyle();
     }
 
     public void applyHeaderStyle() {
-        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer();
-        headerRenderer.setBackground(Theme.PRIMARY);
-        headerRenderer.setForeground(Color.WHITE);
-        headerRenderer.setFont(Theme.BODY_BOLD);
-        headerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                                                           boolean isSelected, boolean hasFocus,
+                                                           int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                if (value != null) {
+                    String text = value.toString();
+                    if (!text.startsWith("<html>")) {
+                        text = "<html><center>" + text.replaceAll("\n", "<br>") + "</center></html>";
+                    }
+                    label.setText(text);
+                }
+
+                label.setBackground(Theme.PRIMARY);
+                label.setForeground(Color.WHITE);
+                label.setFont(Theme.BODY_BOLD);
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                return label;
+            }
+        };
 
         for (int i = 0; i < getColumnCount(); i++) {
             getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
@@ -85,7 +104,7 @@ public class StyledTable extends JTable {
             protected void setValue(Object value) {
                 if (value instanceof Number num) {
                     if (num.doubleValue() < 0) {
-                        setText("-");                       // fallback kept
+                        setText("-");
                     } else {
                         String text = (formatPattern != null)
                                 ? String.format(formatPattern, num.doubleValue())

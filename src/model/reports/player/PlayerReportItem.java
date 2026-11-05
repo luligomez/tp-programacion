@@ -11,7 +11,7 @@ public class PlayerReportItem {
     private final int age;
     private final LocalDate birthDate;
     private final String documentType;
-    private final String documentNumber;
+    private final Long documentNumber;
     private final int rating;
     private final int matchesPlayed;
     private final int minutesPlayed;
@@ -48,7 +48,7 @@ public class PlayerReportItem {
         this.age = age;
         this.birthDate = birthDate;
         this.documentType = documentType;
-        this.documentNumber = documentNumber;
+        this.documentNumber = Long.parseLong(documentNumber);
         this.rating = rating;
         this.matchesPlayed = matchesPlayed;
         this.minutesPlayed = minutesPlayed;
@@ -66,7 +66,7 @@ public class PlayerReportItem {
     public int getAge() { return age; }
     public LocalDate getBirthDate() { return birthDate; }
     public String getDocumentType() { return documentType; }
-    public String getDocumentNumber() { return documentNumber; }
+    public Long getDocumentNumber() { return documentNumber; }
     public int getRating() { return rating; }
     public int getMatchesPlayed() { return matchesPlayed; }
     public int getMinutesPlayed() { return minutesPlayed; }

@@ -3,12 +3,13 @@ package view.zonestage;
 import model.team.Team;
 import model.match.Match;
 import model.tournament.zone.Zone;
+import model.tournament.zone.TeamStanding;
+import model.tournament.zone.MatchStandingComparison;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.function.Consumer;
-import model.tournament.zone.TeamStanding;
 
 public class ZoneStageView extends JPanel {
 
@@ -57,7 +58,7 @@ public class ZoneStageView extends JPanel {
         add(new DrawResultPanel(
                 zones,
                 () -> { if (onDrawConfirmedListener != null) onDrawConfirmedListener.run(); },
-                () -> { if (onRedrawListener != null) onRedrawListener.run(); }
+        () -> { if (onRedrawListener != null) onRedrawListener.run(); }
         ), BorderLayout.CENTER);
         revalidate();
         repaint();
@@ -70,7 +71,6 @@ public class ZoneStageView extends JPanel {
             if (onSimulateMatchdayListener != null) {
                 standingsPanel.setOnSimulateMatchdayListener(onSimulateMatchdayListener);
             }
-            // the lambda reads the field at click time, not at construction
             standingsPanel.setOnMatchSelectedListener(match -> {
                 if (matchSelectedListener != null) matchSelectedListener.accept(match);
             });
@@ -88,10 +88,13 @@ public class ZoneStageView extends JPanel {
         }
     }
 
-    public void showStandingsComparison(List<Zone> zones, List<List<TeamStanding>> standingsBefore) {
+    public void showStandingsComparison(List<Zone> zones,
+    List<List<TeamStanding>> standingsBefore,
+    List<MatchStandingComparison> matchComparisons) {
         if (standingsPanel != null) {
             standingsPanel.updateGroups(zones);
             standingsPanel.showComparison(standingsBefore);
+            standingsPanel.showMatchComparisons(matchComparisons);
         }
     }
 
@@ -105,10 +108,6 @@ public class ZoneStageView extends JPanel {
         if (standingsPanel != null) {
             standingsPanel.disableSimulateButton();
         }
-    }
-
-    public StandingsPanel getStandingsPanel() {
-        return standingsPanel;
     }
 
     public void setOnMatchSelectedListener(Consumer<Match> listener) {

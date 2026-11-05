@@ -1,8 +1,8 @@
-package controller;
+package controller.admin;
 
 import DAO.CityDAO;
 import model.place.City;
-import view.citiesAndStadiums.CitiesView;
+import view.admin.CitiesView;
 import java.util.concurrent.ExecutionException;
 import javax.swing.*;
 import java.sql.SQLException;

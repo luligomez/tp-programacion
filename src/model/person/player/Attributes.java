@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 public abstract class Attributes implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     public abstract double calculateScore(Position position);
 

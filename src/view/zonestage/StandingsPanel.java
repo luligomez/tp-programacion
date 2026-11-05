@@ -121,7 +121,7 @@ public class StandingsPanel extends JPanel {
         matchesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         matchesList.setFixedCellHeight(40);
         matchesList.setLayoutOrientation(JList.VERTICAL);
-        matchesList.setVisibleRowCount(-1); // Lets the JList grow according to the number of matches
+        matchesList.setVisibleRowCount(-1);
 
         matchesList.addMouseListener(new MouseAdapter() {
             @Override
@@ -145,20 +145,21 @@ public class StandingsPanel extends JPanel {
 // ------------------------------------------------------------------
         JScrollPane mainScrollPane = new JScrollPane(contentPanel);
         mainScrollPane.setBorder(null);
-        mainScrollPane.getVerticalScrollBar().setUnitIncrement(16); // Smooth scrolling with the mouse wheel
+        mainScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         mainScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         add(mainScrollPane, BorderLayout.CENTER);
 
         updateGroups(zones);
     }
+
     public void showComparison(List<List<TeamStanding>> standingsBefore) {
         StringBuilder message = new StringBuilder();
 
-        message.append("POSICIONES ANTES DE LA FECHA\n\n");
+        message.append("STANDINGS BEFORE MATCHDAY\n\n");
 
         for (int i = 0; i < standingsBefore.size(); i++) {
-            message.append("ZONA ")
+            message.append("ZONE ")
                     .append((char) ('A' + i))
                     .append("\n");
 
@@ -170,7 +171,7 @@ public class StandingsPanel extends JPanel {
                         .append(standing.getTeam().getName())
                         .append(" - ")
                         .append(standing.getPoints())
-                        .append(" puntos\n");
+                        .append(" points\n");
             }
 
             message.append("\n");
@@ -183,10 +184,11 @@ public class StandingsPanel extends JPanel {
         JOptionPane.showMessageDialog(
                 this,
                 new JScrollPane(textArea),
-                "Tabla anterior a la simulación",
+                "Standings Before Simulation",
                 JOptionPane.INFORMATION_MESSAGE
         );
     }
+
     public void showMatchComparisons(List<MatchStandingComparison> comparisons) {
 
         if (comparisons == null || comparisons.isEmpty()) {
@@ -198,7 +200,7 @@ public class StandingsPanel extends JPanel {
         for (MatchStandingComparison comparison : comparisons) {
             var match = comparison.getMatch();
 
-            message.append("PARTIDO: ")
+            message.append("MATCH: ")
                     .append(match.getTeam1().getName())
                     .append(" ")
                     .append(match.getTeam1Goals())
@@ -208,10 +210,10 @@ public class StandingsPanel extends JPanel {
                     .append(match.getTeam2().getName())
                     .append("\n\n");
 
-            message.append("TABLA ANTES DEL PARTIDO\n");
+            message.append("STANDINGS BEFORE MATCH\n");
             appendStandingsTable(message, comparison.getStandingsBefore());
 
-            message.append("\nTABLA DESPUES DEL PARTIDO\n");
+            message.append("\nSTANDINGS AFTER MATCH\n");
             appendStandingsTable(message, comparison.getStandingsAfter());
 
             message.append("\n")
@@ -230,7 +232,7 @@ public class StandingsPanel extends JPanel {
         JOptionPane.showMessageDialog(
                 this,
                 scrollPane,
-                "Tablas antes y despues de cada partido",
+                "Standings Before and After Each Match",
                 JOptionPane.INFORMATION_MESSAGE
         );
     }
@@ -241,7 +243,7 @@ public class StandingsPanel extends JPanel {
 
         message.append(String.format(
                 "%-30s %4s %3s %3s %3s %3s %3s %3s %4s%n",
-                "EQUIPO", "PTS", "PJ", "PG", "PE", "PP", "GF", "GC", "DG"
+                "TEAM", "PTS", "MP", "W", "D", "L", "GF", "GA", "GD"
         ));
 
         int position = 1;
@@ -261,6 +263,7 @@ public class StandingsPanel extends JPanel {
             ));
         }
     }
+
     /**
      * Refreshes both the tables and the filtered match list.
      */
@@ -338,23 +341,22 @@ public class StandingsPanel extends JPanel {
             JPanel badgeWrap = new JPanel(new GridBagLayout());
             badgeWrap.setOpaque(false);
             badgeWrap.add(lblBadge);
-            // 1. Label setup and alignment
+
             lblTeam1.setFont(Theme.SMALL_BOLD13);
-            lblTeam1.setHorizontalAlignment(SwingConstants.RIGHT); // Next to the score
-            lblTeam1.setPreferredSize(new Dimension(0, 24));       // TRICK: width 0 to force a 50/50 split
+            lblTeam1.setHorizontalAlignment(SwingConstants.RIGHT);
+            lblTeam1.setPreferredSize(new Dimension(0, 24));
 
             lblTeam2.setFont(Theme.SMALL_BOLD13);
-            lblTeam2.setHorizontalAlignment(SwingConstants.LEFT);  // Next to the score
-            lblTeam2.setPreferredSize(new Dimension(0, 24));       // TRICK: width 0 to force a 50/50 split
+            lblTeam2.setHorizontalAlignment(SwingConstants.LEFT);
+            lblTeam2.setPreferredSize(new Dimension(0, 24));
 
             lblScore.setFont(Theme.BODY_BOLD);
-            lblScore.setHorizontalAlignment(SwingConstants.CENTER);// Text in the center
+            lblScore.setHorizontalAlignment(SwingConstants.CENTER);
             lblScore.setPreferredSize(new Dimension(60, 24));
 
             lblStatus.setFont(Theme.SMALL12);
             lblStatus.setPreferredSize(new Dimension(110, 20));
 
-            // 2. Build the center panel (GridBagLayout)
             JPanel center = new JPanel(new GridBagLayout());
             center.setOpaque(false);
             GridBagConstraints gc = new GridBagConstraints();
@@ -382,7 +384,7 @@ public class StandingsPanel extends JPanel {
 
         @Override
         public Component getListCellRendererComponent(JList<? extends MatchRow> list, MatchRow row,
-                                                      int index, boolean isSelected, boolean cellHasFocus) {
+        int index, boolean isSelected, boolean cellHasFocus) {
             GroupStageMatch m = row.getMatch();
 
             lblBadge.setText(row.getZoneName() + " · Matchday " + m.getMatchday());
@@ -431,7 +433,6 @@ public class StandingsPanel extends JPanel {
         int index = matchesList.locationToIndex(point);
         if (index < 0) return;
 
-        // locationToIndex returns the closest row even if the empty space below was clicked
         Rectangle bounds = matchesList.getCellBounds(index, index);
         if (bounds == null || !bounds.contains(point)) return;
 
@@ -439,5 +440,4 @@ public class StandingsPanel extends JPanel {
             matchSelectedListener.accept(matchesListModel.get(index).getMatch());
         }
     }
-
 }

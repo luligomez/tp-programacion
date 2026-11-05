@@ -11,12 +11,15 @@ import org.json.simple.parser.ParseException;
 import javax.swing.*;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Locale;
 
 public class Application {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
+                Locale.setDefault(Locale.ENGLISH);
+                JOptionPane.setDefaultLocale(Locale.ENGLISH);
                 // 1. Set the UI look and feel
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 

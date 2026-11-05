@@ -1,4 +1,4 @@
-package controller;
+package controller.rankings;
 
 import model.tournament.Tournament;
 import service.TournamentReportsService;

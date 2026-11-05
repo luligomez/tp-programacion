@@ -7,45 +7,45 @@ import java.io.Serial;
 
 public class GoalkeeperCareerStats extends CareerStats {
     @Serial
-    private static final long serialVersionUID = 1L;
-    private int goalsReceived;
-    private int penaltiesReceived;
-    private int penaltiesSaved;
+    private static final long serialVersionUID = 2L;
+    private final int GOALS_RECEIVED;
+    private final int PENALTIES_RECEIVED;
+    private final int PENALTIES_SAVED;
 
-    public GoalkeeperCareerStats(int carreerMatchesPlayed, int careerExpulsions, int goalsReceived, int penaltiesReceived, int penaltiesSaved) {
-        super(carreerMatchesPlayed, careerExpulsions);
-        this.goalsReceived = goalsReceived;
-        this.penaltiesReceived = penaltiesReceived;
-        this.penaltiesSaved = penaltiesSaved;
+    public GoalkeeperCareerStats(int careerMatchesPlayed, int careerExpulsions, int goalsReceived, int penaltiesReceived, int penaltiesSaved) {
+        super(careerMatchesPlayed, careerExpulsions);
+        this.GOALS_RECEIVED = goalsReceived;
+        this.PENALTIES_RECEIVED = penaltiesReceived;
+        this.PENALTIES_SAVED = penaltiesSaved;
     }
 
     public int getGoalsReceived() {
-        return goalsReceived;
+        return GOALS_RECEIVED;
     }
 
     public int getPenaltiesReceived() {
-        return penaltiesReceived;
+        return PENALTIES_RECEIVED;
     }
 
     public int getPenaltiesSaved() {
-        return penaltiesSaved;
+        return PENALTIES_SAVED;
     }
 
     @Override
     public double calculateScore(Position pos) {
         if (pos.equals(Position.GOALKEEPER)) {
-            int matchesPlayed = getMATCHESPLAYED();
+            int matchesPlayed = getMatchesPlayed();
             if (matchesPlayed == 0)
                 return 60.0;
 
             // 1. average goals per match
-            double goalsPerMatch = (double) this.goalsReceived / matchesPlayed;
+            double goalsPerMatch = (double) this.GOALS_RECEIVED / matchesPlayed;
             double goalsScore = 100.0 - (goalsPerMatch * 20.0);
 
             // 2. penalty bonus
             double penaltyBonus = 0.0;
-            if (this.penaltiesReceived > 0) {
-                double saveRate = (double) this.penaltiesSaved / this.penaltiesReceived;
+            if (this.PENALTIES_RECEIVED > 0) {
+                double saveRate = (double) this.PENALTIES_SAVED / this.PENALTIES_RECEIVED;
                 penaltyBonus = saveRate * 15.0;
             }
 

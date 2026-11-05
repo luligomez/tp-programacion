@@ -7,7 +7,7 @@ import java.io.Serial;
 
 public class FieldPlayerAttributes extends Attributes {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     private final int TACKLING;
     private final int SPEED;
     private final int SKILL;
@@ -28,35 +28,35 @@ public class FieldPlayerAttributes extends Attributes {
         this.PHYSICALRESISTANCE = physicalResistance;
     }
 
-    public int getTACKLING() {
+    public int getTackling() {
         return TACKLING;
     }
 
-    public int getSPEED() {
+    public int getSpeed() {
         return SPEED;
     }
 
-    public int getSKILL() {
+    public int getSkill() {
         return SKILL;
     }
 
-    public int getHEADING() {
+    public int getHeading() {
         return HEADING;
     }
 
-    public int getFINISHING() {
+    public int getFinishing() {
         return FINISHING;
     }
 
-    public int getSHOTPOWER() {
+    public int getShotPower() {
         return SHOTPOWER;
     }
 
-    public int getGAMEVISION() {
+    public int getGameVision() {
         return GAMEVISION;
     }
 
-    public int getPHYSICALRESISTANCE() {
+    public int getPhysicalResistance() {
         return PHYSICALRESISTANCE;
     }
 

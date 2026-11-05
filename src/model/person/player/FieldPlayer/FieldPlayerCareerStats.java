@@ -7,47 +7,47 @@ import java.io.Serial;
 
 public class FieldPlayerCareerStats extends CareerStats {
     @Serial
-    private static final long serialVersionUID = 1L;
-    private int goals;
-    private int penalties;
-    private int penaltiesScored;
-    private int assists;
+    private static final long serialVersionUID = 2L;
+    private final int GOALS;
+    private final int PENALTIES;
+    private final int PENALTIES_SCORED;
+    private final int ASSISTS;
 
     public FieldPlayerCareerStats(int matchesPlayed, int expulsions, int goals, int penalties, int penaltiesScored, int assists) {
         super(matchesPlayed, expulsions);
-        this.goals = goals;
-        this.penalties = penalties;
-        this.penaltiesScored = penaltiesScored;
-        this.assists = assists;
+        this.GOALS = goals;
+        this.PENALTIES = penalties;
+        this.PENALTIES_SCORED = penaltiesScored;
+        this.ASSISTS = assists;
     }
 
     public int getGoals() {
-        return goals;
+        return GOALS;
     }
 
     public int getPenalties() {
-        return penalties;
+        return PENALTIES;
     }
 
     public int getPenaltiesScored() {
-        return penaltiesScored;
+        return PENALTIES_SCORED;
     }
 
     public int getAssists() {
-        return assists;
+        return ASSISTS;
     }
 
     @Override
     public double calculateScore(Position pos) {
-        int matchesPlayed = getMATCHESPLAYED();
+        int matchesPlayed = getMatchesPlayed();
         if (matchesPlayed == 0) return 60.0;
 
-        double goalsPerMatch = (double) this.goals / matchesPlayed;
-        double assistsPerMatch = (double) this.assists / matchesPlayed;
+        double goalsPerMatch = (double) this.GOALS / matchesPlayed;
+        double assistsPerMatch = (double) this.ASSISTS / matchesPlayed;
 
         double penaltyEfficiency = 0.0;
-        if (this.penalties > 0) {
-            penaltyEfficiency = (double) this.penaltiesScored / this.penalties;
+        if (this.PENALTIES > 0) {
+            penaltyEfficiency = (double) this.PENALTIES_SCORED / this.PENALTIES;
         }
 
         double basePerformance;

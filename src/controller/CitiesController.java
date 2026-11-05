@@ -3,7 +3,7 @@ package controller;
 import DAO.CityDAO;
 import model.place.City;
 import view.citiesAndStadiums.CitiesView;
-
+import java.util.concurrent.ExecutionException;
 import javax.swing.*;
 import java.sql.SQLException;
 import java.util.List;
@@ -39,7 +39,7 @@ public class CitiesController {
             protected void done() {
                 try {
                     view.setCitiesData(get());
-                } catch (Exception ex) {
+                } catch (InterruptedException | ExecutionException ex) {
                     view.showMessage("Error loading cities: " + ex.getMessage());
                 }
             }

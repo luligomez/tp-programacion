@@ -18,6 +18,9 @@ import view.theme.Theme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.SQLException;
+import org.json.simple.parser.ParseException;
+import org.openpdf.text.DocumentException;
 
 import static model.tournament.TournamentState.*;
 
@@ -89,7 +92,7 @@ public class MainWindowController {
                         "Reset Complete",
                         JOptionPane.INFORMATION_MESSAGE
                 );
-            } catch (Exception e) {
+            } catch (IOException | ParseException | SQLException e) {
                 JOptionPane.showMessageDialog(
                         view,
                         "Error loading tournament file: " + e.getMessage(),
@@ -196,7 +199,7 @@ public class MainWindowController {
         try {
             new CredentialPdfService().generate(tournament, chooser.getSelectedFile().toPath());
             JOptionPane.showMessageDialog(view, "Credentials PDF created.");
-        } catch (Exception e) {
+        } catch (IOException | DocumentException e) {
             JOptionPane.showMessageDialog(view, "Could not create credentials: " + e.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }

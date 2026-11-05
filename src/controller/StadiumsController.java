@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import javax.swing.*;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class StadiumsController {
 
@@ -46,7 +47,7 @@ public class StadiumsController {
             protected void done() {
                 try {
                     view.setCities(get());
-                } catch (Exception ex) {
+                } catch (InterruptedException | ExecutionException ex) {
                     view.showMessage("Error loading cities: " + ex.getMessage());
                 }
             }
@@ -66,7 +67,7 @@ public class StadiumsController {
                     List<Stadium> stadiums = get();
                     view.setStadiumsData(stadiums);
                     onStadiumsLoaded.accept(stadiums);
-                } catch (Exception ex) {
+                } catch (InterruptedException | ExecutionException ex) {
                     view.showMessage("Error loading stadiums: " + ex.getMessage());
                 }
             }

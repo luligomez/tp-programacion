@@ -7,7 +7,7 @@ import model.tournament.Tournament;
 import service.FileReader;
 import service.TournamentRepository;
 import view.mainwindow.MainWindowView;
-
+import org.json.simple.parser.ParseException;
 import javax.swing.*;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -38,8 +38,7 @@ public class Application {
                 windowView.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 windowView.setVisible(true);
 
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (SQLException | IllegalStateException | ReflectiveOperationException | UnsupportedLookAndFeelException e){
                 JOptionPane.showMessageDialog(null,
                         "Critical error while opening app: " + e.getMessage(),
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -58,12 +57,11 @@ public class Application {
         }
         return loadTournamentFromJson();
     }
-    // Métod auxiliar para la lectura del JSON
     private static Tournament loadTournamentFromJson() {
         try {
             return FileReader.fileReader("torneo.json");
-        } catch (Exception e) {
-            throw new RuntimeException("Error al cargar torneo.json: " + e.getMessage(), e);
+        } catch (IOException | ParseException e) {
+            throw new IllegalStateException("Could not load torneo.json: " + e.getMessage(), e);
         }
     }
 

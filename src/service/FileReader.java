@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import org.json.simple.parser.ParseException;
+import java.io.IOException;
 
 public class FileReader {
 
@@ -35,7 +37,7 @@ public class FileReader {
                 person.get("nroDocumento").toString());
     }
 
-    public static Tournament fileReader(String file) throws Exception{
+    public static Tournament fileReader(String file) throws IOException, ParseException{
         Tournament tournament = new Tournament();
         Map<String, Country> countries = new HashMap<>();
         JSONParser parser = new JSONParser();

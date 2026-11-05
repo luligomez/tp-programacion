@@ -9,7 +9,6 @@ import model.place.Stadium;
 import model.tournament.zone.ZoneStage;
 import model.tournament.zone.Zone;
 import model.exception.InvalidTournamentException;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;

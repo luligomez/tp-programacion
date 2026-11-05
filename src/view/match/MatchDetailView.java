@@ -5,7 +5,9 @@ import model.reports.match.MatchReport;
 import model.reports.match.MatchReport.*;
 import model.match.knockout.PenaltyShootout.*;
 import view.theme.Theme;
-
+import view.components.StyledTable;
+import javax.swing.table.DefaultTableModel;
+import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 
@@ -22,6 +24,8 @@ public class MatchDetailView extends JPanel {
     private final JTabbedPane tabs = new JTabbedPane();
     private final JPanel shootoutPanel = new JPanel();
     private JScrollPane shootoutScroll;
+    private final JPanel standingsPanel = new JPanel();
+    private JScrollPane standingsScroll;
 
     private static final Color SEPARATOR = Theme.SEPARATOR;
     private static final int CONTENT_MAX_WIDTH = 1000;
@@ -48,7 +52,10 @@ public class MatchDetailView extends JPanel {
         shootoutPanel.setBackground(Theme.BACKGROUND);
         shootoutPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         shootoutScroll = scroll(shootoutPanel);
-
+        standingsPanel.setLayout(new BoxLayout(standingsPanel, BoxLayout.Y_AXIS));
+        standingsPanel.setBackground(Theme.BACKGROUND);
+        standingsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        standingsScroll = scroll(standingsPanel);
         tabs.addTab("Timeline", scroll(timelinePanel));
         tabs.addTab("Lineups", scroll(lineupsPanel));
         add(tabs, BorderLayout.CENTER);
@@ -65,6 +72,7 @@ public class MatchDetailView extends JPanel {
         showTimeline(report);
         showLineups(report);
         showShootout(report);
+        showStandings(report);
     }
 
 
@@ -312,6 +320,68 @@ public class MatchDetailView extends JPanel {
         label.setForeground(Theme.PRIMARY);
         label.setBorder(BorderFactory.createEmptyBorder(3, horizontalPadding, 3, horizontalPadding));
         return label;
+    }
+
+    // ---------- Standings before / after (group stage matches only) ----------
+
+    private static final String[] STANDINGS_COLUMNS = {"#", "Team", "PTS", "MP", "W", "D", "L", "GF", "GA", "GD"};
+
+    private void showStandings(MatchReport report) {
+        int index = tabs.indexOfComponent(standingsScroll);
+        if (index >= 0) tabs.removeTabAt(index);
+        if (!report.hasStandings()) return;
+
+        standingsPanel.removeAll();
+        standingsPanel.add(buildStandingsTable("Standings before the match", report.standings().before(), report));
+        standingsPanel.add(Box.createVerticalStrut(24));
+        standingsPanel.add(buildStandingsTable("Standings after the match", report.standings().after(), report));
+        standingsPanel.revalidate();
+        standingsPanel.repaint();
+        tabs.addTab("Standings", standingsScroll);
+    }
+
+    private JPanel buildStandingsTable(String title, List<StandingRow> rows, MatchReport report) {
+        DefaultTableModel model = new DefaultTableModel(STANDINGS_COLUMNS, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        for (StandingRow row : rows) {
+            model.addRow(new Object[]{row.position(), row.teamName(), row.points(), row.matchesPlayed(),
+                    row.wins(), row.draws(), row.losses(), row.goalsFor(), row.goalsAgainst(),
+                    row.goalDifference()});
+        }
+
+        // The two teams that played this match are highlighted
+        StyledTable table = new StyledTable(model) {
+            @Override
+            public Component prepareRenderer(javax.swing.table.TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                String team = (String) getValueAt(row, 1);
+                boolean playing = team.equals(report.team1Name()) || team.equals(report.team2Name());
+                c.setFont(c.getFont().deriveFont(playing ? Font.BOLD : Font.PLAIN));
+                c.setBackground(playing ? Theme.PRIMARY_LIGHT : Color.WHITE);
+                return c;
+            }
+        };
+        table.centerAllRows();
+        table.setColumnWidths(new int[]{40, 260, 60, 60, 60, 60, 60, 60, 60, 60});
+        table.setRowSelectionAllowed(false);
+        table.getTableHeader().setPreferredSize(new Dimension(0, 38));
+
+        JLabel label = sectionLabel(title, 15f, Theme.PRIMARY);
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setOpaque(false);
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.setMaximumSize(new Dimension(CONTENT_MAX_WIDTH, 38 + rows.size() * table.getRowHeight() + 50));
+        panel.add(label, BorderLayout.NORTH);
+        JPanel tablePanel = new JPanel(new BorderLayout());
+        tablePanel.add(table.getTableHeader(), BorderLayout.NORTH);
+        tablePanel.add(table, BorderLayout.CENTER);
+        panel.add(tablePanel, BorderLayout.CENTER);
+        return panel;
     }
 
     private void showShootout(MatchReport report) {

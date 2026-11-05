@@ -1,5 +1,7 @@
 package controller;
 
+import model.exception.InvalidMatchResourceException;
+import model.exception.InvalidTournamentException;
 import model.tournament.Tournament;
 import model.match.Match;
 import model.tournament.knockout.KnockoutPhase;
@@ -41,28 +43,34 @@ public class KnockoutController {
 
     private void simulateNextRound() {
         KnockoutPhase qf = KnockoutPhase.QUARTER_FINAL, sf = KnockoutPhase.SEMI_FINAL;
-        switch (knockout.currentStep()) {
-            case QUARTERS_FIRST_LEG -> knockout.simulateFirstLegs(qf);
-            case QUARTERS_SECOND_LEG -> {
-                knockout.simulateSecondLegs(qf);
-                tournament.advanceKnockoutIfDecided(qf);
+        try {
+            tournament.requireKnockoutStadiums();
+            switch (knockout.currentStep()) {
+                case QUARTERS_FIRST_LEG -> knockout.simulateFirstLegs(qf);
+                case QUARTERS_SECOND_LEG -> {
+                    knockout.simulateSecondLegs(qf);
+                    tournament.advanceKnockoutIfDecided(qf);
+                }
+                case QUARTERS_PENALTIES -> {
+                    knockout.resolveTies(qf);
+                    tournament.advanceKnockoutIfDecided(qf);
+                }
+                case SEMIS_FIRST_LEG -> knockout.simulateFirstLegs(sf);
+                case SEMIS_SECOND_LEG -> {
+                    knockout.simulateSecondLegs(sf);
+                    tournament.advanceKnockoutIfDecided(sf);
+                }
+                case SEMIS_PENALTIES -> {
+                    knockout.resolveTies(sf);
+                    tournament.advanceKnockoutIfDecided(sf);
+                }
+                case FINAL -> knockout.simulateFinal();
+                case FINAL_PENALTIES -> knockout.resolveFinal();
+                case DONE -> { }
             }
-            case QUARTERS_PENALTIES -> {
-                knockout.resolveTies(qf);
-                tournament.advanceKnockoutIfDecided(qf);
-            }
-            case SEMIS_FIRST_LEG -> knockout.simulateFirstLegs(sf);
-            case SEMIS_SECOND_LEG -> {
-                knockout.simulateSecondLegs(sf);
-                tournament.advanceKnockoutIfDecided(sf);
-            }
-            case SEMIS_PENALTIES -> {
-                knockout.resolveTies(sf);
-                tournament.advanceKnockoutIfDecided(sf);
-            }
-            case FINAL -> knockout.simulateFinal();
-            case FINAL_PENALTIES -> knockout.resolveFinal();
-            case DONE -> { }
+        } catch (InvalidTournamentException | InvalidMatchResourceException e) {
+            view.showWarning("Cannot simulate", e.getMessage());
+            return;
         }
         onProgress.run();
         updateView();

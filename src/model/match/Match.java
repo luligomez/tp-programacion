@@ -6,7 +6,7 @@ import model.place.Stadium;
 import model.team.Team;
 import model.person.Referee;
 import model.reports.match.MatchReport.*;
-
+import java.util.Collections;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -81,8 +81,8 @@ public abstract class Match implements Serializable {
         return referee;
     }
 
-    public ArrayList<Incident> getIncidents() {
-        return incidents;
+    public List<Incident> getIncidents() {
+        return Collections.unmodifiableList(incidents);
     }
 
     public void addIncident(Incident incident) {
@@ -153,8 +153,9 @@ public abstract class Match implements Serializable {
     }
 
     public PlayerParticipation getParticipationFor(Player player) {
-        if (player == null) return null;//TODO exception
-
+        if (player == null) {
+            throw new IllegalArgumentException("Player cannot be null.");
+        }
         for (PlayerParticipation pp : playerParticipations) {
             if (pp.getPlayer().equals(player)) {
                 return pp;

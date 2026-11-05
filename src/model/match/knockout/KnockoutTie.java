@@ -114,22 +114,6 @@ public class KnockoutTie implements Serializable {
         return 0;
     }
 
-    public int getTeam1AggregateGoals() {
-        return firstLeg.getTeam1Goals() + secondLeg.getTeam2Goals();
-    }
-
-    public int getTeam2AggregateGoals() {
-        return firstLeg.getTeam2Goals() + secondLeg.getTeam1Goals();
-    }
-
-    public int getTeam1AwayGoals() {
-        return secondLeg.getTeam2Goals();
-    }
-
-    public int getTeam2AwayGoals() {
-        return firstLeg.getTeam2Goals();
-    }
-
     public int getTeam1FirstLegGoals() {
         return firstLeg.getTeam1Goals();
     }

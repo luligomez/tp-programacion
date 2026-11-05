@@ -12,7 +12,7 @@ public class TeamRowPanel extends JPanel {
     public TeamRowPanel(Team team) {
         setLayout(new GridBagLayout());
         setOpaque(false);
-        setBorder(BorderFactory.createEmptyBorder(10, 14, 10, 14));
+        setBorder(BorderFactory.createEmptyBorder(6, 14, 6, 14));
         setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JTextArea nameLabel = new JTextArea(team.getName());

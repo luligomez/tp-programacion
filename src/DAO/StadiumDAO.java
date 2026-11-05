@@ -2,7 +2,8 @@ package DAO;
 
 import model.place.City;
 import model.place.Stadium;
-
+import java.util.HashMap;
+import java.util.Map;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -109,21 +110,25 @@ public class StadiumDAO {
     }
 
     public ArrayList<Stadium> getAllStadiums() throws SQLException {
-        String sql = "SELECT id, name, capacity, city_id FROM stadium ORDER BY id";
+        // A single query brings each stadium together with its city
+        String sql = "SELECT s.id, s.name, s.capacity, c.id AS city_id, c.name AS city_name, c.country " +
+                "FROM stadium s JOIN city c ON c.id = s.city_id " +
+                "ORDER BY s.id";
         ArrayList<Stadium> stadiums = new ArrayList<>();
+        Map<Long, City> cities = new HashMap<>();   // stadiums of the same city share the same City object
 
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                long id = rs.getLong("id");
-                String name = rs.getString("name");
-                int capacity = rs.getInt("capacity");
-                long cityid = rs.getLong("city_id");
-                City city = cityDAO.getCityById(cityid);
-                Stadium stadium = new Stadium(id, name, capacity, city);
-                stadiums.add(stadium);
+                long cityId = rs.getLong("city_id");
+                City city = cities.get(cityId);
+                if (city == null) {
+                    city = new City(cityId, rs.getString("city_name"), rs.getString("country"));
+                    cities.put(cityId, city);
+                }
+                stadiums.add(new Stadium(rs.getLong("id"), rs.getString("name"), rs.getInt("capacity"), city));
             }
         }
         return stadiums;

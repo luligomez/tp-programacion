@@ -3,10 +3,12 @@ package model.team;
 import model.person.Coach;
 import model.person.player.Player;
 import model.place.Country;
-
+import java.util.Collections;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
+
 import model.person.Position;
 
 public class Team implements Serializable {
@@ -67,20 +69,29 @@ public class Team implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getRankingPosition() {
         return rankingPosition;
     }
 
     public List<Player> getPlayers() {
-        return players;
+        return Collections.unmodifiableList(players);
     }
 
     public Coach getCoach() {
         return coach;
+    }
+
+    // Team names are unique in the tournament
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Team other)) return false;
+        return Objects.equals(name, other.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
     }
 
 }

@@ -15,7 +15,7 @@ public class ScorerRankingController {
     }
 
     private void showScorers(){
-        view.showScorers(TournamentReportsService.generateScorersRanking(tournament));
+        view.showRanking(TournamentReportsService.generateScorersRanking(tournament));
     }
 
     public ScorerRankingView getView() {

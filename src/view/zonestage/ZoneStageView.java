@@ -2,14 +2,11 @@ package view.zonestage;
 
 import model.team.Team;
 import model.match.Match;
-import model.tournament.zone.Zone;
-import model.tournament.zone.TeamStanding;
-import model.tournament.zone.MatchStandingComparison;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.function.Consumer;
+import model.tournament.zone.Zone;
 
 public class ZoneStageView extends JPanel {
 
@@ -85,16 +82,6 @@ public class ZoneStageView extends JPanel {
     public void updateStandings(List<Zone> zones) {
         if (standingsPanel != null) {
             standingsPanel.updateGroups(zones);
-        }
-    }
-
-    public void showStandingsComparison(List<Zone> zones,
-    List<List<TeamStanding>> standingsBefore,
-    List<MatchStandingComparison> matchComparisons) {
-        if (standingsPanel != null) {
-            standingsPanel.updateGroups(zones);
-            standingsPanel.showComparison(standingsBefore);
-            standingsPanel.showMatchComparisons(matchComparisons);
         }
     }
 

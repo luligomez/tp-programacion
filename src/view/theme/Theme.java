@@ -34,6 +34,7 @@ public final class Theme {
     public static final Color SUCCESS = new Color(46, 125, 50);
     public static final Color DANGER = new Color(198, 40, 40);
     public static final Color WARNING = new Color(249, 168, 37);
+    public static final Color GOLD = new Color(212, 160, 23);
     public static final Color CARD_YELLOW = new Color(249, 190, 0);
 
     // ---------- Player positions ----------

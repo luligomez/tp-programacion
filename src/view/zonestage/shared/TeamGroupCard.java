@@ -13,14 +13,14 @@ public class TeamGroupCard extends JPanel {
         setBackground(Theme.SURFACE);
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Theme.BORDER, 1, true),
-                BorderFactory.createEmptyBorder(0, 0, 12, 0)
+                BorderFactory.createEmptyBorder(0, 0, 8, 0)
         ));
 
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 15f));
         titleLabel.setForeground(Theme.PRIMARY);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(14, 14, 10, 14));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 14, 6, 14));
         add(titleLabel);
 
         add(new JSeparator());

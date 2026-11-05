@@ -115,6 +115,13 @@ public class MatchCardPanel extends JPanel {
         show(played ? "Finished" : "Pending", "Goals",
                 match.getTeam1().getName(), match.getTeam2().getName(), score1, score2, winnerIndex);
 
+        if (winnerIndex >= 0) {
+            names[winnerIndex].setText("🏆 " + names[winnerIndex].getText());
+        }
+        setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(winnerIndex >= 0 ? Theme.GOLD : Theme.BORDER, winnerIndex >= 0 ? 2 : 1),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)));
+
         details.showFinal(match);
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }

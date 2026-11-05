@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Collections;
 
 public class Tournament implements Serializable {
     @Serial
@@ -35,8 +36,8 @@ public class Tournament implements Serializable {
     // ---------- data ----------
 
     public TournamentState getState() { return state; }
-    public ArrayList<Team> getTeams() { return teams; }
-    public ArrayList<Referee> getReferees() { return referees; }
+    public List<Team> getTeams() { return Collections.unmodifiableList(teams); }
+    public List<Referee> getReferees() { return Collections.unmodifiableList(referees); }
     public ArrayList<Stadium> getStadiums() { return stadiums; }
     public void setStadiums(ArrayList<Stadium> stadiums) { this.stadiums = stadiums; }
     public ZoneStage getZoneStage() { return zoneStage; }
@@ -87,9 +88,23 @@ public class Tournament implements Serializable {
     }
 
     // ---------- moving from one stage to the next (coordination happens here) ----------
+    // Checks, before anything is played, that the phases still to be generated will find enough unused stadiums
+    public void requireKnockoutStadiums() {
+        int needed = 0;
+        if (knockoutStage.getTies(KnockoutPhase.QUARTER_FINAL).isEmpty()) needed += 8;   // 4 ties x 2 legs
+        if (knockoutStage.getTies(KnockoutPhase.SEMI_FINAL).isEmpty()) needed += 4;      // 2 ties x 2 legs
+        if (!knockoutStage.hasFinal()) needed += 1;
+        long available = stadiums == null ? 0 : stadiums.stream().filter(s -> !s.isUsed()).count();
+        if (available < needed) {
+            throw new InvalidTournamentException(
+                    "At least " + needed + " unused stadiums are needed for the rest of the tournament, but only "
+                            + available + " are available. Add more in Cities & Stadiums.");
+        }
+    }
 
     public void simulateCurrentMatchday() {
         if (zoneStage.isFinished()) return;
+        requireKnockoutStadiums();
         zoneStage.simulateCurrentMatchday();
         if (zoneStage.isFinished()) startKnockoutStage();
     }
@@ -127,7 +142,7 @@ public class Tournament implements Serializable {
                 .map(Match::getStadium)
                 .filter(Objects::nonNull)
                 .forEach(used -> stadiums.stream()
-                        .filter(s -> s.getName().equals(used.getName()))
+                        .filter(s -> s.getId() == used.getId())
                         .findFirst()
                         .ifPresent(s -> s.setUsed(true)));
     }

@@ -98,11 +98,10 @@ public class MatchSimulator {
 
     public static void simulateMatch(Match match) {
 
-        // If it was already simulated, exit
+        // A match can only be simulated once
         if (match.isPlayed()) {
-            System.out.println("El partido entre " + match.getTeam1().getName() + //TODO agregar exception
-                    " y " + match.getTeam2().getName() + " ya fue simulado.");
-            return;
+            throw new IllegalStateException("The match between " + match.getTeam1().getName()
+                    + " and " + match.getTeam2().getName() + " was already simulated.");
         }
 
         Team team1 = match.getTeam1();
@@ -274,12 +273,6 @@ public class MatchSimulator {
                 .orElse(null);
     }
 
-    private static Player getHighestRatingPlayer(List<Player> bench) {
-        return bench.stream()
-                .max(Comparator.comparingDouble(Player::getRating))
-                .orElse(null);
-    }
-
     // SENDING-OFF AND PARTICIPATION HANDLING
     private static boolean simulateCardsForMinute(Match match, List<Player> activePlayers, List<Player> benchPlayers,
                                                int minute, Map<Player, Integer> yellowCardsMap, boolean isGkAlreadyExpelled, Random random) {
@@ -358,7 +351,8 @@ public class MatchSimulator {
             totalWeight += weight;
         }
 
-        if (totalWeight <= 0) return activePlayers.getFirst(); //TODO exception?
+        // Nobody on the pitch has any scoring weight: any player may score, the match goes on
+        if (totalWeight <= 0) return activePlayers.getFirst();
 
         // 2. Roulette / weighted draw
         double randomValue = random.nextDouble() * totalWeight; // [0.0, totalWeight)
@@ -371,7 +365,8 @@ public class MatchSimulator {
             }
         }
 
-        return activePlayers.getFirst(); //TODO exception?
+        // Only reached because of floating point rounding at the very end of the draw
+        return activePlayers.getLast();
     }
 
     private static Player selectWeightedFouler(List<Player> activePlayers, Map<Player, Integer> yellowCardsMap, boolean isGkAlreadyExpelled, Random random) {
@@ -381,17 +376,11 @@ public class MatchSimulator {
         Map<Player, Double> weights = new HashMap<>();
 
         for (Player p : activePlayers) {
-            double weight;
-
-            switch (p.getPosition()) {
-                case DEFENDER -> weight = 40.0;
-                case MIDFIELDER -> weight = 35.0;
-                case FORWARD -> weight = 20.0;
-                // If the goalkeeper was ALREADY sent off, the substitute commits no fouls
-                case GOALKEEPER -> weight = isGkAlreadyExpelled ? 0.0 : 2.0;
-                default -> weight = 10.0;
+            double weight = p.getPosition().getFoulWeight();
+            // If the goalkeeper was ALREADY sent off, the substitute commits no fouls
+            if (p.getPosition() == Position.GOALKEEPER && isGkAlreadyExpelled) {
+                weight = 0.0;
             }
-
             // CAUTION REDUCTION: if the player already has 1 yellow, they play more carefully (weight reduced by 75%)
             if (yellowCardsMap.getOrDefault(p, 0) == 1) {
                 weight *= 0.25;
@@ -465,13 +454,7 @@ public class MatchSimulator {
 
         for (Player p : activePlayers) {
             double rating = p.getRating();
-            double weight = switch (p.getPosition()) {
-                case FORWARD -> 1.0;
-                case MIDFIELDER -> 0.6;
-                case DEFENDER -> 0.15;
-                case GOALKEEPER -> 0.0;
-            };
-
+            double weight = p.getPosition().getAttackWeight();
             attackSum += rating * weight;
             weightSum += weight; // Accumulate the applied weights
         }
@@ -494,13 +477,7 @@ public class MatchSimulator {
 
         for (Player p : activePlayers) {
             double rating = p.getRating();
-            double weight = switch (p.getPosition()) {
-                case GOALKEEPER -> 1.2; // The goalkeeper has a large defensive impact
-                case DEFENDER -> 1.0;   // 100% contribution
-                case MIDFIELDER -> 0.5; // 50% contribution (marks in midfield)
-                case FORWARD -> 0.05;   // 5% contribution (high press)
-            };
-
+            double weight = p.getPosition().getDefenseWeight();
             defenseSum += rating * weight;
             weightSum += weight; // Accumulate the applied weights
         }
@@ -573,32 +550,14 @@ public class MatchSimulator {
         if (playerOut.getPosition() == playerIn.getPosition()) {
             return true;
         }
-
-        // 1. Count how many players there currently are in each position
-        long def = activePlayers.stream().filter(p -> p.getPosition() == Position.DEFENDER).count();
-        long mid = activePlayers.stream().filter(p -> p.getPosition() == Position.MIDFIELDER).count();
-        long fwd = activePlayers.stream().filter(p -> p.getPosition() == Position.FORWARD).count();
-
-        // 2. Subtract the outgoing player
-        switch (playerOut.getPosition()) {
-            case DEFENDER -> def--;
-            case MIDFIELDER -> mid--;
-            case FORWARD -> fwd--;
+        // Every position must stay within its allowed range after the substitution
+        for (Position position : Position.values()) {
+            long count = activePlayers.stream().filter(p -> p.getPosition() == position).count();
+            if (playerOut.getPosition() == position) count--;
+            if (playerIn.getPosition() == position) count++;
+            if (!position.isAllowedOnPitch(count)) return false;
         }
-
-        // 3. Add the incoming player
-        switch (playerIn.getPosition()) {
-            case DEFENDER -> def++;
-            case MIDFIELDER -> mid++;
-            case FORWARD -> fwd++;
-        }
-
-        // 4. Validate allowed tactical ranges (3 to 5 DEF, 3 to 6 MID, 1 to 4 FWD)
-        boolean defValid = def >= 3 && def <= 5;
-        boolean midValid = mid >= 3 && mid <= 6;
-        boolean fwdValid = fwd >= 1 && fwd <= 4;
-
-        return defValid && midValid && fwdValid;
+        return true;
     }
 
 }

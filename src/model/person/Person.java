@@ -3,6 +3,7 @@ package model.person;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 
 public abstract class Person implements Serializable {
     @Serial
@@ -43,6 +44,23 @@ public abstract class Person implements Serializable {
         if(birthDate != null)
             return java.time.Period.between(birthDate, java.time.LocalDate.now()).getYears();
         return 0;
+    }
+
+    // Two people are the same when their personal data matches (document numbers alone are not unique in the data)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person other = (Person) o;
+        return Objects.equals(name, other.name)
+                && Objects.equals(birthDate, other.birthDate)
+                && Objects.equals(documentType, other.documentType)
+                && Objects.equals(documentNumber, other.documentNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, birthDate, documentType, documentNumber);
     }
 
 }

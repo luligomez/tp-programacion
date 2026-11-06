@@ -3,7 +3,7 @@ package model.person;
 public enum Position {
 
     //            name          short  attack  defense  foul    min  max   (min/max = players allowed on the pitch)
-    GOALKEEPER("Goalkeeper", "GK", 0.0, 1.2, 2.0, 0, 11),
+    GOALKEEPER("Goalkeeper", "GK", 0.0, 1.2, 2.0, 0, 1),
     DEFENDER("Defender", "DF", 0.15, 1.0, 40.0, 3, 5),
     MIDFIELDER("Midfielder", "MF", 0.6, 0.5, 35.0, 3, 6),
     FORWARD("Forward", "FW", 1.0, 0.05, 20.0, 1, 4);
